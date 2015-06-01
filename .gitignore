@@ -1,8 +1,13 @@
+# Final files
+build
+linux/mathtext
+
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
+*.d
 
 # Precompiled Headers
 *.gch
@@ -26,3 +31,10 @@
 *.exe
 *.out
 *.app
+
+# EMacs save files
+*~
+
+# Doxygen files
+doc/doxygen/html
+doc/doxygen/latex
