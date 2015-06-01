@@ -1,12 +1,15 @@
 BUILD_NUMBER_FILE := makefile.bld
-CPP_FILES := $(wildcard *.cpp)
+CPP_FILES := $(wildcard *.cpp) $(wildcard ../common/*.cpp) 
 OBJ_FILES := $(addprefix ../build/obj/,$(notdir $(CPP_FILES:.cpp=.o)))
-LD_FLAGS := 
-CC_FLAGS := -I../common/h
+BOOST_PATH := ../../boost_1_58_0
+LD_FLAGS := -L$(BOOST_PATH)/stage/lib
+LD_LIBS := -Wl,-Bstatic -lboost_program_options -Wl,-Bdynamic 
+CC_FLAGS := -I../common/h -I$(BOOST_PATH) 
 CC_FLAGS += -DMATHTEXT_VERSION_BUILD=$(shell cat makefile.bld)
+VPATH=.:../common
 
 mathtext: $(OBJ_FILES)
-	g++ $(LD_FLAGS) -o $@ $^
+	g++ $(LD_FLAGS) -o $@ $^ $(LD_LIBS)
 
 ../build/obj/%.o: %.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
