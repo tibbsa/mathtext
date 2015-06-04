@@ -14,6 +14,7 @@
 #include "mathtext.h"
 #include "MathDocument.h"
 #include "utility.h"
+#include "logging.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -29,6 +30,9 @@ namespace fs = boost::filesystem;
  */
 int main (const int argc, const char **argv)
 {
+  LOG_INFO << endl;
+  LOG_INFO << "=====================================================";
+
   try {
     string inputFilename;
     bool generateLaTeX = false;
@@ -80,10 +84,9 @@ int main (const int argc, const char **argv)
       generateLaTeX = (vm.count("latex"));
       if (generateLaTeX && latexOutputFilename.empty())
 	latexOutputFilename = remove_file_extension (inputFilename) + ".tex";
-
-      // Attempt to load the specified file into a buffer
     }
     catch(std::exception &e) {
+      LOG_FATAL << "Command line error: " << e.what() << endl << endl;
       cerr << "Command line error: " << e.what() << endl << endl;
       cout << "Usage: mathtext [options] <filename>" << endl;
       cout << desc;
@@ -99,11 +102,15 @@ int main (const int argc, const char **argv)
       std::string const *file = boost::get_error_info<mdx_filename_info>(e);
       std::string const *desc = boost::get_error_info<mdx_liberrmsg_info>(e);
 
+      LOG_ERROR << "Caught MDFE in main(): " << *error << " (" << *file << "): " << *desc;
+
       cerr << *error << " (" << *file << "): " << *desc << endl;
       return 2;
     }
   }
   catch (boost::exception &e) {
+    LOG_FATAL << "Uncaught exception in main(): " << boost::diagnostic_information(e);
+
     cerr << "terminating on unhandled exception: " << boost::diagnostic_information(e) << endl;
     return 2;
   }

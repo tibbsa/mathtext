@@ -10,7 +10,7 @@
 #define __MATH_DOCUMENT_H__
 
 #include <string>
-#include <queue>
+#include <vector>
 
 #include <boost/exception/all.hpp>
 
@@ -23,7 +23,9 @@
 class MathDocument
 {
  protected:
-  std::queue<MathDocumentLine> m_document;
+  std::vector<MathDocumentLine> m_document;
+
+  void ingest (const std::string &filename, const std::string &buffer);
 
  public:
   void loadFromFile (const std::string &filename);

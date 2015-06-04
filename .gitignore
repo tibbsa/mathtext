@@ -1,5 +1,6 @@
 linux/g
 linux/test.*
+linux/mathtext.log
 
 # Final files
 build
