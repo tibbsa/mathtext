@@ -7,13 +7,17 @@
 */
 
 #include <iostream>
+#include <boost/exception/diagnostic_information.hpp>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 
 #include "mathtext.h"
+#include "MathDocument.h"
 #include "utility.h"
 
 using namespace std;
 namespace po = boost::program_options;
+namespace fs = boost::filesystem;
 
 /** 
  * Parses the command line and launches the necessary conversions.
@@ -76,6 +80,8 @@ int main (const int argc, const char **argv)
       generateLaTeX = (vm.count("latex"));
       if (generateLaTeX && latexOutputFilename.empty())
 	latexOutputFilename = remove_file_extension (inputFilename) + ".tex";
+
+      // Attempt to load the specified file into a buffer
     }
     catch(std::exception &e) {
       cerr << "Command line error: " << e.what() << endl << endl;
@@ -84,20 +90,23 @@ int main (const int argc, const char **argv)
       return 2;
     }
 
-    MathTranslator mt;
-
+    MathDocument document;
     try {
-      mt.loadFromFile(inputFilename);
-    }
-    catch (std::exception &e) {
-      cerr << "terminating on unhandled translation exception: " << e.what() << endl << endl;
+      document.loadFromFile(inputFilename);
+    } 
+    catch (MathDocumentFileException &e) {
+      std::string const *error = boost::get_error_info<mdx_error_info>(e);
+      std::string const *file = boost::get_error_info<mdx_filename_info>(e);
+      std::string const *desc = boost::get_error_info<mdx_liberrmsg_info>(e);
+
+      cerr << *error << " (" << *file << "): " << *desc << endl;
       return 2;
     }
   }
-  catch (std::exception &e) {
-    cerr << "terminating on unhandled exception: " << e.what() << endl << endl;
+  catch (boost::exception &e) {
+    cerr << "terminating on unhandled exception: " << boost::diagnostic_information(e) << endl;
     return 2;
   }
-
+  
   return 0;
 }

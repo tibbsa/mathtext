@@ -1,3 +1,6 @@
+linux/g
+linux/test.*
+
 # Final files
 build
 linux/mathtext

@@ -3,7 +3,7 @@ CPP_FILES := $(wildcard *.cpp) $(wildcard ../common/*.cpp)
 OBJ_FILES := $(addprefix ../build/obj/,$(notdir $(CPP_FILES:.cpp=.o)))
 BOOST_PATH := ../../boost_1_58_0
 LD_FLAGS := -L$(BOOST_PATH)/stage/lib
-LD_LIBS := -Wl,-Bstatic -lboost_program_options -Wl,-Bdynamic 
+LD_LIBS := -Wl,-Bstatic -lboost_program_options -lboost_filesystem -lboost_system -Wl,-Bdynamic 
 CC_FLAGS := -I../common/h -I$(BOOST_PATH) 
 CC_FLAGS += -DMATHTEXT_VERSION_BUILD=$(shell cat makefile.bld)
 VPATH=.:../common
