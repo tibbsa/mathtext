@@ -18,5 +18,4 @@
 // Prevent inadvertent use of old Boost features
 #define BOOST_FILESYSTEM_NO_DEPRECATED 
 
-
 #endif /* __MATHTEXT_H__ */

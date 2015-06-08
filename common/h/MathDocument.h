@@ -69,6 +69,8 @@ class MathDocument
   const std::vector<MathDocumentMsg> &getMessages (void) const;
 
   static std::string getErrorMessage (const unsigned long errorCode);
+
+  friend class MathRenderer;
 };
 
 #endif /* __MATH_DOCUMENT_H__ */

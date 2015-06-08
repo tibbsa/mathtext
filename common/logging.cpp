@@ -8,6 +8,7 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <assert.h>
 #include <boost/log/core/core.hpp>
 #include <boost/log/expressions/formatters/date_time.hpp>
 #include <boost/log/expressions.hpp>
@@ -24,6 +25,23 @@
 #include <ostream>
 
 #include "logging.h"
+
+int logIndentLevel = 0;
+void logIncreaseIndent (void)
+{
+  logIndentLevel++;
+}
+
+void logDecreaseIndent (void)
+{
+  assert (logIndentLevel != 0);
+  logIndentLevel--;
+}
+
+void logResetIndent (void)
+{
+  logIndentLevel = 0;
+}
 
 namespace logging = boost::log;
 namespace src = boost::log::sources;
@@ -61,3 +79,5 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
 
   return logger;
 }
+
+

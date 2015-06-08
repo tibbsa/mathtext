@@ -11,6 +11,8 @@
 
 #include <boost/exception/all.hpp>
 
+class MathDocumentElement;
+
 /**
  * Exception handling
  */
@@ -20,9 +22,11 @@ typedef boost::error_info<struct mdx_error,std::string> mdx_error_info;
 typedef boost::error_info<struct mdx_liberrno,int> mdx_liberrno_info;
 typedef boost::error_info<struct mdx_liberrmsg,std::string> mdx_liberrmsg_info;
 typedef boost::error_info<struct mdx_libfunction,std::string> mdx_liberrfunction_info;
+typedef boost::error_info<struct mdx_element,MathDocumentElement> mdx_element_info;
 
 class MathDocumentException : public boost::exception, public std::exception {};
 class MathDocumentFileException : public MathDocumentException {};
 class MathDocumentParseException : public MathDocumentException {};
+class MathDocumentRenderException : public MathDocumentException {};
 
 #endif /* __MATH_EXCEPTIONS_H__ */

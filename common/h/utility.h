@@ -9,8 +9,28 @@
 #ifndef __UTILITY_H__
 #define __UTILITY_H__
 
+#include <iostream>
 #include <string>
 
+/**
+ * Removes the extension (.XXX) from a filename, if there is one
+ */
 std::string remove_file_extension (const std::string &filename);
 
+/**
+ * Used primarily for logging, generic 'Whitespace' stream manipulator
+ * Inspired by http://stackoverflow.com/questions/1391746/how-to-easily-indent-output-to-ofstream
+ */
+struct Whitespace {
+  Whitespace(int n);
+  int num_spaces;
+};
+
+std::ostream &operator<<(std::ostream &stream, const Whitespace &ws);
+
+/**
+ * Returns true if 'subject' begins with 'search' (case insensitive)
+ */
+bool strBeginsWith (const std::string subject, const std::string search);
+  
 #endif /* __UTILITY_H__ */

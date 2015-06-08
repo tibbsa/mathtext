@@ -8,6 +8,10 @@
 
 #include <string>
 
+#include <boost/algorithm/string.hpp>
+
+#include "utility.h"
+
 /**
  * Removes an existing file extension from a string.
  *
@@ -23,3 +27,32 @@ std::string remove_file_extension (const std::string &filename)
     return filename.substr(0, lastDot);
 }
 
+/**
+ * Determine if the subject string begins (case-insensitive)  with search phrase.
+ *
+ * @param subject String to be searched
+ * @param search The text to look for
+ * @return true if 'search' appears at the start of 'subject', false otherwise
+ */
+bool strBeginsWith (const std::string subject, const std::string search) {
+  if (subject.length() < search.length())
+    return false;
+
+  return (boost::iequals(subject.substr(0, search.length()), search));
+}
+
+/**
+ * Generic whitespace stream manipulator support functions
+ */
+Whitespace::Whitespace (int n) : num_spaces(n)
+{
+}
+
+std::ostream& operator<<(std::ostream& stream, const Whitespace &ws)
+{
+  for(int i = 0; i < ws.num_spaces; i++)
+    {
+      stream << "  ";
+    }
+  return stream;
+}

@@ -38,6 +38,7 @@ linux/mathtext
 
 # EMacs save files
 *~
+*#*#
 
 # Doxygen files
 doc/doxygen/html

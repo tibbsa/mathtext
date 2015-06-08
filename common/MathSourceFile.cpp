@@ -1,5 +1,5 @@
 /**
- * @file MathDocument.cpp
+ * @file MathSourceFile.cpp
  * Implementation of the container holding the raw source document
  * 
  * @copyright Copyright 2015 Anthony Tibbs
@@ -13,9 +13,17 @@
 #include <sstream>
 #include <string>
 
-#include "MathDocument.h"
-#include "logging.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
 
+#include "logging.h"
+#include "MathExceptions.h"
+#include "MathSourceFile.h"
+
+namespace ba = boost::algorithm;
+
+
+/* ========================= PUBLIC FUNCTION =============================== */
 
 /**
  * Loads a source document from the specified file.
@@ -27,8 +35,11 @@
  * @throw MathDocumentParseException when parse or interpretation errors arise
  * @throw MathDocumentFileException on I/O errors
  */
-void MathDocument::loadFromFile (const std::string &filename)
+void MathSourceFile::loadFromFile (const std::string &filename)
 {
+  LOG_TRACE << "enter MathSourceFile::loadFromFile (" << filename << ")";
+  logIncreaseIndent();
+
   assert (!filename.empty());
   
   std::ifstream ifs;
@@ -55,53 +66,137 @@ void MathDocument::loadFromFile (const std::string &filename)
 			   mdx_liberrfunction_info("ifstream::rdbuf"));
   }
 
-  ingest (filename, buf.str());
   ifs.close();
+
+  std::string file_contents (buf.str());
+
+  // On DOS, line endings may be \r\n rather than just \n.  Get rid of the
+  // \r characters as we do not care about them.
+  boost::replace_all(file_contents, "\r", "");
+  ingest (filename, file_contents);
+
+  /*
+  LOG_TRACE << "Ingested document:";
+  for (std::vector<MathDocumentLine>::iterator it = m_document.begin();
+       it != m_document.end(); ++it) {
+    LOG_TRACE << *it;
+  }
+  */
+
+  logDecreaseIndent();
+  LOG_TRACE << "exit MathSourceFile::loadFromFile (" << filename << ")";
 }
 
+/* ========================= INTERNAL FUNCTIONS =========================== */
+
 /**
- * Appends text from a buffer (sourced from 'filename') to the document.
- *
- * @param filename Name of current file
- * @param buffer Characters to be added to the current document
- * @throw MathDocumentParseException when parse or interpretation errors arise
- * @throw MathDocumentFileException on I/O errors
- */
-void MathDocument::ingest (const std::string &filename, 
-			   const std::string &buffer)
+* Appends text from a buffer (sourced from 'filename') to the document.
+*
+* @param filename Name of current file
+* @param buffer Characters to be added to the current document
+* @throw MathSourceFileParseException when parse or interpretation errors arise
+* @throw MathSourceFileFileException on I/O errors
+* Generates a string of spaces to help with log indentation.
+*/
+void MathSourceFile::ingest (const std::string &filename,
+			     const std::string &buffer)
 {
-  static int nestLevel = 0;
-  unsigned long lineNumber = 1L;
-  unsigned long columnNumber = 0;
+  unsigned long lineNumber = 1;
+  unsigned long continuedLineStartedNumber = 0;
   std::string curLine;
+  int i;
 
-  nestLevel++;
-
-  std::string LI;
-  for (int i = 0; i < nestLevel; i++)
-    LI += " ";
+  LOG_TRACE << "enter MathSourceFile::ingest (" << filename << ")";
+  logIncreaseIndent();
   LOG_INFO << "Ingesting from " << filename;
 
-  for (std::string::const_iterator it = buffer.begin(); 
-       it != buffer.end(); ++it) {
-    columnNumber++;
+  for (int i = 0; i < buffer.length(); i++, lineNumber++) {
+    // Grab a whole line of text
+    int eolPos = buffer.find("\n", i);
+    std::string temp = buffer.substr(i, eolPos - i);
 
-    char c = *it;
+    // Only trim from the right side, where trailing spaces should be
+    // meaningless. Spaces on the left side might well be important 
+    // in certain contexts (e.g. $PrintVerbatim sections)
+    ba::trim_right(temp);
 
-    if (c == '\n') {
-      LOG_TRACE << LI << "(" << lineNumber << ") " << curLine;
-      m_document.push_back (MathDocumentLine (filename, lineNumber, curLine));
-      curLine.clear();
-      columnNumber = 0;
-      lineNumber++;
+    // Advance to the end of the current line
+    i = eolPos;
+
+    // Handle "continuation lines".  If this line ended in a \ then 
+    // combine it with the next line.
+    if (temp.length() > 1 && temp.at (temp.length() - 1) == '\\') {
+      if (!continuedLineStartedNumber)
+	continuedLineStartedNumber = lineNumber;
+      
+      // Remove the continuation character from the line
+      temp.erase(temp.end() - 1, temp.end());
+
+      curLine = curLine + temp;
       continue;
     }
 
 
+    // Handle "include" statements. These appear at the left margin and 
+    // follow the format:
+    //
+    // #include <filename>\n
+    if (strBeginsWith(temp, "#include ")) {
+      static int numIncludeLevels = 0;
 
-    // DEFAULT: Output source character as-is
-    curLine += c;
+      if (++numIncludeLevels >= 5) {
+	BOOST_THROW_EXCEPTION (
+	  MathDocumentParseException() <<
+	  mdx_filename_info(filename) <<
+	  mdx_lineno_info(lineNumber) <<
+	  mdx_error_info("You cannot nest #included files more than five levels deep!"));
+      }
+
+      // Advance beyond the "#include " command
+      std::string include_filename = temp.substr(9);
+      ba::trim(include_filename);
+
+      // Try to load the include filename
+      try { 
+	loadFromFile(include_filename);
+      } 
+      catch (MathDocumentException &e) {
+	// If an error of any sort occurred while loading the 'include' 
+	// file, add info on how that file got included in the first place
+	// to point the user to the source of the problem.
+	std::string const *file = boost::get_error_info<mdx_filename_info>(e);
+
+	// If an exception occured while loading or parsing, we should 
+	// already have a filename reported. (Sanity check.)
+	assert (file != NULL);
+
+	std::string file_revised = *file;
+	file_revised.append (boost::str(
+			     boost::format(" (included by \"%s\" at line %u)")
+			     % filename % lineNumber));
+
+	e << mdx_filename_info(file_revised);
+	throw;
+      }
+
+      continue;
+    }
+
+    curLine = curLine + temp;
+
+    if (!continuedLineStartedNumber)
+      continuedLineStartedNumber = lineNumber;
+
+    m_document.push_back (MathDocumentLine (filename, 
+					    continuedLineStartedNumber,
+					    lineNumber, 
+					    curLine));
+    curLine.clear();
+    continuedLineStartedNumber = 0;
   }
 
-  LOG_DEBUG << LI << "Ingestion complete";
+  logDecreaseIndent();
+  LOG_TRACE << "exit MathSourceFile::ingest (" << filename << ")";
 }
+
+/* ========================= PRIVATE FUNCTIONS =========================== */

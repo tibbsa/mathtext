@@ -6,15 +6,24 @@
  * This project is released under the GNU General Public License.
 */
 
+
+#include <assert.h>
 #include <iostream>
+#include <vector>
+
 #include <boost/exception/diagnostic_information.hpp>
-#include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+
+#include "logging.h"
+#include "utility.h"
 
 #include "mathtext.h"
 #include "MathDocument.h"
-#include "utility.h"
-#include "logging.h"
+#include "MathDocumentMsg.h"
+#include "MathExceptions.h"
+#include "MathSourceFile.h"
+#include "TextRenderer.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -88,23 +97,52 @@ int main (const int argc, const char **argv)
     catch(std::exception &e) {
       LOG_FATAL << "Command line error: " << e.what() << endl << endl;
       cerr << "Command line error: " << e.what() << endl << endl;
-      cout << "Usage: mathtext [options] <filename>" << endl;
-      cout << desc;
+      cerr << "Usage: mathtext [options] <filename>" << endl;
+      cerr << desc;
       return 2;
     }
 
-    MathDocument document;
     try {
-      document.loadFromFile(inputFilename);
+      MathSourceFile srcfile;
+      srcfile.loadFromFile(inputFilename);
+
+      MathDocument doc;
+      doc.interpret (srcfile);
+      if (doc.haveMessages()) {
+	const std::vector<MathDocumentMsg> &msgs = doc.getMessages();
+	cout << msgs.size() << " message(s):" << endl;
+
+	for (std::vector<MathDocumentMsg>::const_iterator it = msgs.begin();
+	     it != msgs.end();
+	     ++it) {
+	  cout << "- " << *it << endl;
+	}
+      }
+
+      TextRenderer rt(doc);
+      rt.render();
+      LOG_INFO << endl <<  "===================== Text Render ====================" << endl;
+      LOG_INFO << rt.getOutput() << endl;
     } 
-    catch (MathDocumentFileException &e) {
+    catch (MathDocumentException &e) {
+      logResetIndent();
+
       std::string const *error = boost::get_error_info<mdx_error_info>(e);
       std::string const *file = boost::get_error_info<mdx_filename_info>(e);
       std::string const *desc = boost::get_error_info<mdx_liberrmsg_info>(e);
 
-      LOG_ERROR << "Caught MDFE in main(): " << *error << " (" << *file << "): " << *desc;
+      LOG_FATAL << "=======================================" << endl;
+      LOG_FATAL << boost::diagnostic_information(e);
+      LOG_FATAL << "=======================================" << endl;
 
-      cerr << *error << " (" << *file << "): " << *desc << endl;
+      assert (error != NULL);
+      
+      cerr << *error;
+      if (file)
+	cerr << " [" << *file << "]";
+      if (desc)
+	cerr << " - " << *desc;
+      cerr << endl;
       return 2;
     }
   }
