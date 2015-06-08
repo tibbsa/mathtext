@@ -9,6 +9,7 @@
 #ifndef __MATH_DOCUMENT_LINE_H__
 #define __MATH_DOCUMENT_LINE_H__
 
+#include <iostream>
 #include <string>
 #include <queue>
 
@@ -19,15 +20,22 @@ class MathDocumentLine
 {
  protected:
   std::string m_filename;
-  unsigned long m_line;
+  unsigned long m_line1;
+  unsigned long m_line2;
   std::string m_content;
 
  public:
   MathDocumentLine (const std::string &source_filename, 
-		    const unsigned long source_linenumber,
+		    const unsigned long source_linenumber1,
+		    const unsigned long source_linenumber2,
 		    const std::string &text);
 
-  operator std::string() { return m_content; }
+  std::string getFilename (void) const;
+  unsigned long getStartLineNumber (void) const;
+  unsigned long getEndLineNumber (void) const;
+  std::string getContent (void) const;
+
+  friend std::ostream &operator<<(std::ostream &os, const MathDocumentLine &mdl);
 };
 
 #endif /* __MATH_DOCUMENT_LINE_H__ */

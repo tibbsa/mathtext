@@ -1,0 +1,147 @@
+&Anthony Tibbs, s/n 2884579
+&ADM2303 Statistics Final Examination
+&Section E, Professor Wright
+&Monday, December 22, 2003
+
+&1(a) [ 6 ]. 
+&--- This is a HYPERGEOMETRIC distribution question. 
+P(x) = C_(x)^S * C_(n-x)^(N-S) / C_(n)^N
+N = &total number of items (people)
+S = &number of special items (fraud-committing people)
+n = &number of items in chosen sample (5)
+x = &number of items we want to find probability of being special (2 or more)
+
+&For this problem, $N = 8, S = 3, and n = 5
+
+&We want to know what the chance of finding at LEAST two of the frauds are.  i.e. the chance of finding 2 or more 'special' items.  This is the same as $1 - &the probability of finding only 1 (or 0) of the frauds.  
+
+P(>= 2 found) = 1 - P(1 found) - P(0 found)
+P(x) = @S!~x! * (S - x)!# * @(N - S)!~(n - x)! * ((N - S) - (n - x))!# / @N!~n! * (N - n)!#
+P(1) = @3!~1! * (3 - 1)!# \ 
+ * @(8 - 3)!~(5 - 1)! * ((8 - 3) - (5 - 1))!# \
+ / @8!~5! * (8 - 5)!#
+P(1) = @6~2# * @120~4! * (5 - 4)!# / 56
+P(1) = 3 * @120~24# / 56
+P(1) = 0.2679
+
+P(0) = @3!~0! * 3!# * @(8 - 3)!~5! * (5 - 5)!# / 56
+P(0) = 1 * @120~120# / 56
+P(0) = 1 / 56
+P(0) = 0.0179
+
+P(>= 2 found) = 1 - P(1 found) - P(0 found)
+P(>= 2 found) = 1 - 0.2679 - 0.0179
+P(>= 2 found) = 0.7142
+
+/\ &There is a $0.71 &probability the auditor will view two or more of the fraudulent files.
+
+
+&- - - - - - -- - - - - - - -- -- - - -- - - 
+
+&&
+ADM2304A - Assignment 2
+Student Name: Mark Dumalski
+Student Number: 2892383
+
+1.
+Let $d_I &represent the difference between time spent on an MS Word task and time spent on an OOwriter task for each user, where $I = 1-10.
+$$
+d_1 = 58 - 53 = 5
+d_2 = 50 - 56 = -6
+d_3 = 58 - 54 = 4
+d_4 = 57 - 52 = 5
+d_5 = 56 - 50 = 6
+d_6 = 48 - 44 = 4
+d_7 = 58 - 57 = 1
+d_8 = 50 - 47 = 3
+d_9 = 54 - 48 = 6
+d_10 = 57 - 53 = 4
+
+&&
+Parametric Test:
+Samples are dependent, since the same user is performing both tasks.
+Assumption: The differences are normally distributed. This assumption is required so that we can apply the central limit theorem and use a one-sided matched pairs T-Test to test the following null hypothesis.
+
+Let $%m_d &represent the average population difference.
+Let $%m_0 &be a reference value from outside the data where $%m_0 = 0.
+Let $`CJ d &represent the average sample difference.
+Let $%m_1 &represent the average population time it takes to complete a MS Word task.
+Let $%m_2 &represent the average population time it takes to complete an OOwriter task.
+
+$$
+H_0: (%m_1 - %m_2 = %m_d) = %m_0
+&In other words, it takes the same amount of time to complete a task in word, as it does to complete the same task in OOwriter.
+H_a: (%m_1 - %m_2 = %m_d) > 0
+&In other words, it takes longer to complete a task in MS Word than it does to complete the same task in OOwriter.
+&Test at the $95%% &confidence level where $%a = 0.05.
+&Using one-sided matched pairs T-test subject to the assumption above.
+
+t_stat = @`CJ d - %m_0~@s_d~_/n##
+$Feature +NoBracketMatching
+$Feature +NoSizedBrackets
+`CJ d = (5 - 6 + 4 + 5 \
++ 6 + 4 + 1 + 3 + 6 + 4) / 10
+`CJ d = 3.2
+
+var_d = [(5 - 3.2)^2 + (-6 - 3.2)^2 + (4 - 3.2)^2 \- \
++ (5 - 3.2)^2 + (6 - 3.2)^2 + (4 - 3.2)^2 \- \
++ (1 - 3.2)^2 + (3 - 3.2)^2 + (6 - 3.2)^2 \- \
++ (4 - 3.2)^2] / 10 - 1
+$Feature -NoSizedBrackets
+$Feature -NoBracketMatching
+
+Var_d = 12.622222
+s_d = _/(var_d)
+s_d = 3.552777
+
+t_stat = @3.2 - 0~@3.552777~_/10##
+t_stat = 2.848276
+&Decision Rule:
+&Reject null hypothesis if $t_stat > t_%a
+t_%a
+= t_0.05
+= 1.833
+2.848276 > 1.833
+&&
+This means we should reject the null hypothesis and conclude that it does take longer to complete the tasks in MS word.
+However, if we look at the box plot of the differences (see Graph A at end of document), we can see that the data are not normally distributed. This means that the validity of the t-test is questionnable. Instead, we should perform a non-parametric test.
+
+Wilcoxon Signed-Rank Test for Matched Pairs:
+In order for this test to be valid, the sample of differences has to be roughly symmetric.
+$$
+H_0: (%m_1 - %m_2 = %m_d) = %m_0
+&In other words, it takes the same amount of time to complete a task in word,, as it does to complete the same task in OOwriter.
+H_1: (%m_1 - %m_2 = %m_d) > 0
+&In other words, it takes longer to complete a task in MS Word than it does to complete the same task in OOwriter.
+&Test at the $95%% &confidence level where $%a = 0.05.
+&Using one-sided Wilcoxon Signed-Rank Test as per assumptions above.
+
+&Ranking of Differences:
+1. |1| = 1
+2. |3| = 3
+4. |4| = 4
+4. |4| = 4
+4. |4| = 4
+6.5. |5| = 5
+6.5. |5| = 5
+9. |6| = 6
+9. |-6| = 6
+9. |6| = 6
+
+T- = |-9| = 9
+T+ = |1 + 2 + 4 + 4 + 4 + 6.5 + 6.5 + 9 + 9| = 46
+&&
+Given the alternative hypothesis, we expect T- to be smaller, so we use it as the test statistic t.
+Decision Rule:
+We reject the null hypothesis if $t < critical value
+$$
+critical value = 8
+9 > 8
+&&
+So we should not reject the null hypothesis, and should conclude that it does not take longer to complete a task in MS word than in OOwriter.
+By looking at the box plot of the differences (See Graph A at end of document), we can see that the data is roughly symmetrical. There is one out-lyer, but this makes no difference in terms of the ranks. Since the data is roughly symmetrical, the population median equals the population mean, so we can say that the test is valid.
+
+&&
+Overall, we can say that there is no evidence to support the hypothesis that users take longer to complete tasks in MS Word. However, since the better test to use is the parametric test, and since the data does not allow for the parametric test to be valid, we cannot be completely certain.
+
+
