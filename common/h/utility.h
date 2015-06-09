@@ -32,5 +32,10 @@ std::ostream &operator<<(std::ostream &stream, const Whitespace &ws);
  * Returns true if 'subject' begins with 'search' (case insensitive)
  */
 bool strBeginsWith (const std::string subject, const std::string search);
-  
+
+/**
+ * Returns true if 'subject' is one of the characters in 'candidates'
+ */
+bool isOneOf (const char subject, const std::string &candidates);  
+
 #endif /* __UTILITY_H__ */

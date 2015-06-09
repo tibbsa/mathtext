@@ -89,4 +89,24 @@ class MDE_MathBlock : public MDE_GenericText
   virtual std::string getString (void) const;
 };
 
+/* ============== Operators, symbols, etc. ============================= */
+/**
+ * An operator (+/-*)
+ */
+class MDE_Operator : public MathDocumentElement
+{
+ public:
+  typedef enum { ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION } Operator;
+
+  MDE_Operator (const Operator o);
+  Operator getOperator (void) const;
+  void setOperator (const Operator o);
+
+  virtual std::string getString (void) const;
+
+ protected:
+  
+  MDE_Operator::Operator op;
+};
+
 #endif /* __MATH_DOCUMENT_ELEMENTS_H__ */

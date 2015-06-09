@@ -6,7 +6,9 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <cctype>
 #include <map>
+#include <assert.h>
 
 #include <boost/assign.hpp>
 #include <boost/format.hpp>
@@ -167,6 +169,8 @@ void MathDocument::interpretLine (const MathDocumentLine &mdl)
  */
 #define PUSH_CATCH_BUFFER { if (!catch_buffer.empty()) {  elements.push_back (makeGeneric (catch_buffer));  catch_buffer.erase(); } }
 
+#define ATTEMPT(class) { if (interpret##class (temp_elements, buffer, i)) { PUSH_CATCH_BUFFER; elements.insert (elements.end(), temp_elements.begin(), temp_elements.end()); goto NextChar; } }
+
 MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 {
   std::string catch_buffer;
@@ -176,6 +180,8 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
   logIncreaseIndent();
 
   for (int i = 0; i < buffer.length(); i++) {
+    MDEVector temp_elements;
+
     char c = buffer[i];
     LOG_TRACE << "At pos " << i << ", char '" << c << "', " << (inTextBlock ? "T" : "M") << (inTextMode ? "t" : "m");
     logIncreaseIndent();
@@ -186,10 +192,12 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
      */
     if (c == '$') {
       if (inTextMode) {
+	LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
 	inTextMode = false;
 	elements.push_back (boost::make_shared<MDE_MathModeMarker>());
       } else {
+	LOG_TRACE << "! attempt to enter math mode while in math mode";
 	MSG_WARNINGX(MDM_NESTED_MATH_MODE);
       }
 
@@ -198,16 +206,31 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 
     if (c == '&') {
       if (!inTextMode) {
+	LOG_TRACE << "* entering text mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
 	inTextMode = true;
 	elements.push_back (boost::make_shared<MDE_TextModeMarker>());
       } else {
+	LOG_TRACE << "! attempt to enter math mode while in text mode";
 	MSG_WARNINGX(MDM_NESTED_TEXT_MODE);
       }
 
       goto NextChar;
     }
 
+    if (inTextMode)
+      goto HandleTextBlocks;
+
+    if (isspace(c))
+      goto DefaultAction;
+
+    ATTEMPT(OperatorSign);
+
+  HandleTextBlocks:
+    ;
+
+  DefaultAction:
+  
     /**
      * Default action: Save the unknown character to be added later as a 
      * generic text/math block.
@@ -227,22 +250,63 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 }
 
 /**
+ * Attempts to interpret the specified characters as signs of operation
+ * (+, -, / *)
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+bool MathDocument::interpretOperatorSign (MDEVector &target,
+					  const std::string &src, 
+					  int &i)
+{
+  const std::string temp = src.substr(i, 3);
+
+  if (!isOneOf(temp[0], "+*-") && temp != " / ")
+    return false;
+
+  // +/- is a different symbol and ought not be handled here
+  if (temp == "+/-" || temp == "-/+")
+    return false;
+
+  LOG_TRACE << "- interpretOperatorSign() hit";
+  if (temp[0] == '+') {
+    LOG_TRACE << "* adding addition sign";
+    target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::ADDITION));
+    i++;
+  } else if (temp[0] == '*') {
+    LOG_TRACE << "* adding multiplication sign";
+    target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::MULTIPLICATION));
+    i++;
+  } else if (temp[0] == '-') {
+    LOG_TRACE << "* adding subtraction sign";
+    target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::SUBTRACTION));
+    i++;
+  }
+  else if (temp == " / ") {
+    LOG_TRACE << "* adding division sign";
+    target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::DIVISION));
+    i += 3;
+  }
+  else
+    assert (false);
+
+  return true;
+}
+
+/**
  * Creates a 'generic text/math' block from the characters in buffer
  */
 MathDocumentElementPtr MathDocument::makeGeneric (const std::string &buffer)
 {
   MathDocumentElementPtr e;
 
-  LOG_TRACE << "entering makeGeneric(" << buffer << "), TextMode=" << inTextMode;
-  logIncreaseIndent();
+  LOG_TRACE << "creating generic block(" << buffer << "), TextMode=" << inTextMode;
 
   if (inTextMode)
     e = boost::make_shared<MDE_TextBlock>(buffer);
   else
     e = boost::make_shared<MDE_MathBlock>(buffer);
-
-  logDecreaseIndent();
-  LOG_TRACE << "exiting makeGeneric";
 
   return e;
 }

@@ -56,3 +56,11 @@ std::ostream& operator<<(std::ostream& stream, const Whitespace &ws)
     }
   return stream;
 }
+
+/**
+ * Returns true if 'subject' is one of the characters in 'candidates'
+ */
+bool isOneOf (const char subject, const std::string &candidates)
+{
+  return (candidates.find(subject) != std::string::npos);
+}

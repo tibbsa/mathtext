@@ -16,31 +16,44 @@ MathRenderer::MathRenderer (const MathDocument &md) : doc(md.m_document)
 }
 
 
-#define RX(class) if (MDE_##class *e = dynamic_cast< MDE_##class *>(ptr)) { std::cout << "dfjiow: " << e << ", " << std::endl; render##class (e); continue; }
-void MathRenderer::render (void)
+std::string MathRenderer::render (void)
 {
+  std::string temp;
+
   for (MDEVector::const_iterator it = doc.begin();
        it != doc.end(); ++it) {
-    MathDocumentElementPtr ePtr = *it;
-    MathDocumentElement *ptr = ePtr.get();
 
-    RX(MathModeMarker);
-    RX(TextModeMarker);
-    RX(LineBreak);
-
-    RX(TextBlock);
-    RX(MathBlock);
-
-    std::ostringstream os;
-    os << "Unsupported element type in MathRenderer::render(): " << typeid(*ptr).name();
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
-			   mdx_error_info(os.str()));
+    const MathDocumentElementPtr ePtr = *it;
+    const MathDocumentElement *ptr = ePtr.get();
+    temp += renderElement(ptr);
   }
+
+  return temp;
+}
+
+#define RX(class) { if (const MDE_##class *ptr = dynamic_cast< const MDE_##class *>(e)) { return render##class (ptr); } }
+
+std::string MathRenderer::renderElement (const MathDocumentElement *e)
+{
+  RX(MathModeMarker);
+  RX(TextModeMarker);
+  RX(LineBreak);
+  
+  RX(TextBlock);
+  RX(MathBlock);
+
+  RX(Operator);
+
+  std::ostringstream os;
+  os << "Unsupported element type in MathRenderer::renderElement(): " << typeid(*e).name();
+  BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+			 mdx_error_info(os.str()));
+  
 }
 
 #define PLACEHOLDER(class) \
-  void MathRenderer::render##class (MDE_##class *e)\
-  { renderUnsupported (dynamic_cast<MathDocumentElement*>(e)); }
+  std::string MathRenderer::render##class (const MDE_##class *e)		\
+  { return renderUnsupported (dynamic_cast<const MathDocumentElement*>(e)); }
 
 PLACEHOLDER(MathModeMarker);
 PLACEHOLDER(TextModeMarker);
@@ -49,7 +62,9 @@ PLACEHOLDER(LineBreak);
 PLACEHOLDER(TextBlock);
 PLACEHOLDER(MathBlock);
 
-void MathRenderer::renderUnsupported (MathDocumentElement *e)
+PLACEHOLDER(Operator);
+
+std::string MathRenderer::renderUnsupported (const MathDocumentElement *e)
 {
   std::ostringstream os;
   os << "Render callback not implemented for type " << typeid(*e).name();

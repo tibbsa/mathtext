@@ -40,6 +40,7 @@
  */
 typedef boost::shared_ptr<MathDocumentElement> MathDocumentElementPtr;
 typedef std::vector<MathDocumentElementPtr> MDEVector;
+typedef boost::shared_ptr<MDEVector> MDEVectorPtr;
 
 class MathDocument
 {
@@ -55,9 +56,10 @@ class MathDocument
 
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
+  bool interpretOperatorSign (MDEVector &target, const std::string &src, int &i);
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
-  
+
   void addMessage (const MathDocumentMsg::MDMCategory category, 
 		   const unsigned long msgCode,
 		   const std::string &msg = std::string());

@@ -6,6 +6,10 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <assert.h>
+
+#include <boost/format.hpp>
+
 #include "MathDocument.h"
 #include "MathExceptions.h"
 #include "TextRenderer.h"
@@ -14,46 +18,52 @@ TextRenderer::TextRenderer (const MathDocument &md) : MathRenderer(md)
 {
 }
 
-std::string TextRenderer::getOutput (void) const
+std::string TextRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 {
-  return output;
+  return std::string(/* no output*/);
 }
 
-void TextRenderer::render (void)
+std::string TextRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
 {
-  MathRenderer::render();
+  return std::string(/* no output*/);
 }
 
-void TextRenderer::renderMathModeMarker (MDE_MathModeMarker *e)
+std::string TextRenderer::renderLineBreak (const MDE_LineBreak *e)
 {
-  /* no output */
+  return std::string("\n");
 }
 
-void TextRenderer::renderTextModeMarker (MDE_TextModeMarker *e)
+std::string TextRenderer::renderTextBlock (const MDE_TextBlock *e)
 {
-  /* no output */
+  return e->getText();
 }
 
-void TextRenderer::renderLineBreak (MDE_LineBreak *e)
+std::string TextRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
-  output += "\n";
+  return boost::str(boost::format("«%s»") % e->getText());
 }
 
-void TextRenderer::renderTextBlock (MDE_TextBlock *e)
+std::string TextRenderer::renderOperator (const MDE_Operator *e)
 {
-  output += e->getText();
+  switch (e->getOperator()) {
+  case MDE_Operator::ADDITION:
+    return std::string (" (plus) ");
+
+  case MDE_Operator::SUBTRACTION:
+    return std::string (" (minus) ");
+
+  case MDE_Operator::DIVISION:
+    return std::string (" (divided by) ");
+
+  case MDE_Operator::MULTIPLICATION: 
+    return std::string (" (times) ");
+
+  default:
+    assert(false);
+  }
 }
 
-void TextRenderer::renderMathBlock (MDE_MathBlock *e)
+std::string TextRenderer::renderUnsupported (const MathDocumentElement *e)
 {
-  output += "«";
-  output += e->getText();
-  output += "»";
-}
-
-void TextRenderer::renderUnsupported (MathDocumentElement *e)
-{
-  output += "<? ";
-  output += typeid(*e).name();
-  output += " ?>";
+  return boost::str(boost::format("<? %s ?>") % typeid(*e).name());
 }

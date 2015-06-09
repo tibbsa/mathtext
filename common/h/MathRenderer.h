@@ -10,13 +10,16 @@
 #ifndef __MATH_RENDERER_H__
 #define __MATH_RENDERER_H__
 
+#include <string>
+
 #include "MathDocument.h"
 
-#define DECL_RENDER_FUNC(class) virtual void render##class (MDE_##class *e)
+#define DECL_RENDER_FUNC(class) virtual std::string render##class (const MDE_##class *e)
 
 class MathRenderer
 {
  protected:
+  std::string output;
   const MDEVector &doc;
 
   DECL_RENDER_FUNC(MathModeMarker);
@@ -26,12 +29,15 @@ class MathRenderer
   DECL_RENDER_FUNC(TextBlock);
   DECL_RENDER_FUNC(MathBlock);
 
-  virtual void renderUnsupported (MathDocumentElement *e);
+  DECL_RENDER_FUNC(Operator);
+
+  virtual std::string renderElement (const MathDocumentElement *e);
+  virtual std::string renderUnsupported (const MathDocumentElement *e);
 
  public:
   MathRenderer (const MathDocument &md);
 
-  virtual void render (void);
+  virtual std::string render (void);
 };
 
 
