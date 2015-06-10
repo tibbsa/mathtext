@@ -108,6 +108,11 @@ int main (const int argc, const char **argv)
 
       MathDocument doc;
       doc.interpret (srcfile);
+
+      TextRenderer rt(doc);
+      LOG_INFO << endl <<  "===================== Text Render ====================" << endl;
+      LOG_INFO << rt.render();
+
       if (doc.haveMessages()) {
 	const std::vector<MathDocumentMsg> &msgs = doc.getMessages();
 	cout << msgs.size() << " message(s):" << endl;
@@ -119,9 +124,6 @@ int main (const int argc, const char **argv)
 	}
       }
 
-      TextRenderer rt(doc);
-      LOG_INFO << endl <<  "===================== Text Render ====================" << endl;
-      LOG_INFO << rt.render();
     } 
     catch (MathDocumentException &e) {
       logResetIndent();

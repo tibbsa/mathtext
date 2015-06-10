@@ -30,11 +30,12 @@
 #define MSG_ERRORX(code) addMessage(MathDocumentMsg::WARNING, code)
 
 /**
- * Message codes
+ * Message codes: 1xxx are notices, 2xxx are warnings, 3xxx are errors
  */
-#define MDM_NESTED_TEXT_MODE 1000
-#define MDM_NESTED_MATH_MODE 1001
-#define MDM_FRACTION_NOT_TERMINATED 1100
+#define MDM_NESTED_TEXT_MODE 2000
+#define MDM_NESTED_MATH_MODE 2001
+#define MDM_SUSPECT_MATH_IN_TEXT 2010
+#define MDM_FRACTION_NOT_TERMINATED 3000
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
@@ -46,12 +47,14 @@ class MathDocument
   MDEVector m_document;
   std::vector<MathDocumentMsg> m_messages;
 
+  /* Translation "current status" parameters */
   const MathDocumentLine *pCurLine;
   bool inTextBlock; // lines default to being 'text' lines if enabled
   bool inTextMode; // whether translator is currently seeing 'text'
   unsigned long textBlockBeganLine;
   unsigned long mathBlockBeganLine;
 
+  /* Interpretation functions */
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
@@ -60,6 +63,10 @@ class MathDocument
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
 
+  /* Support functions */
+  void sniffTextForMath (const std::string &buffer);
+
+  /* Reporting functions */
   void addMessage (const MathDocumentMsg::MDMCategory category, 
 		   const unsigned long msgCode,
 		   const std::string &msg = std::string());

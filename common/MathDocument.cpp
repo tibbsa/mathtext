@@ -10,12 +10,15 @@
 #include <map>
 #include <assert.h>
 
+#include <boost/algorithm/string/join.hpp>
 #include <boost/assign.hpp>
 #include <boost/format.hpp>
 
 #include "logging.h"
 #include "MathDocument.h"
 #include "MathExceptions.h"
+
+namespace ba = boost::algorithm;
 
 /* ========================= PUBLIC FUNCTION =============================== */
 
@@ -87,6 +90,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
   static std::map<unsigned long,std::string> error_map = boost::assign::map_list_of 
     (MDM_NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
     (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
+    (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     ;
 
@@ -430,13 +434,50 @@ MathDocumentElementPtr MathDocument::makeGeneric (const std::string &buffer)
 
   LOG_TRACE << "creating generic block(" << buffer << "), TextMode=" << inTextMode;
 
-  if (inTextMode)
+  if (inTextMode) {
+    sniffTextForMath (buffer);
     e = boost::make_shared<MDE_TextBlock>(buffer);
+  }
   else
     e = boost::make_shared<MDE_MathBlock>(buffer);
 
   return e;
 }
+
+/**
+ * Evaluates a block of text to determine whether it appears as though it 
+ * might contain mathematical material.  If it does, a warning is added to
+ * the processing log.
+ */
+#define CONTAINS(c) (buffer.find(c) != std::string::npos)
+void MathDocument::sniffTextForMath (const std::string &buffer)
+{
+  std::vector<std::string> suspicious_items;
+
+  if (CONTAINS('@') && CONTAINS('~') && CONTAINS('#')) 
+    suspicious_items.push_back ("Fractions");
+
+  if (CONTAINS('<') || CONTAINS('>') || CONTAINS('='))
+    suspicious_items.push_back ("Signs of Comparison");
+
+  if (CONTAINS("_/"))
+    suspicious_items.push_back ("Roots");
+  else if (CONTAINS("/_"))
+    suspicious_items.push_back ("Angles");
+  else if (CONTAINS('_'))
+    suspicious_items.push_back ("Subsbcripts");
+
+  if (CONTAINS('^'))
+    suspicious_items.push_back ("Exponents");
+
+  if (CONTAINS('|'))
+    suspicious_items.push_back ("Absolute Values");
+
+  if (!suspicious_items.empty()) {
+    MSG_WARNING(MDM_SUSPECT_MATH_IN_TEXT, boost::str(boost::format("found %s in '%s'") % ba::join(suspicious_items, ", ") % buffer));
+  }
+}
+#undef CONTAINS
 
 /**
  * Adds a warning/info/notice message to the log for later perusal.
