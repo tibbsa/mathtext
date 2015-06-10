@@ -34,13 +34,11 @@
  */
 #define MDM_NESTED_TEXT_MODE 1000
 #define MDM_NESTED_MATH_MODE 1001
+#define MDM_FRACTION_NOT_TERMINATED 1100
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
  */
-typedef boost::shared_ptr<MathDocumentElement> MathDocumentElementPtr;
-typedef std::vector<MathDocumentElementPtr> MDEVector;
-typedef boost::shared_ptr<MDEVector> MDEVectorPtr;
 
 class MathDocument
 {
@@ -56,7 +54,9 @@ class MathDocument
 
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
-  bool interpretOperatorSign (MDEVector &target, const std::string &src, int &i);
+  bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
 

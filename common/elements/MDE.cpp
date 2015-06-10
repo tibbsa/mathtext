@@ -16,8 +16,6 @@
  */
 MathDocumentElement::MathDocumentElement()
 {
-  exponent.reset();
-  subscript.reset();
 }
 
 /**
@@ -37,17 +35,18 @@ std::string MathDocumentElement::getString (void) const
 {
   std::string output;
 
+  /*
   if(exponent)
     output += "^(" + exponent->getString() + ")";
   if(subscript)
     output += "_(" + subscript->getString() + ")";
+  */
 
-  
   return output;
 }
 
 
 std::ostream &operator<<(std::ostream &os, const MathDocumentElement &e){
-  os << e.getString();
+  return os << e.getString();
 }
 

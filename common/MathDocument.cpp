@@ -15,6 +15,7 @@
 
 #include "logging.h"
 #include "MathDocument.h"
+#include "MathExceptions.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
 
@@ -86,6 +87,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
   static std::map<unsigned long,std::string> error_map = boost::assign::map_list_of 
     (MDM_NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
     (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
+    (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     ;
 
   assert (error_map.count(errorCode) > 0);
@@ -179,7 +181,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
   LOG_TRACE << "enter interpretBuffer(" << buffer << ")";
   logIncreaseIndent();
 
-  for (int i = 0; i < buffer.length(); i++) {
+  for (size_t i = 0; i < buffer.length(); /* i++ done below */) {
     MDEVector temp_elements;
 
     char c = buffer[i];
@@ -201,7 +203,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 	MSG_WARNINGX(MDM_NESTED_MATH_MODE);
       }
 
-      goto NextChar;
+      goto AdvanceNextChar;
     }
 
     if (c == '&') {
@@ -215,28 +217,33 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 	MSG_WARNINGX(MDM_NESTED_TEXT_MODE);
       }
 
-      goto NextChar;
+      goto AdvanceNextChar;
     }
 
     if (inTextMode)
       goto HandleTextBlocks;
 
-    if (isspace(c))
-      goto DefaultAction;
+    ATTEMPT(Operator);
+    ATTEMPT(Comparator);
+    ATTEMPT(Fraction);
 
-    ATTEMPT(OperatorSign);
+    goto DefaultAction;
 
   HandleTextBlocks:
     ;
 
   DefaultAction:
-  
+    ;
+    
     /**
      * Default action: Save the unknown character to be added later as a 
      * generic text/math block.
      */
     catch_buffer.push_back (c);
-
+    
+  AdvanceNextChar:
+    i++;
+    
   NextChar:
     logDecreaseIndent();
     continue;
@@ -256,20 +263,19 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
  */
-bool MathDocument::interpretOperatorSign (MDEVector &target,
-					  const std::string &src, 
-					  int &i)
+bool MathDocument::interpretOperator (MDEVector &target,
+				      const std::string &src, 
+				      size_t &i)
 {
   const std::string temp = src.substr(i, 3);
 
-  if (!isOneOf(temp[0], "+*-") && temp != " / ")
+  if (temp != " / " && !isOneOf(temp[0], "+*-"))
     return false;
 
   // +/- is a different symbol and ought not be handled here
   if (temp == "+/-" || temp == "-/+")
     return false;
 
-  LOG_TRACE << "- interpretOperatorSign() hit";
   if (temp[0] == '+') {
     LOG_TRACE << "* adding addition sign";
     target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::ADDITION));
@@ -289,8 +295,129 @@ bool MathDocument::interpretOperatorSign (MDEVector &target,
     i += 3;
   }
   else
-    assert (false);
+    assert (false); // Tests above should prevent us from getting here
 
+  return true;
+}
+
+/**
+ * Attempts to interpret the specified characters as signs of comparison
+ * (< > = != ~= <= >=)
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+struct ComparatorSymbolMap { 
+  ComparatorSymbolMap (const std::string &s, const MDE_Comparator::Comparator c) : search(s), symbol(c) {}
+  std::string search;
+  MDE_Comparator::Comparator symbol;
+};
+
+bool MathDocument::interpretComparator (MDEVector &target,
+					const std::string &src, 
+					size_t &i)
+{
+  static const std::vector<ComparatorSymbolMap> map = boost::assign::list_of 
+    ( ComparatorSymbolMap("<=", MDE_Comparator::LESS_THAN_EQUALS) )
+    ( ComparatorSymbolMap(">=", MDE_Comparator::GREATER_THAN_EQUALS) )
+    ( ComparatorSymbolMap("!=", MDE_Comparator::NOT_EQUALS) )
+    ( ComparatorSymbolMap("~=", MDE_Comparator::APPROX_EQUALS) )
+    ( ComparatorSymbolMap("<", MDE_Comparator::LESS_THAN) )
+    ( ComparatorSymbolMap(">", MDE_Comparator::GREATER_THAN) )
+    ( ComparatorSymbolMap("=", MDE_Comparator::EQUALS) );
+
+  const std::string temp = src.substr(i, 2);
+
+  for (std::vector<ComparatorSymbolMap>::const_iterator it = map.begin();
+       it != map.end(); ++it) {
+    const ComparatorSymbolMap &mi = *it;
+    // Look for the first character
+    if (temp[0] == mi.search[0]) {
+      // It matches. If the second one also has to match, consider it too.
+      if (mi.search.length() == 1 || temp[1] == mi.search[1]) {
+	LOG_TRACE << "* added comparator sign (" << mi.search << ")";
+	target.push_back (boost::make_shared<MDE_Comparator>(mi.symbol));
+	i += mi.search.length();
+	return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Attempts to interpret a fraction: @num~den#
+
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+bool MathDocument::interpretFraction (MDEVector &target,
+				      const std::string &src, 
+				      size_t &i)
+{
+  if (src [i] != '@') 
+    return false;
+
+  // Count forward to find the "end fraction" indicator (#). Allow 
+  // nested fractions but do not evaluate them as we go for now -- 
+  // just try to get the outermost fraction that we see.
+  int num_nested_fractions = 0;
+  bool foundTerminator = false;
+  bool foundDividingLine = false;
+  size_t pos;
+  std::string numerator;
+  std::string denominator;
+  for (pos = i+1; pos < src.length(); pos++) {
+    // Skip escaped characters or "approximately equal to" symbols
+    // that appear within a fraction.
+    if (src.substr (pos, 2) == "\\#" || src.substr(pos, 2) == "\\@" 
+	|| src.substr (pos, 2) == "\\~" || src.substr(pos, 2) == "~=")
+      pos += 2;
+
+    // Look for nested fractions
+    if (src [pos] == '@')
+      num_nested_fractions++;
+    else // Look for the "end fraction" indicators
+    if (src [pos] == '#') {
+      if (!num_nested_fractions) {
+	foundTerminator = true;
+	break;
+      }
+      else
+	num_nested_fractions--;
+    }
+    else // Look for the dividing line if we aren't in a nested fraction
+    if (!foundDividingLine && !num_nested_fractions && src [pos] == '~') {
+      foundDividingLine = true;
+      continue;
+    }
+  
+    // Add this character  to the numerator or denominator as requierd
+    if (!foundDividingLine)
+      numerator += src [pos];
+    else
+      denominator += src [pos];
+  }
+
+  if (!foundTerminator) {
+    MSG_ERROR(MDM_FRACTION_NOT_TERMINATED, boost::str(boost::format("end of line encountered while still inside %d fraction%s") % num_nested_fractions % (num_nested_fractions > 1 ? "s" : "")));
+
+    BOOST_THROW_EXCEPTION (MathDocumentParseException());
+  }
+
+  // advance cursor
+  i = pos + 1;
+
+  LOG_TRACE << "* found fraction: " << numerator << " // " << denominator;
+
+  MDEVector numvec;
+  MDEVector denvec;
+
+  numvec = interpretBuffer (numerator);
+  denvec = interpretBuffer (denominator);
+  
+  target.push_back (boost::make_shared<MDE_Fraction>(numvec, denvec));
   return true;
 }
 

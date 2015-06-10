@@ -9,7 +9,13 @@
 #ifndef __MATH_DOCUMENT_ELEMENTS_H__
 #define __MATH_DOCUMENT_ELEMENTS_H__
 
+#include <vector>
 #include <boost/shared_ptr.hpp>
+
+class MathDocumentElement;
+typedef boost::shared_ptr<MathDocumentElement> MathDocumentElementPtr;
+typedef std::vector<MathDocumentElementPtr> MDEVector;
+typedef boost::shared_ptr<MDEVector> MDEVectorPtr;
 
 /**
  * A MathDocumentElement holds the contents of an interpreted math file.
@@ -17,8 +23,8 @@
 class MathDocumentElement
 {
  protected:
-  boost::shared_ptr<MathDocumentElement> exponent;
-  boost::shared_ptr<MathDocumentElement> subscript;
+  MDEVector exponent;
+  MDEVector subscript;
 
  public:
   MathDocumentElement();
@@ -27,6 +33,7 @@ class MathDocumentElement
   virtual std::string getString (void) const;
   friend std::ostream &operator<<(std::ostream &os, const MathDocumentElement &e);
 };
+
 
 /* ============== Internal/technical block types ======================= */
 
@@ -107,6 +114,43 @@ class MDE_Operator : public MathDocumentElement
  protected:
   
   MDE_Operator::Operator op;
+};
+
+/**
+ * A sign of comparision (< > = ~= <= >=)
+ */
+class MDE_Comparator : public MathDocumentElement
+{
+ public:
+  typedef enum { LESS_THAN, GREATER_THAN, EQUALS, APPROX_EQUALS, NOT_EQUALS,
+		 LESS_THAN_EQUALS, GREATER_THAN_EQUALS } Comparator;
+
+  MDE_Comparator (const Comparator c);
+  Comparator getComparator (void) const;
+  void setComparator (const Comparator c);
+
+  virtual std::string getString (void) const;
+
+ protected:
+  
+  MDE_Comparator::Comparator comp;
+};
+
+
+/* ============== Fractions ======================================= */
+class MDE_Fraction : public MathDocumentElement
+{
+ protected:
+  MDEVector numerator;
+  MDEVector denominator;
+  
+ public:
+  MDE_Fraction(const MDEVector num, const MDEVector den);
+
+  MDEVector getNumerator (void) const;
+  MDEVector getDenominator (void) const;
+
+  virtual std::string getString (void) const;
 };
 
 #endif /* __MATH_DOCUMENT_ELEMENTS_H__ */

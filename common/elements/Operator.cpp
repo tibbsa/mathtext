@@ -6,6 +6,8 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <assert.h>
+
 #include "logging.h"
 #include "MathDocumentElements.h"
 
@@ -42,6 +44,8 @@ std::string MDE_Operator::getString (void) const
     output = "<mult>";
   else if (op == DIVISION)
     output = "<div>";
+  else
+    assert (false);
 
   return output;
 }

@@ -18,10 +18,15 @@ MathRenderer::MathRenderer (const MathDocument &md) : doc(md.m_document)
 
 std::string MathRenderer::render (void)
 {
+  return renderFromVector (doc);
+}
+
+std::string MathRenderer::renderFromVector (const MDEVector &v)
+{
   std::string temp;
 
-  for (MDEVector::const_iterator it = doc.begin();
-       it != doc.end(); ++it) {
+  for (MDEVector::const_iterator it = v.begin();
+       it != v.end(); ++it) {
 
     const MathDocumentElementPtr ePtr = *it;
     const MathDocumentElement *ptr = ePtr.get();
@@ -43,6 +48,9 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(MathBlock);
 
   RX(Operator);
+  RX(Comparator);
+
+  RX(Fraction);
 
   std::ostringstream os;
   os << "Unsupported element type in MathRenderer::renderElement(): " << typeid(*e).name();
@@ -63,6 +71,9 @@ PLACEHOLDER(TextBlock);
 PLACEHOLDER(MathBlock);
 
 PLACEHOLDER(Operator);
+PLACEHOLDER(Comparator);
+
+PLACEHOLDER(Fraction);
 
 std::string MathRenderer::renderUnsupported (const MathDocumentElement *e)
 {

@@ -8,6 +8,7 @@
 
 #include <assert.h>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 
 #include "MathDocument.h"
@@ -40,7 +41,7 @@ std::string TextRenderer::renderTextBlock (const MDE_TextBlock *e)
 
 std::string TextRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
-  return boost::str(boost::format("«%s»") % e->getText());
+  return boost::str(boost::format("«%s»") % boost::trim_copy(e->getText()));
 }
 
 std::string TextRenderer::renderOperator (const MDE_Operator *e)
@@ -61,6 +62,45 @@ std::string TextRenderer::renderOperator (const MDE_Operator *e)
   default:
     assert(false);
   }
+}
+
+std::string TextRenderer::renderComparator (const MDE_Comparator *e)
+{
+  switch (e->getComparator()) {
+  case MDE_Comparator::LESS_THAN:
+    return std::string (" (is less than) ");
+
+  case MDE_Comparator::GREATER_THAN:
+    return std::string (" (is greater than) ");
+
+  case MDE_Comparator::EQUALS:
+    return std::string (" (is equal to) ");
+
+  case MDE_Comparator::APPROX_EQUALS:
+    return std::string (" (approximately equals) ");
+
+  case MDE_Comparator::NOT_EQUALS:
+    return std::string (" (is not equal to) ");
+
+  case MDE_Comparator::GREATER_THAN_EQUALS:
+    return std::string (" (is greater than or equal to) ");
+
+  case MDE_Comparator::LESS_THAN_EQUALS:
+    return std::string (" (is less than or equal to) ");
+
+  default:
+    assert(false);
+  }
+}
+
+std::string TextRenderer::renderFraction (const MDE_Fraction *e)
+{
+  std::string renderedNumerator, renderedDenominator;
+
+  renderedNumerator = renderFromVector (e->getNumerator());
+  renderedDenominator = renderFromVector (e->getDenominator());
+
+  return boost::str(boost::format("[Fraction] (%s) over (%s) [End Fraction]") %  renderedNumerator % renderedDenominator);
 }
 
 std::string TextRenderer::renderUnsupported (const MathDocumentElement *e)
