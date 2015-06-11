@@ -44,6 +44,11 @@ std::string TextRenderer::renderMathBlock (const MDE_MathBlock *e)
   return boost::str(boost::format("«%s»") % boost::trim_copy(e->getText()));
 }
 
+std::string TextRenderer::renderItemNumber (const MDE_ItemNumber *e)
+{
+  return (e->getText() + " ");
+}
+
 std::string TextRenderer::renderOperator (const MDE_Operator *e)
 {
   switch (e->getOperator()) {

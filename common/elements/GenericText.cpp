@@ -9,13 +9,6 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-/**
- * Sets up a new, blank math element
- */
-MDE_GenericText::MDE_GenericText()
-{
-}
-
 MDE_GenericText::MDE_GenericText(const std::string &contents) : payload(contents)
 {
 }
@@ -41,7 +34,7 @@ std::string MDE_GenericText::getString (void) const
 {
   std::string output;
 
-  output = "??" + payload + MathDocumentElement::getString() + "??";
+  output = "<GENERIC>" + payload + MathDocumentElement::getString() + "</GENERIC>";
 
   return output;
 }

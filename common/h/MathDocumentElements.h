@@ -61,7 +61,6 @@ class MDE_GenericText : public MathDocumentElement
   std::string payload;
   
  public:
-  MDE_GenericText();
   MDE_GenericText(const std::string &contents);
   
   void setText(const std::string &contents);
@@ -77,7 +76,6 @@ class MDE_GenericText : public MathDocumentElement
 class MDE_TextBlock : public MDE_GenericText
 {
  public:
-  MDE_TextBlock();
   MDE_TextBlock(const std::string &contents);
 
   virtual std::string getString (void) const;
@@ -90,8 +88,18 @@ class MDE_TextBlock : public MDE_GenericText
 class MDE_MathBlock : public MDE_GenericText
 {
  public:
-  MDE_MathBlock();
   MDE_MathBlock(const std::string &contents);
+
+  virtual std::string getString (void) const;
+};
+
+/**
+ * A question or item number (that appears at the start of a line)
+ */
+class MDE_ItemNumber : public MDE_TextBlock
+{
+ public:
+  MDE_ItemNumber(const std::string &contents);
 
   virtual std::string getString (void) const;
 };

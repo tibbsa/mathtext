@@ -10,9 +10,10 @@
 #include <map>
 #include <assert.h>
 
-#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 #include "logging.h"
 #include "MathDocument.h"
@@ -115,6 +116,7 @@ void MathDocument::interpretLine (const MathDocumentLine &mdl)
 
   /* Set defaults for this line */
   inTextMode = inTextBlock;
+  isStartOfLine = true;
 
   /*
    * MAIN MODE SWITCHES
@@ -179,10 +181,12 @@ void MathDocument::interpretLine (const MathDocumentLine &mdl)
 
 MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 {
+  static unsigned long interpreter_recursion_level = 0;
   std::string catch_buffer;
   MDEVector elements;
 
-  LOG_TRACE << "enter interpretBuffer(" << buffer << ")";
+  interpreter_recursion_level++;
+  LOG_TRACE << "enter interpretBuffer lvl " << interpreter_recursion_level << " (" << buffer << ")";
   logIncreaseIndent();
 
   for (size_t i = 0; i < buffer.length(); /* i++ done below */) {
@@ -224,6 +228,14 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
       goto AdvanceNextChar;
     }
 
+    // If this is the first thing we're seeing on the line, check to see
+    // if the first blob appears to be an 'item number' (as might appear 
+    // in homework).
+    if (isStartOfLine) {
+      ATTEMPT(ItemNumber);
+      isStartOfLine = false;
+    }
+
     if (inTextMode)
       goto HandleTextBlocks;
 
@@ -255,9 +267,54 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 
   PUSH_CATCH_BUFFER;
  
+  interpreter_recursion_level--;
+
   logDecreaseIndent();
   LOG_TRACE << "exit interpretBuffer";
   return elements;
+}
+
+/**
+ * Attempts to interpret the specified characters as item numbers. THese 
+ * may appear at the start of the line.  We treat them as a special text 
+ * block to allow rendering engines to distinguish question numbers as 
+ * they see fit.
+ *
+ * Accepted formats:
+ * "1. " "a. "
+ * "1) " "a) "
+ * "(1) " "(a) "
+ */
+bool MathDocument::interpretItemNumber (MDEVector &target,
+					const std::string &src, 
+					size_t &i)
+{
+  const std::vector<std::string> patterns = boost::assign::list_of 
+    ( std::string("^(\\d{1,4}\\.\\s+)") ) // 1. 
+    ( std::string("^([A-Za-z]{1}\\.\\s+)") ) // a. 
+    ( std::string("^(\\d{1,4}\\)\\s+)") ) // 1)
+    ( std::string("^([A-Za-z]{1}\\)\\s+)") ) // a) 
+    ( std::string("^(\\(\\d{1,4}\\)\\s+)") ) // (1)
+    ( std::string("^(\\([A-Za-z]{1}\\)\\s+)") ) // (a)
+    ;
+
+  for (std::vector<std::string>::const_iterator it = patterns.begin();
+       it != patterns.end(); ++it) {
+    const std::string pattern = *it;
+
+    boost::regex exp(pattern);
+    boost::smatch mr;
+    if (boost::regex_search(src.substr(i), mr, exp)) {
+      std::string item_number = ba::trim_copy(mr[0].str());
+      
+      LOG_TRACE << "* added item number '" << item_number << "' with pattern '" << pattern << "'";
+      i = i + mr.length();
+      target.push_back (boost::make_shared<MDE_ItemNumber>(item_number));
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**

@@ -51,12 +51,14 @@ class MathDocument
   const MathDocumentLine *pCurLine;
   bool inTextBlock; // lines default to being 'text' lines if enabled
   bool inTextMode; // whether translator is currently seeing 'text'
+  bool isStartOfLine;
   unsigned long textBlockBeganLine;
   unsigned long mathBlockBeganLine;
 
   /* Interpretation functions */
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
+  bool interpretItemNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);

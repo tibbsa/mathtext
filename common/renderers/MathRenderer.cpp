@@ -44,6 +44,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(TextModeMarker);
   RX(LineBreak);
   
+  RX(ItemNumber); // have to do this before TextBlock as it is a subclass
   RX(TextBlock);
   RX(MathBlock);
 
@@ -69,6 +70,7 @@ PLACEHOLDER(LineBreak);
 
 PLACEHOLDER(TextBlock);
 PLACEHOLDER(MathBlock);
+PLACEHOLDER(ItemNumber);
 
 PLACEHOLDER(Operator);
 PLACEHOLDER(Comparator);

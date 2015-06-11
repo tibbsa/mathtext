@@ -9,14 +9,6 @@
 #include "logging.h"
 #include "MathDocumentElements.h"
 
-/* ========================= PUBLIC FUNCTION =============================== */
-/**
- * Sets up a new, blank math element
- */
-MDE_MathBlock::MDE_MathBlock() : MDE_GenericText()
-{
-}
-
 MDE_MathBlock::MDE_MathBlock(const std::string &contents) : 
   MDE_GenericText(contents)
 {
