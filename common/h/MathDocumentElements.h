@@ -23,8 +23,6 @@ typedef boost::shared_ptr<MDEVector> MDEVectorPtr;
 class MathDocumentElement
 {
  protected:
-  MDEVector exponent;
-  MDEVector subscript;
 
  public:
   MathDocumentElement();
@@ -157,6 +155,20 @@ class MDE_Fraction : public MathDocumentElement
 
   MDEVector getNumerator (void) const;
   MDEVector getDenominator (void) const;
+
+  virtual std::string getString (void) const;
+};
+
+/* ============== Exponents and Subscripts ======================== */
+class MDE_Exponent : public MathDocumentElement
+{
+ protected:
+  MDEVector contents;
+  
+ public:
+  MDE_Exponent(const MDEVector exponent);
+
+  MDEVector getExponent (void) const;
 
   virtual std::string getString (void) const;
 };

@@ -30,6 +30,8 @@ class TextRenderer : public MathRenderer
   DECL_RENDER_FUNC(Comparator);
 
   DECL_RENDER_FUNC(Fraction);
+  
+  DECL_RENDER_FUNC(Exponent);
 
   virtual std::string renderUnsupported (const MathDocumentElement *e);
 

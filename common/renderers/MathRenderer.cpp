@@ -52,6 +52,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(Comparator);
 
   RX(Fraction);
+  RX(Exponent);
 
   std::ostringstream os;
   os << "Unsupported element type in MathRenderer::renderElement(): " << typeid(*e).name();
@@ -76,6 +77,8 @@ PLACEHOLDER(Operator);
 PLACEHOLDER(Comparator);
 
 PLACEHOLDER(Fraction);
+
+PLACEHOLDER(Exponent);
 
 std::string MathRenderer::renderUnsupported (const MathDocumentElement *e)
 {

@@ -36,6 +36,7 @@
 #define MDM_NESTED_MATH_MODE 2001
 #define MDM_SUSPECT_MATH_IN_TEXT 2010
 #define MDM_FRACTION_NOT_TERMINATED 3000
+#define MDM_EXPONENT_NOT_TERMINATED 3001
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
@@ -62,6 +63,7 @@ class MathDocument
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
 

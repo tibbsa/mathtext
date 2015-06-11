@@ -35,6 +35,8 @@ class MathRenderer
 
   DECL_RENDER_FUNC(Fraction);
 
+  DECL_RENDER_FUNC(Exponent);
+
   virtual std::string renderFromVector (const MDEVector &v);
   virtual std::string renderElement (const MathDocumentElement *e);
   virtual std::string renderUnsupported (const MathDocumentElement *e);

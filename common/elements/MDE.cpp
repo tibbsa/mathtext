@@ -25,6 +25,7 @@ MathDocumentElement::~MathDocumentElement()
 {
 }
 
+
 /**
  * Generate a string representation of this element (primarily for 
  * debugging purposes)

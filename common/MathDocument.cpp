@@ -45,6 +45,7 @@ void MathDocument::interpret (const MathSourceFile &src)
   m_document.clear();
   m_messages.clear();
   inTextMode = false;
+  inTextBlock = false;
   textBlockBeganLine = 0;
   mathBlockBeganLine = 0;
 
@@ -93,6 +94,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
     (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
+    (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
     ;
 
   assert (error_map.count(errorCode) > 0);
@@ -242,6 +244,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     ATTEMPT(Operator);
     ATTEMPT(Comparator);
     ATTEMPT(Fraction);
+    ATTEMPT(Exponent);
 
     goto DefaultAction;
 
@@ -479,6 +482,122 @@ bool MathDocument::interpretFraction (MDEVector &target,
   denvec = interpretBuffer (denominator);
   
   target.push_back (boost::make_shared<MDE_Fraction>(numvec, denvec));
+  return true;
+}
+
+/**
+ * Attempts to interpret an exponent: ^item or ^(item)
+ *
+ * An "item" is everything up to the next space, sign of operation,
+ * sign of comparison, etc.
+ *
+ * If ^ is followed by parenthesees then the entire paranthesees is 
+ * taken as the exponent.
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+bool MathDocument::interpretExponent (MDEVector &target,
+				      const std::string &src, 
+				      size_t &i)
+{
+  if (src [i] != '^') 
+    return false;
+
+  std::string exponent_contents;
+
+  // If this is followed by an open paren '(', read until the closing 
+  // paren
+  i++;
+  if (src [i] == '(') {
+    int num_nested_parens = 0;
+    bool foundTerminator = false;
+    size_t pos;
+    for (pos = i+1; pos < src.length(); pos++) {
+      // Skip escaped characters
+      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
+	pos += 2;
+
+      // Look for nested parentheses
+      if (src [pos] == '(')
+	num_nested_parens++;
+      else // Look for the closing parens
+	if (src [pos] == ')') {
+	  if (!num_nested_parens) {
+	    foundTerminator = true;
+	    break;
+	  }
+	  else
+	    num_nested_parens--;
+	}
+  
+      // Add this character to the contents of the exponent 
+      exponent_contents += src [pos];
+    }
+
+    if (!foundTerminator) {
+      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+
+    // advance cursor
+    i = pos + 1;
+  } else  {
+    std::string exponent_terminators = "+/*=<>()[]{} ~@#_";
+    size_t pos;
+
+    // Copy characters until we encounter any of the above-mentioned 
+    // terminators.  
+    //
+    // The semi-colon is specifically designated as a terminator, 
+    // and should be skipped if it arises.
+    //
+    // Special cases:
+    // - fractions (exponent can begin with a fraction in which case we 
+    //   take the whole fraction)
+    // - negative numbers (exponent can begin with a minus sign '-' but 
+    //   only in the first character)
+    if (src [i] == '@') {
+      LOG_TRACE << "- found a fractional exponent: handing over to fractions";
+      MDEVector fracvec;
+      assert (interpretFraction (fracvec, src, i));
+      target.push_back (boost::make_shared<MDE_Exponent>(fracvec));
+      return true;
+    }
+
+    for (pos = i; pos < src.length(); pos++) {
+      // skip escaped characters
+      if (src [pos] == '\\') {
+	pos++;
+	continue;
+      }
+
+      // On exponent terminators, skip -- the semi-colon should not be part 
+      // of the final output.
+      if (src [pos] == ';') {
+	pos++;
+	break;
+      }
+
+      // On other terminators, do not "lose them" -- they should wind 
+      // up in the final output.
+      if (isOneOf (src [pos], exponent_terminators))
+	break;
+
+      if (pos == i) 
+	exponent_terminators += '-';
+
+      exponent_contents += src [pos];
+    }
+
+    i = pos;
+  }
+
+  LOG_TRACE << "* found exponent: " << exponent_contents;
+
+  MDEVector v;
+  v = interpretBuffer (exponent_contents);
+  target.push_back (boost::make_shared<MDE_Exponent>(v));
   return true;
 }
 

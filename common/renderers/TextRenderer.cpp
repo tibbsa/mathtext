@@ -108,6 +108,15 @@ std::string TextRenderer::renderFraction (const MDE_Fraction *e)
   return boost::str(boost::format("[Fraction] (%s) over (%s) [End Fraction]") %  renderedNumerator % renderedDenominator);
 }
 
+std::string TextRenderer::renderExponent (const MDE_Exponent *e)
+{
+  std::string renderedExponent;
+
+  renderedExponent = renderFromVector (e->getExponent());
+
+  return boost::str(boost::format("[Exponent] %s [End Exponent]") % renderedExponent);
+}
+
 std::string TextRenderer::renderUnsupported (const MathDocumentElement *e)
 {
   return boost::str(boost::format("<? %s ?>") % typeid(*e).name());
