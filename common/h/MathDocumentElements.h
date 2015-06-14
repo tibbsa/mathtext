@@ -142,6 +142,31 @@ class MDE_Comparator : public MathDocumentElement
   MDE_Comparator::Comparator comp;
 };
 
+/**
+ * A greek letter (alpha, beta, gamma, etc.)
+ */
+class MDE_GreekLetter : public MathDocumentElement
+{
+ public:
+  typedef enum { alpha, Alpha, beta, Beta, gamma, Gamma, delta, Delta,
+		 epislon, Epsilon, zeta, Zeta, theta, Theta, iota, Iota, 
+		 kappa, Kappa, lambda, Lambda, mu, Mu, nu, Nu,
+		 xi, Xi, omicron, Omicron, pi, Pi, rho, Rho,
+		 sigma, Sigma, tau, Tau, upsilon, Upsilon, 
+		 phi, Phi, chi, Chi, psi, Psi, omega, Omega } Character;
+
+  MDE_GreekLetter (const Character c);
+  Character getValue (void) const;
+  void setValue (const Character c);
+  std::string getName (void) const;
+
+  virtual std::string getString (void) const;
+  
+ protected:
+  
+  MDE_GreekLetter::Character letter;
+};
+
 
 /* ============== Fractions ======================================= */
 class MDE_Fraction : public MathDocumentElement

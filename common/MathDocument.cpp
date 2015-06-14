@@ -94,6 +94,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
     (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
     (MDM_SUSPECT_FRACTION, "Suspect missing open fraction symbol (@)")
+    (MDM_UNKNOWN_GREEK, "Unknown Greek character symbol")
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
@@ -246,6 +247,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 
     ATTEMPT(Operator);
     ATTEMPT(Comparator);
+    ATTEMPT(GreekLetter);
     ATTEMPT(Fraction);
     ATTEMPT(Exponent);
     ATTEMPT(Subscript);
@@ -414,6 +416,72 @@ bool MathDocument::interpretComparator (MDEVector &target,
 
   return false;
 }
+
+/**
+ * Attempts to interpret a greek letter: %a, %b, etc.
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+struct GreekLetterMap { 
+  GreekLetterMap (const char s, const MDE_GreekLetter::Character c) : symbol(s), character(c) {}
+  char symbol;
+  MDE_GreekLetter::Character character;
+};
+#define CHARMAP(symbol1,char1,symbol2,char2) ( GreekLetterMap(symbol1, MDE_GreekLetter::char1) ) ( GreekLetterMap(symbol2, MDE_GreekLetter::char2) )
+bool MathDocument::interpretGreekLetter (MDEVector &target,
+					 const std::string &src, 
+					 size_t &i)
+{
+
+  static const std::vector<GreekLetterMap> map = boost::assign::list_of 
+    CHARMAP('a', alpha, 'A', Alpha)
+    CHARMAP('b', beta, 'B', Beta)
+    CHARMAP('g', gamma, 'G', Gamma)
+    CHARMAP('d', delta, 'D', Delta)
+    CHARMAP('e', epislon, 'E', Epsilon)
+    CHARMAP('z', zeta, 'Z', Zeta)
+    CHARMAP('t', theta, 'T', Theta)
+    CHARMAP('i', iota, 'I', Iota)
+    CHARMAP('k', kappa, 'K', Kappa)
+    CHARMAP('l', lambda, 'L', Lambda)
+    CHARMAP('m', mu, 'M', Mu)
+    CHARMAP('n', nu, 'N', Nu)
+    CHARMAP('x', xi, 'X', Xi)
+    CHARMAP('o', omicron, 'O', Omicron)
+    CHARMAP('p', pi, 'P', Pi)
+    CHARMAP('q', tau, 'Q', Tau)
+    CHARMAP('r', rho, 'R', Rho)
+    CHARMAP('s', sigma, 'S', Sigma)
+    CHARMAP('u', upsilon, 'U', Upsilon)
+    CHARMAP('v', phi, 'V', Phi)
+    CHARMAP('c', chi, 'C', Chi)
+    CHARMAP('y', psi, 'Y', Psi)
+    CHARMAP('f', omega, 'F', Omega)
+    ;
+
+  if (src [i] != '%' || (i+1) >= src.length())
+    return false;
+
+  char c = src [i+1];
+
+  for (std::vector<GreekLetterMap>::const_iterator it = map.begin();
+       it != map.end(); ++it) {
+    const GreekLetterMap &mi = *it;
+    // Look for the first character
+    if (c == mi.symbol) {
+      LOG_TRACE << "* added greek letter for (" << mi.symbol << ")";
+      target.push_back (boost::make_shared<MDE_GreekLetter>(mi.character));
+      i += 2;
+
+      return true;
+    }
+  }
+
+  MSG_WARNING(MDM_UNKNOWN_GREEK, boost::str(boost::format("'%%%c' does not represent a greek letter") % c));
+  return false;
+}
+
 
 /**
  * Attempts to interpret a fraction: @num~den#

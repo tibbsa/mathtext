@@ -41,7 +41,11 @@ std::string TextRenderer::renderTextBlock (const MDE_TextBlock *e)
 
 std::string TextRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
-  return boost::str(boost::format("«%s»") % boost::trim_copy(e->getText()));
+  std::string blockText = boost::trim_copy(e->getText());
+  if (blockText.empty())
+    return std::string();
+  else
+    return boost::str(boost::format("«%s» ") % blockText);
 }
 
 std::string TextRenderer::renderItemNumber (const MDE_ItemNumber *e)
@@ -96,6 +100,11 @@ std::string TextRenderer::renderComparator (const MDE_Comparator *e)
   default:
     assert(false);
   }
+}
+
+std::string TextRenderer::renderGreekLetter (const MDE_GreekLetter *e)
+{
+  return boost::str(boost::format ("[%s]") % e->getName());
 }
 
 std::string TextRenderer::renderFraction (const MDE_Fraction *e)
