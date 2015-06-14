@@ -93,6 +93,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
     (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
     (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
+    (MDM_SUSPECT_FRACTION, "Suspect missing open fraction symbol (@)")
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
@@ -424,6 +425,11 @@ bool MathDocument::interpretFraction (MDEVector &target,
 				      const std::string &src, 
 				      size_t &i)
 {
+  if (src [i] == '#' || src [i] == '~') {
+    MSG_WARNING(MDM_SUSPECT_FRACTION, boost::str(boost::format("found '%c' symbol outside of a fraction") % src [i]));
+    return false;
+  }
+
   if (src [i] != '@') 
     return false;
 
@@ -469,7 +475,7 @@ bool MathDocument::interpretFraction (MDEVector &target,
   }
 
   if (!foundTerminator) {
-    MSG_ERROR(MDM_FRACTION_NOT_TERMINATED, boost::str(boost::format("end of line encountered while still inside %d fraction%s") % num_nested_fractions % (num_nested_fractions > 1 ? "s" : "")));
+    MSG_ERROR(MDM_FRACTION_NOT_TERMINATED, boost::str(boost::format("end of line encountered while still inside %d fraction%s") % (num_nested_fractions+1) % (num_nested_fractions >= 2 ? "s" : "")));
 
     BOOST_THROW_EXCEPTION (MathDocumentParseException());
   }

@@ -26,8 +26,8 @@
 #define MSG_NOTICEX(code) addMessage(MathDocumentMsg::NOTICE, code)
 #define MSG_WARNING(code,msg) addMessage(MathDocumentMsg::WARNING, code, msg)
 #define MSG_WARNINGX(code) addMessage(MathDocumentMsg::WARNING, code)
-#define MSG_ERROR(code,msg) addMessage(MathDocumentMsg::WARNING, code, msg)
-#define MSG_ERRORX(code) addMessage(MathDocumentMsg::WARNING, code)
+#define MSG_ERROR(code,msg) addMessage(MathDocumentMsg::ERROR, code, msg)
+#define MSG_ERRORX(code) addMessage(MathDocumentMsg::ERROR, code)
 
 /**
  * Message codes: 1xxx are notices, 2xxx are warnings, 3xxx are errors
@@ -35,6 +35,7 @@
 #define MDM_NESTED_TEXT_MODE 2000
 #define MDM_NESTED_MATH_MODE 2001
 #define MDM_SUSPECT_MATH_IN_TEXT 2010
+#define MDM_SUSPECT_FRACTION 2011
 #define MDM_FRACTION_NOT_TERMINATED 3000
 #define MDM_EXPONENT_NOT_TERMINATED 3001
 #define MDM_SUBSCRIPT_NOT_TERMINATED 3002
