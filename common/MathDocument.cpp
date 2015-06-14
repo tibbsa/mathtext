@@ -308,7 +308,8 @@ bool MathDocument::interpretItemNumber (MDEVector &target,
     boost::regex exp(pattern);
     boost::smatch mr;
     if (boost::regex_search(src.substr(i), mr, exp)) {
-      std::string item_number = ba::trim_copy(mr[0].str());
+      std::string item_number = mr[1];
+      ba::trim(item_number);
       
       LOG_TRACE << "* added item number '" << item_number << "' with pattern '" << pattern << "'";
       i = i + mr.length();
