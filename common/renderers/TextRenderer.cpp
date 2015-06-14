@@ -112,9 +112,18 @@ std::string TextRenderer::renderExponent (const MDE_Exponent *e)
 {
   std::string renderedExponent;
 
-  renderedExponent = renderFromVector (e->getExponent());
+  renderedExponent = renderFromVector (e->getValue());
 
   return boost::str(boost::format("[Exponent] %s [End Exponent]") % renderedExponent);
+}
+
+std::string TextRenderer::renderSubscript (const MDE_Subscript *e)
+{
+  std::string renderedSubscript;
+
+  renderedSubscript = renderFromVector (e->getValue());
+
+  return boost::str(boost::format("[Sub] %s [End Sub]") % renderedSubscript);
 }
 
 std::string TextRenderer::renderUnsupported (const MathDocumentElement *e)

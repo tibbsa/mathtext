@@ -32,6 +32,7 @@ class TextRenderer : public MathRenderer
   DECL_RENDER_FUNC(Fraction);
   
   DECL_RENDER_FUNC(Exponent);
+  DECL_RENDER_FUNC(Subscript);
 
   virtual std::string renderUnsupported (const MathDocumentElement *e);
 

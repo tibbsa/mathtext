@@ -95,6 +95,8 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
+
     ;
 
   assert (error_map.count(errorCode) > 0);
@@ -245,6 +247,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     ATTEMPT(Comparator);
     ATTEMPT(Fraction);
     ATTEMPT(Exponent);
+    ATTEMPT(Subscript);
 
     goto DefaultAction;
 
@@ -507,6 +510,7 @@ bool MathDocument::interpretExponent (MDEVector &target,
 
   std::string exponent_contents;
 
+
   // If this is followed by an open paren '(', read until the closing 
   // paren
   i++;
@@ -599,6 +603,125 @@ bool MathDocument::interpretExponent (MDEVector &target,
   MDEVector v;
   v = interpretBuffer (exponent_contents);
   target.push_back (boost::make_shared<MDE_Exponent>(v));
+  return true;
+}
+
+/**
+ * Attempts to interpret a subscript: _item or _(item)
+ *
+ * An "item" is everything up to the next space, sign of operation,
+ * sign of comparison, etc.
+ *
+ * If _ is followed by parenthesees then the entire paranthesees is 
+ * taken as the subscript.
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+bool MathDocument::interpretSubscript (MDEVector &target,
+				      const std::string &src, 
+				      size_t &i)
+{
+  if (src [i] != '_') 
+    return false;
+
+  std::string subscript_contents;
+
+
+  // If this is followed by an open paren '(', read until the closing 
+  // paren
+  i++;
+  if (src [i] == '(') {
+    int num_nested_parens = 0;
+    bool foundTerminator = false;
+    size_t pos;
+    for (pos = i+1; pos < src.length(); pos++) {
+      // Skip escaped characters
+      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
+	pos += 2;
+
+      // Look for nested parentheses
+      if (src [pos] == '(')
+	num_nested_parens++;
+      else // Look for the closing parens
+	if (src [pos] == ')') {
+	  if (!num_nested_parens) {
+	    foundTerminator = true;
+	    break;
+	  }
+	  else
+	    num_nested_parens--;
+	}
+  
+      // Add this character to the contents of the exponent 
+      subscript_contents += src [pos];
+    }
+
+    if (!foundTerminator) {
+      MSG_ERROR(MDM_SUBSCRIPT_NOT_TERMINATED, boost::str(boost::format("text in subscript: '%s'") % subscript_contents));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+
+    // advance cursor
+    i = pos + 1;
+  } else  {
+    std::string subscript_terminators = "+/*=<>()[]{} ~@#_";
+    size_t pos;
+
+    // Copy characters until we encounter any of the above-mentioned 
+    // terminators.  
+    //
+    // The semi-colon is specifically designated as a terminator, 
+    // and should be skipped if it arises.
+    //
+    // Special cases:
+    // - fractions (subscript can begin with a fraction in which case we 
+    //   take the whole fraction)
+    // - negative numbers (subsscript can begin with a minus sign '-' but 
+    //   only in the first character)
+    if (src [i] == '@') {
+      LOG_TRACE << "- found a fractional subscript: handing over to fractions";
+      MDEVector fracvec;
+      assert (interpretFraction (fracvec, src, i));
+      target.push_back (boost::make_shared<MDE_Exponent>(fracvec));
+      return true;
+    }
+
+    for (pos = i; pos < src.length(); pos++) {
+      // skip escaped characters
+      if (src [pos] == '\\') {
+	pos++;
+	continue;
+      }
+
+      // On subscript terminators, skip -- the semi-colon should not be part 
+      // of the final output.
+      if (src [pos] == ';') {
+	pos++;
+	break;
+      }
+
+      // On other terminators, do not "lose them" -- they should wind 
+      // up in the final output.
+      if (isOneOf (src [pos], subscript_terminators))
+	break;
+
+      // If this is the first character considered, add '-' to the list of 
+      // possible terminators going forward
+      if (pos == i) 
+	subscript_terminators += '-';
+
+      subscript_contents += src [pos];
+    }
+
+    i = pos;
+  }
+
+  LOG_TRACE << "* found subscript: " << subscript_contents;
+
+  MDEVector v;
+  v = interpretBuffer (subscript_contents);
+  target.push_back (boost::make_shared<MDE_Subscript>(v));
   return true;
 }
 

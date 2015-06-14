@@ -168,7 +168,20 @@ class MDE_Exponent : public MathDocumentElement
  public:
   MDE_Exponent(const MDEVector exponent);
 
-  MDEVector getExponent (void) const;
+  MDEVector getValue (void) const;
+
+  virtual std::string getString (void) const;
+};
+
+class MDE_Subscript : public MathDocumentElement
+{
+ protected:
+  MDEVector contents;
+  
+ public:
+  MDE_Subscript(const MDEVector subscript);
+
+  MDEVector getValue (void) const;
 
   virtual std::string getString (void) const;
 };
