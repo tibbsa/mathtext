@@ -25,5 +25,5 @@ clean:
 	rm $(OBJ_FILES)
 	rm mathtext
 
--include $(OBJFILES:.o=.d)
+-include $(OBJ_FILES:.o=.d)
 
