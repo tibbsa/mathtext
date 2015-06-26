@@ -1,27 +1,40 @@
 /**
- * @file MathRenderer.h
- * Header file for the generic class that forms the basis of the rendering 
- * engines.
+ * @file LaTeXRenderer.h
+ * Header file for the LaTeX renderer.
  * 
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
 
-#ifndef __MATH_RENDERER_H__
-#define __MATH_RENDERER_H__
+#ifndef __LATEX_RENDERER_H__
+#define __LATEX_RENDERER_H__
 
 #include <string>
 
 #include "MathDocument.h"
+#include "MathRenderer.h"
 
-#define DECL_RENDER_FUNC(class) virtual std::string render##class (const MDE_##class *e)
-
-class MathRenderer
+class LaTeXRenderer : public MathRenderer
 {
- protected:
-  std::string output;
-  const MDEVector &doc;
+ private:
+  std::string status (void) const;
 
+  void setWriteMode (void);
+
+ protected:
+  typedef enum { UNKNOWN, MATH, TEXT } Mode;
+
+  Mode writerLineMode;
+  Mode writerCurrentMode;
+
+  Mode currentBlockType;
+  Mode currentSegmentType;
+
+  bool isStartOfLine;
+
+  std::string renderMathContent (const std::string &s);
+  std::string renderTextContent (const std::string &s);
+  
   DECL_RENDER_FUNC(SourceLine);
 
   DECL_RENDER_FUNC(MathModeMarker);
@@ -41,15 +54,11 @@ class MathRenderer
   DECL_RENDER_FUNC(Exponent);
   DECL_RENDER_FUNC(Subscript);
 
-  virtual std::string renderFromVector (const MDEVector &v);
-  virtual std::string renderElement (const MathDocumentElement *e);
   virtual std::string renderUnsupported (const MathDocumentElement *e);
 
  public:
-  MathRenderer (const MathDocument &md);
-
-  virtual std::string render (void);
+  LaTeXRenderer (const MathDocument &md);
 };
 
 
-#endif /* __MATH_RENDERER_H__ */
+#endif /* __LATEX_RENDERER_H__ */

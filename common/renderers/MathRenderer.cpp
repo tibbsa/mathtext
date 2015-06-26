@@ -40,6 +40,8 @@ std::string MathRenderer::renderFromVector (const MDEVector &v)
 
 std::string MathRenderer::renderElement (const MathDocumentElement *e)
 {
+  RX(SourceLine);
+
   RX(MathModeMarker);
   RX(TextModeMarker);
   RX(LineBreak);
@@ -68,6 +70,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   std::string MathRenderer::render##class (const MDE_##class *e)		\
   { return renderUnsupported (dynamic_cast<const MathDocumentElement*>(e)); }
 
+PLACEHOLDER(SourceLine);
 PLACEHOLDER(MathModeMarker);
 PLACEHOLDER(TextModeMarker);
 PLACEHOLDER(LineBreak);

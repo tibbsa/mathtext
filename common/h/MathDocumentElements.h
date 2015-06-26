@@ -36,6 +36,32 @@ class MathDocumentElement
 /* ============== Internal/technical block types ======================= */
 
 /**
+ * A complete copy of the original source input line(s)
+ */
+class MDE_SourceLine : public MathDocumentElement
+{
+ protected:
+  std::string filename;
+  unsigned long line1;
+  unsigned long line2;
+  std::string payload;
+
+ public:
+  MDE_SourceLine(const std::string &fname,
+		 const unsigned long line_start, 
+		 const unsigned long line_end,
+		 const std::string &contents);
+
+  std::string getFilename (void) const;
+  unsigned long getStartLine (void) const;
+  unsigned long getEndLine (void) const;
+  std::string getContents (void) const;
+
+  virtual std::string getString (void) const;
+  
+};
+
+/**
  * An internal marker used to indicate that the following material is 
  * primarily mathematical or primary textual in nature.
  */

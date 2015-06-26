@@ -11,10 +11,10 @@
 
 std::string MDE_MathModeMarker::getString (void) const
 {
-  return std::string("$$");
+  return std::string("$");
 }
 
 std::string MDE_TextModeMarker::getString (void) const
 {
-  return std::string("&&");
+  return std::string("&");
 }

@@ -104,13 +104,12 @@ void MathSourceFile::ingest (const std::string &filename,
   unsigned long lineNumber = 1;
   unsigned long continuedLineStartedNumber = 0;
   std::string curLine;
-  int i;
 
   LOG_TRACE << "enter MathSourceFile::ingest (" << filename << ")";
   logIncreaseIndent();
   LOG_INFO << "Ingesting from " << filename;
 
-  for (int i = 0; i < buffer.length(); i++, lineNumber++) {
+  for (unsigned i = 0; i < buffer.length(); i++, lineNumber++) {
     // Grab a whole line of text
     int eolPos = buffer.find("\n", i);
     std::string temp = buffer.substr(i, eolPos - i);

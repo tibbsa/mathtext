@@ -23,6 +23,7 @@
 #include "MathDocumentMsg.h"
 #include "MathExceptions.h"
 #include "MathSourceFile.h"
+#include "LaTeXRenderer.h"
 #include "TextRenderer.h"
 
 using namespace std;
@@ -113,6 +114,10 @@ int main (const int argc, const char **argv)
       LOG_INFO << endl <<  "===================== Text Render ====================" << endl;
       LOG_INFO << rt.render();
 
+      LaTeXRenderer ltr(doc);
+      LOG_INFO << endl << "====================== LaTeX Render ===================" << endl;
+      LOG_INFO << ltr.render();
+      
       if (doc.haveMessages()) {
 	const std::vector<MathDocumentMsg> &msgs = doc.getMessages();
 	cout << msgs.size() << " message(s):" << endl;
