@@ -52,6 +52,10 @@ void MathDocument::interpret (const MathSourceFile &src)
   for (std::vector<MathDocumentLine>::const_iterator it = src.m_document.begin();
        it != src.m_document.end(); ++it) {
 
+    m_document.push_back (boost::make_shared<MDE_SourceLine>(it->getFilename(),
+							     it->getStartLineNumber(), 
+							     it->getEndLineNumber(), 
+							     it->getContent()));
     interpretLine(*it);
   }
   
@@ -237,7 +241,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     // If this is the first thing we're seeing on the line, check to see
     // if the first blob appears to be an 'item number' (as might appear 
     // in homework).
-    if (isStartOfLine) {
+    if (isStartOfLine && !inTextMode) {
       ATTEMPT(ItemNumber);
       isStartOfLine = false;
     }
