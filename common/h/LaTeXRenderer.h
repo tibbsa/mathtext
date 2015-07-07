@@ -31,6 +31,11 @@ class LaTeXRenderer : public MathRenderer
   Mode currentSegmentType;
 
   bool isStartOfLine;
+  unsigned internalRenderCount;
+
+  void beginInternalRender (void);
+  bool doingInternalRender (void) const;
+  void endInternalRender (void);
 
   std::string renderMathContent (const std::string &s);
   std::string renderTextContent (const std::string &s);

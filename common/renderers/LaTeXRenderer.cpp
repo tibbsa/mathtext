@@ -30,6 +30,7 @@ LaTeXRenderer::LaTeXRenderer (const MathDocument &md) : MathRenderer(md)
   writerCurrentMode = UNKNOWN;
 
   isStartOfLine = true;
+  internalRenderCount = 0;
 }
 
 std::string LaTeXRenderer::status (void) const
@@ -67,11 +68,30 @@ std::string LaTeXRenderer::status (void) const
   if (isStartOfLine)
     output += " *SOL*";
 
+  if (doingInternalRender())
+    output += boost::str(boost::format(" *MODE SWITCH INHIBITED - irc:%u*") % internalRenderCount);
+
   return output;
 }
 
+void LaTeXRenderer::beginInternalRender (void)
+{
+  internalRenderCount++;
+}
+
+bool LaTeXRenderer::doingInternalRender (void) const
+{
+  return (internalRenderCount > 0);
+}
+
+void LaTeXRenderer::endInternalRender (void)
+{
+  assert (internalRenderCount != 0);
+  internalRenderCount--;
+}
+
 // called to output what is known to be 'math' material. takes care of 
-// any necessary LaTeX mode switches, etc.
+// any necessary LaTeX mode switches, etc., 
 std::string LaTeXRenderer::renderMathContent (const std::string &s)
 {
   std::string output;
@@ -81,38 +101,41 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
   logIncreaseIndent();
 
   /*
-  ** Enter or switch to math mode as required
+  ** Enter or switch to math mode as required.  (If we're doing an internal 
+  ** render, e.g. the numerator of a fraction or some such, don't do this.)
   */
-   if (writerCurrentMode != MATH) {
-    LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == TEXT ? "text" : "unknown") << " mode";
-    if (writerCurrentMode == UNKNOWN) {
-      // We should only get here if we're at the start of a line and 
-      // we haven't yet made up our mind as to the line mode.
-      assert (writerLineMode == UNKNOWN);
-      assert (isStartOfLine == true);
+  if (!doingInternalRender()) {
+    if (writerCurrentMode != MATH) {
+      LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == TEXT ? "text" : "unknown") << " mode";
+      if (writerCurrentMode == UNKNOWN) {
+	// We should only get here if we're at the start of a line and 
+	// we haven't yet made up our mind as to the line mode.
+	assert (writerLineMode == UNKNOWN);
+	assert (isStartOfLine == true);
 
-      LOG_TRACE << "* LaTeX line will be in math mode";
-      writerLineMode = MATH;
-      writerCurrentMode = MATH;
+	LOG_TRACE << "* LaTeX line will be in math mode";
+	writerLineMode = MATH;
+	writerCurrentMode = MATH;
      
-      output += "\\[ ";
-    } else { /* writerCurrentMode == TEXT */ 
-      assert (writerLineMode != UNKNOWN);
+	output += "\\[ ";
+      } else { /* writerCurrentMode == TEXT */ 
+	assert (writerLineMode != UNKNOWN);
 
-      // If this is a math line, end the \text{...} segment. If it is a text 
-      // line, begin an inline math segment ($...$).
-      if (writerLineMode == MATH) {
-	LOG_TRACE << "* LaTeX math line, ending text segment";
-	output += "} ";
-      } else { /* writerLineMode == TEXT */ 
-	LOG_TRACE << "* LaTeX text line, beginning math segment";
-	output += " $";
+	// If this is a math line, end the \text{...} segment. If it is a text 
+	// line, begin an inline math segment ($...$).
+	if (writerLineMode == MATH) {
+	  LOG_TRACE << "* LaTeX math line, ending text segment";
+	  output += "} ";
+	} else { /* writerLineMode == TEXT */ 
+	  LOG_TRACE << "* LaTeX text line, beginning math segment";
+	  output += " $";
+	}
+
+	writerCurrentMode = MATH;
       }
 
-      writerCurrentMode = MATH;
+      LOG_TRACE << "   >> " << status();
     }
-
-    LOG_TRACE << "   >> " << status();
   }
 
   output += s;
@@ -134,35 +157,38 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
   logIncreaseIndent();
 
   /*
-  ** Enter or switch to text mode as required
+  ** Enter or switch to text mode as required.  (If we're doing an internal 
+  ** render, e.g. the numerator of a fraction or some such, don't do this.)
   */
-   if (writerCurrentMode != TEXT) {
-    LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == MATH ? "math" : "unknown") << " mode";
-    if (writerCurrentMode == UNKNOWN) {
-      // We should only get here if we're at the start of a line and 
-      // we haven't yet made up our mind as to the line mode.
-      assert (writerLineMode == UNKNOWN);
-      assert (isStartOfLine == true);
+  if (!doingInternalRender()) {
+    if (writerCurrentMode != TEXT) {
+      LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == MATH ? "math" : "unknown") << " mode";
+      if (writerCurrentMode == UNKNOWN) {
+	// We should only get here if we're at the start of a line and 
+	// we haven't yet made up our mind as to the line mode.
+	assert (writerLineMode == UNKNOWN);
+	assert (isStartOfLine == true);
 
-      LOG_TRACE << "* LaTeX line will be in text mode";
-      writerLineMode = TEXT;
-      writerCurrentMode = TEXT;
+	LOG_TRACE << "* LaTeX line will be in text mode";
+	writerLineMode = TEXT;
+	writerCurrentMode = TEXT;
      
-      output += "\\par ";
-    } else { /* writerCurrentMode == MATH */ 
-      assert (writerLineMode != UNKNOWN);
+	output += "\\par ";
+      } else { /* writerCurrentMode == MATH */ 
+	assert (writerLineMode != UNKNOWN);
 
-      // If this is a math line, begin the \text{...} segment. If it is a text 
-      // line, end  an inline math segment ($...$).
-      if (writerLineMode == MATH) {
-	LOG_TRACE << "* LaTeX math line, beginning text segment";
-	output += "\\text{ ";
-      } else { /* writerLineMode == TEXT */ 
-	LOG_TRACE << "* LaTeX text line, ending math segment";
-	output += "$ ";
+	// If this is a math line, begin the \text{...} segment. If it is a text 
+	// line, end  an inline math segment ($...$).
+	if (writerLineMode == MATH) {
+	  LOG_TRACE << "* LaTeX math line, beginning text segment";
+	  output += "\\text{ ";
+	} else { /* writerLineMode == TEXT */ 
+	  LOG_TRACE << "* LaTeX text line, ending math segment";
+	  output += "$ ";
+	}
+
+	writerCurrentMode = TEXT;
       }
-
-      writerCurrentMode = TEXT;
     }
   }
 
@@ -385,28 +411,34 @@ std::string LaTeXRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;
 
+  beginInternalRender();
   renderedNumerator = renderFromVector (e->getNumerator());
   renderedDenominator = renderFromVector (e->getDenominator());
+  endInternalRender();
 
-  return boost::str(boost::format("[Fraction] (%s) over (%s) [End Fraction]") %  renderedNumerator % renderedDenominator);
+  return renderMathContent(boost::str(boost::format("\\frac{%s}{%s}") % renderedNumerator % renderedDenominator));
 }
 
 std::string LaTeXRenderer::renderExponent (const MDE_Exponent *e)
 {
   std::string renderedExponent;
 
+  beginInternalRender();
   renderedExponent = renderFromVector (e->getValue());
+  endInternalRender();
 
-  return boost::str(boost::format("[Exponent] %s [End Exponent]") % renderedExponent);
+  return renderMathContent(boost::str(boost::format("^{%s}") % renderedExponent));
 }
 
 std::string LaTeXRenderer::renderSubscript (const MDE_Subscript *e)
 {
   std::string renderedSubscript;
 
+  beginInternalRender();
   renderedSubscript = renderFromVector (e->getValue());
+  endInternalRender();
 
-  return boost::str(boost::format("[Sub] %s [End Sub]") % renderedSubscript);
+  return renderMathContent(boost::str(boost::format("_{%s}") % renderedSubscript));
 }
 
 std::string LaTeXRenderer::renderUnsupported (const MathDocumentElement *e)
