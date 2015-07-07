@@ -38,7 +38,7 @@ std::string MDE_GreekLetter::getName (void) const
   static std::map<MDE_GreekLetter::Character,std::string> charmap = boost::assign::map_list_of
     CHARMAP(alpha, Alpha, beta, Beta)
     CHARMAP(gamma, Gamma, delta, Delta)
-    CHARMAP(epislon, Epsilon, zeta, Zeta)
+    CHARMAP(epsilon, Epsilon, zeta, Zeta)
     CHARMAP(theta, Theta, iota, Iota)
     CHARMAP(kappa, Kappa, lambda, Lambda)
     CHARMAP(mu, Mu, nu, Nu)

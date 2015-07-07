@@ -175,7 +175,7 @@ class MDE_GreekLetter : public MathDocumentElement
 {
  public:
   typedef enum { alpha, Alpha, beta, Beta, gamma, Gamma, delta, Delta,
-		 epislon, Epsilon, zeta, Zeta, theta, Theta, iota, Iota, 
+		 epsilon, Epsilon, zeta, Zeta, theta, Theta, iota, Iota, 
 		 kappa, Kappa, lambda, Lambda, mu, Mu, nu, Nu,
 		 xi, Xi, omicron, Omicron, pi, Pi, rho, Rho,
 		 sigma, Sigma, tau, Tau, upsilon, Upsilon, 

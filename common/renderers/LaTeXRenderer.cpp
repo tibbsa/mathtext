@@ -8,6 +8,9 @@
 
 #include <assert.h>
 
+#include <map>
+
+#include <boost/assign.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 
@@ -15,6 +18,8 @@
 #include "MathDocument.h"
 #include "MathExceptions.h"
 #include "LaTeXRenderer.h"
+
+namespace ba = boost::assign;
 
 LaTeXRenderer::LaTeXRenderer (const MathDocument &md) : MathRenderer(md)
 {
@@ -276,11 +281,10 @@ std::string LaTeXRenderer::renderTextBlock (const MDE_TextBlock *e)
 
 std::string LaTeXRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
-  std::string blockText = boost::trim_copy(e->getText());
-  if (blockText.empty())
+  if (boost::trim_copy(e->getText()).empty())
     return std::string();
-
-  return renderMathContent(blockText);
+  else
+    return renderMathContent(e->getText());
 }
 
 std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
@@ -288,8 +292,7 @@ std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
   std::string qnumber, output;
   qnumber = e->getText();
   qnumber = boost::str(boost::format("%s \\thickspace ") % qnumber);
-  output = renderMathContent(qnumber);
-  return output;
+  return renderMathContent(qnumber);
 }
 
 std::string LaTeXRenderer::renderOperator (const MDE_Operator *e)
@@ -305,7 +308,7 @@ std::string LaTeXRenderer::renderOperator (const MDE_Operator *e)
     return renderMathContent(" \\div ");
 
   case MDE_Operator::MULTIPLICATION: 
-    return std::string (" \\times ");
+    return renderMathContent(" \\times ");
 
   default:
     assert(false);
@@ -343,7 +346,39 @@ std::string LaTeXRenderer::renderComparator (const MDE_Comparator *e)
 
 std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 {
-  return boost::str(boost::format ("[%s]") % e->getName());
+#define MAP(a) (MDE_GreekLetter::a, "\\" #a) 
+#define MAPTO(a, b) (MDE_GreekLetter::a, b)
+
+  static std::map<MDE_GreekLetter::Character,std::string> charmap = ba::map_list_of
+    MAP(alpha) MAPTO(Alpha, "A")
+    MAP(beta) MAPTO(Beta, "B")
+    MAP(gamma) MAP(Gamma)
+    MAP(delta) MAP(Delta)
+    MAP(epsilon) MAPTO(Epsilon, "\\varepsilon")
+    MAP(zeta) MAPTO(Zeta, "Z")
+    MAP(theta) MAP(Theta)
+    MAP(iota) MAPTO(Iota, "I")
+    MAP(kappa) MAPTO(Kappa, "K")
+    MAP(lambda) MAP(Lambda)
+    MAP(mu) MAPTO(Mu, "M")
+    MAP(nu) MAPTO(Nu, "N")
+    MAP(xi) MAP(Xi)
+    MAPTO(omicron, "o") MAPTO(Omicron, "O")
+    MAP(pi) MAP(Pi)
+    MAP(rho) MAPTO(Rho, "P")
+    MAP(sigma) MAP(Sigma)
+    MAP(tau) MAPTO(Tau, "T")
+    MAP(upsilon) MAP(upsilon)
+    MAP(phi) MAP(Phi)
+    MAP(chi) MAPTO(Chi, "X")
+    MAP(psi) MAP(Psi)
+    MAP(omega) MAP(Omega)
+    ;
+
+#undef MAP
+#undef MAPTO
+
+  return renderMathContent(charmap [e->getValue()]);
 }
 
 std::string LaTeXRenderer::renderFraction (const MDE_Fraction *e)
