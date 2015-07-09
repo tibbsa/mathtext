@@ -107,6 +107,23 @@ std::string TextRenderer::renderGreekLetter (const MDE_GreekLetter *e)
   return boost::str(boost::format ("[%s]") % e->getName());
 }
 
+std::string TextRenderer::renderSymbol (const MDE_Symbol *e)
+{
+  switch (e->getSymbol()) {
+  case MDE_Symbol::FACTORIAL:
+    return std::string ("!");
+
+  case MDE_Symbol::THEREFORE:
+    return std::string (" (Therefore) ");
+
+  case MDE_Symbol::PERCENT:
+    return std::string ("%");
+
+  default:
+    assert(false);
+  }
+}
+
 std::string TextRenderer::renderRoot (const MDE_Root *e)
 {
   std::string renderedIndex, renderedArgument;

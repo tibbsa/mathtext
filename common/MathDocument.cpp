@@ -254,6 +254,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     ATTEMPT(Operator);
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
+    ATTEMPT(Symbol);
     ATTEMPT(Fraction);
     ATTEMPT(Root); // do this before a subscript to avoid confusion
     ATTEMPT(Exponent);
@@ -466,11 +467,13 @@ bool MathDocument::interpretGreekLetter (MDEVector &target,
     CHARMAP('y', psi, 'Y', Psi)
     CHARMAP('f', omega, 'F', Omega)
     ;
-
+  
   if (src [i] != '%' || (i+1) >= src.length())
     return false;
 
   char c = src [i+1];
+  if (c == '%') /* %% is the symbol for 'percent sign' */
+    return false;
 
   for (std::vector<GreekLetterMap>::const_iterator it = map.begin();
        it != map.end(); ++it) {
@@ -489,6 +492,47 @@ bool MathDocument::interpretGreekLetter (MDEVector &target,
   return false;
 }
 
+/**
+ * Attempts to interpret a variety of random symbols.
+
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+struct SymbolMap { 
+  SymbolMap (const std::string &s, const MDE_Symbol::Symbol sym) : search(s), symbol(sym) {}
+  std::string search;
+  MDE_Symbol::Symbol symbol;
+};
+
+bool MathDocument::interpretSymbol (MDEVector &target,
+				    const std::string &src, 
+				    size_t &i)
+{
+  #define MAX_SYMBOL_LEN 2
+  // Be sure to update MAX_SYMBOL_LEN if longer symbols get added to
+  // this table.  Place longer symbols at the top.
+  static const std::vector<SymbolMap> map = boost::assign::list_of 
+    ( SymbolMap("/\\", MDE_Symbol::THEREFORE) )
+    ( SymbolMap("%%", MDE_Symbol::PERCENT) )
+    ( SymbolMap("!", MDE_Symbol::FACTORIAL) )
+    ;
+  
+  const std::string temp = src.substr(i, MAX_SYMBOL_LEN);
+
+  for (std::vector<SymbolMap>::const_iterator it = map.begin();
+       it != map.end(); ++it) {
+    const SymbolMap &mi = *it;
+    
+    if (strBeginsWith(temp, mi.search)) {
+      LOG_TRACE << "* added symbol (" << mi.search << ")";
+      target.push_back (boost::make_shared<MDE_Symbol>(mi.symbol));
+      i += mi.search.length();
+      return true;
+    }
+  }
+
+  return false;
+}
 
 /**
  * Attempts to interpret a fraction: @num~den#

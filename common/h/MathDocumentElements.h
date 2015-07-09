@@ -194,6 +194,30 @@ class MDE_GreekLetter : public MathDocumentElement
 };
 
 /**
+ * Various miscellaneous symbols that do not require particularly 
+ * special handling (do not have arguments or other values attached, etc.)
+ */
+class MDE_Symbol : public MathDocumentElement
+{
+ public:
+  typedef enum { 
+    FACTORIAL, /* ! */
+    THEREFORE, /* /\ (3 dot triangle) */
+    PERCENT, /* %% (percent sign) */
+  } Symbol;
+
+  MDE_Symbol (const Symbol s);
+  Symbol getSymbol (void) const;
+  void setSymbol (const Symbol s);
+
+  virtual std::string getString (void) const;
+
+ protected:
+  
+  MDE_Symbol::Symbol symbol;
+};
+
+/**
  * A root sign
  */
 class MDE_Root : public MathDocumentElement

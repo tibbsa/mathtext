@@ -68,6 +68,7 @@ class MathDocument
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretGreekLetter (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretSymbol (MDEVector &target, const std::string &src, size_t &i);
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
   bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSubscript (MDEVector &target, const std::string &src, size_t &i);

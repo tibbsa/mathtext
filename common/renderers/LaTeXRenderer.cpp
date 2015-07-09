@@ -338,6 +338,7 @@ std::string LaTeXRenderer::renderOperator (const MDE_Operator *e)
 
   default:
     assert(false);
+    return renderTextContent (" **OPERATOR ERROR** ");
   }
 }
 
@@ -367,6 +368,7 @@ std::string LaTeXRenderer::renderComparator (const MDE_Comparator *e)
 
   default:
     assert(false);
+    return renderTextContent (" **COMPARATOR ERROR** ");
   }
 }
 
@@ -405,6 +407,24 @@ std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 #undef MAPTO
 
   return renderMathContent(charmap [e->getValue()]);
+}
+
+std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
+{
+  switch (e->getSymbol()) {
+  case MDE_Symbol::FACTORIAL:
+    return std::string ("!");
+
+  case MDE_Symbol::THEREFORE:
+    return std::string ("\\therefore ");
+
+  case MDE_Symbol::PERCENT:
+    return std::string ("\\%");
+
+  default:
+    assert(false);
+    return renderTextContent (" **SYMBOL ERROR** ");
+  }
 }
 
 std::string LaTeXRenderer::renderRoot (const MDE_Root *e)

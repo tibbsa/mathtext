@@ -6,8 +6,8 @@
  * This project is released under the GNU General Public License.
 */
 
-#ifndef __MATH_RENDERER_TEXT_H__
-#define __MATH_RENDERER_TEXT_H__
+#ifndef __TEXT_RENDERER_H__
+#define __TEXT_RENDERER_H__
 
 
 #include <string>
@@ -29,6 +29,7 @@ class TextRenderer : public MathRenderer
   DECL_RENDER_FUNC(Operator);
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);
+  DECL_RENDER_FUNC(Symbol);
 
   DECL_RENDER_FUNC(Root);
   DECL_RENDER_FUNC(Fraction);
@@ -43,4 +44,4 @@ class TextRenderer : public MathRenderer
 };
 
 
-#endif /* __MATH_RENDERER_H__ */
+#endif /* __TEXT_RENDERER_H__ */
