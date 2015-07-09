@@ -54,6 +54,7 @@ class LaTeXRenderer : public MathRenderer
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);
 
+  DECL_RENDER_FUNC(Root);
   DECL_RENDER_FUNC(Fraction);
 
   DECL_RENDER_FUNC(Exponent);

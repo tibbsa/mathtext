@@ -40,6 +40,8 @@
 #define MDM_FRACTION_NOT_TERMINATED 3000
 #define MDM_EXPONENT_NOT_TERMINATED 3001
 #define MDM_SUBSCRIPT_NOT_TERMINATED 3002
+#define MDM_ROOT_INDEX_NOT_TERMINATED 3003
+#define MDM_ROOT_NOT_TERMINATED 3004
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
@@ -69,6 +71,7 @@ class MathDocument
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
   bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSubscript (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretRoot (MDEVector &target, const std::string &src, size_t &i);
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
 

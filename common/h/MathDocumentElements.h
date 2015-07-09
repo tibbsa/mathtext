@@ -193,6 +193,24 @@ class MDE_GreekLetter : public MathDocumentElement
   MDE_GreekLetter::Character letter;
 };
 
+/**
+ * A root sign
+ */
+class MDE_Root : public MathDocumentElement
+{
+ protected:
+  MDEVector index;
+  MDEVector argument;
+
+ public:
+  MDE_Root(const MDEVector idx, const MDEVector contents);
+
+  MDEVector getIndex(void) const;
+  MDEVector getArgument(void) const;
+
+  virtual std::string getString (void) const;
+};
+
 
 /* ============== Fractions ======================================= */
 class MDE_Fraction : public MathDocumentElement

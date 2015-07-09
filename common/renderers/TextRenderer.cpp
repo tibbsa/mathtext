@@ -107,6 +107,21 @@ std::string TextRenderer::renderGreekLetter (const MDE_GreekLetter *e)
   return boost::str(boost::format ("[%s]") % e->getName());
 }
 
+std::string TextRenderer::renderRoot (const MDE_Root *e)
+{
+  std::string renderedIndex, renderedArgument;
+
+  renderedIndex = renderFromVector (e->getIndex());
+  renderedArgument = renderFromVector (e->getArgument());
+
+  if (!renderedIndex.empty()) {
+    return boost::str(boost::format("[Root Index='%s'] %s [End Root]") % renderedIndex % renderedArgument);
+  } else {
+    return boost::str(boost::format("[Sqrt] %s [End Sqrt]") % renderedArgument);
+  }
+   
+}
+
 std::string TextRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;

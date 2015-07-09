@@ -407,6 +407,22 @@ std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
   return renderMathContent(charmap [e->getValue()]);
 }
 
+std::string LaTeXRenderer::renderRoot (const MDE_Root *e)
+{
+  std::string renderedIndex, renderedArgument;
+
+  beginInternalRender();
+  renderedIndex = renderFromVector (e->getIndex());
+  renderedArgument = renderFromVector (e->getArgument());
+  endInternalRender();
+
+  if (!renderedIndex.empty()) {
+    return renderMathContent(boost::str(boost::format("\\sqrt[%s]{%s}") % renderedIndex % renderedArgument));
+  } else {
+    return renderMathContent(boost::str(boost::format("\\sqrt{%s}") % renderedArgument));
+  }
+}
+
 std::string LaTeXRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;

@@ -102,6 +102,8 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (MDM_ROOT_INDEX_NOT_TERMINATED, "Root includes a complex index with opening bracket '[' but is never terminated with a closing bracket ']'")
+    (MDM_ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
 
     ;
 
@@ -253,6 +255,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
     ATTEMPT(Fraction);
+    ATTEMPT(Root); // do this before a subscript to avoid confusion
     ATTEMPT(Exponent);
     ATTEMPT(Subscript);
 
@@ -492,6 +495,8 @@ bool MathDocument::interpretGreekLetter (MDEVector &target,
 
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
+ *
+ * ##TODO: warn about empty numerator/denominator
  */
 bool MathDocument::interpretFraction (MDEVector &target,
 				      const std::string &src, 
@@ -578,6 +583,8 @@ bool MathDocument::interpretFraction (MDEVector &target,
  *
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
+ *
+ * ##TODO: warn about empty exponents: x^() for example
  */
 bool MathDocument::interpretExponent (MDEVector &target,
 				      const std::string &src, 
@@ -695,6 +702,8 @@ bool MathDocument::interpretExponent (MDEVector &target,
  *
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
+ *
+ * ##TODO: warn about empty subscriptions: x_() for example
  */
 bool MathDocument::interpretSubscript (MDEVector &target,
 				      const std::string &src, 
@@ -800,6 +809,182 @@ bool MathDocument::interpretSubscript (MDEVector &target,
   MDEVector v;
   v = interpretBuffer (subscript_contents);
   target.push_back (boost::make_shared<MDE_Subscript>(v));
+  return true;
+}
+
+
+/**
+ * Attempts to interpret a root: _/100 (square root of 100)
+ *                            or _/(n+1) (square root of 'n+1')
+ *                            or _/3(16) (cube root of 16)
+ *                            or _/[n^2](x + 2y + 3c^2) (complex root index)
+ *
+ * For the basic form, the root is everything up to the next space, sign of 
+ * operation, sign of comparison, etc.
+ *
+ * If _/ is followed by parenthesees then the entire paranthesees is 
+ * taken as the root argument.
+ *
+ * If _/ is followed by a number, and immediately followed by an expression 
+ * in paranthesees, then the number is considered the root index and the 
+ * entire paranthesees is taken as the root argment.
+ *
+ * If _/ is followed by a square bracket, then the entire square bracket is 
+ * taken as the root index, and the entire paranthesees following that is 
+ * taken as the root argument.
+ *
+ * Returns true on success, false on error, and puts resulting elements
+ * into the 'target' buffer.
+ */
+bool MathDocument::interpretRoot (MDEVector &target,
+				  const std::string &src, 
+				  size_t &i)
+{
+  if (src.substr(i, 2) != "_/")
+    return false;
+
+  std::string root_index;
+  std::string root_argument;
+  MDEVector root_index_vector;
+
+  i += 2;
+
+  // Look for root indexes, which may be a simple letter or number, or a 
+  // more complex expression bounded by square brackets.
+  boost::regex root_index_regex("(\\w)+\\(");
+  boost::smatch mr;
+  if (boost::regex_search(src.substr(i), mr, root_index_regex)) {
+    root_index = mr[1];
+    i += root_index.length();
+  } else if (src [i] == '[') {
+    // read until the closing square bracket
+    int num_nested_brackets = 0;
+    bool foundTerminator = false;
+    size_t pos;
+    for (pos = i+1; pos < src.length(); pos++) {
+      // Skip escaped characters
+      if (src.substr (pos, 2) == "\\[" || src.substr(pos, 2) == "\\]")
+	pos += 2;
+
+      // Look for nested brackets
+      if (src [pos] == '[')
+	num_nested_brackets++;
+      else // Look for the closing brackets
+	if (src [pos] == ']') {
+	  if (!num_nested_brackets) {
+	    foundTerminator = true;
+	    break;
+	  }
+	  else
+	    num_nested_brackets--;
+	}
+  
+      // Add this character to the contents of the root index
+      root_index += src [pos];
+    }
+
+    if (!foundTerminator) {
+      MSG_ERROR(MDM_ROOT_INDEX_NOT_TERMINATED, boost::str(boost::format("text in root index: '%s'") % root_index));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+
+    // advance cursor
+    i = pos + 1;
+  }
+
+  if (!root_index.empty()) {
+    LOG_TRACE << "- found a root with an index: generating index vector for '" << root_index << "'";
+    root_index_vector = interpretBuffer(root_index);
+  }
+  else
+    LOG_TRACE << "- found a root with no index";
+
+  // If this is followed by an open paren '(', read until the closing 
+  // paren; otherwise, read until the end of the item
+  if (src [i] == '(') {
+    int num_nested_parens = 0;
+    bool foundTerminator = false;
+    size_t pos;
+    for (pos = i+1; pos < src.length(); pos++) {
+      // Skip escaped characters
+      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
+	pos += 2;
+
+      // Look for nested parentheses
+      if (src [pos] == '(')
+	num_nested_parens++;
+      else // Look for the closing parens
+	if (src [pos] == ')') {
+	  if (!num_nested_parens) {
+	    foundTerminator = true;
+	    break;
+	  }
+	  else
+	    num_nested_parens--;
+	}
+  
+      // Add this character to the contents of the root
+      root_argument += src [pos];
+    }
+
+    if (!foundTerminator) {
+      MSG_ERROR(MDM_ROOT_NOT_TERMINATED, boost::str(boost::format("text in root: '%s'") % root_argument));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+
+    // advance cursor
+    i = pos + 1;
+  } else  {
+    std::string root_terminators = "+/*=<>()[]{} ~@#_";
+    size_t pos;
+
+    // Copy characters until we encounter any of the above-mentioned 
+    // terminators.  
+    //
+    // The semi-colon is specifically designated as a terminator, 
+    // and should be skipped if it arises.
+    //
+    // Special cases:
+    // - fractions (root can begin with a fraction in which case we 
+    //   take the whole fraction)
+    if (src [i] == '@') {
+      LOG_TRACE << "- for the fractional root, generating root argument via fraction handling";
+      MDEVector fracvec;
+      assert (interpretFraction (fracvec, src, i));
+
+      target.push_back (boost::make_shared<MDE_Root>(root_index_vector, fracvec));
+      return true;
+    }
+
+    for (pos = i; pos < src.length(); pos++) {
+      // skip escaped characters
+      if (src [pos] == '\\') {
+	pos++;
+	continue;
+      }
+
+      // On terminators, skip -- the semi-colon should not be part 
+      // of the final output.
+      if (src [pos] == ';') {
+	pos++;
+	break;
+      }
+
+      // On other terminators, do not "lose them" -- they should wind 
+      // up in the final output.
+      if (isOneOf (src [pos], root_terminators))
+	break;
+
+      root_argument += src [pos];
+    }
+
+    i = pos;
+  }
+
+  LOG_TRACE << "* found root: index='" << root_index << "', argument: '" << root_argument << "'";
+
+  MDEVector root_argument_vector = interpretBuffer (root_argument);
+  target.push_back (boost::make_shared<MDE_Root>(root_index_vector, root_argument_vector));
   return true;
 }
 
