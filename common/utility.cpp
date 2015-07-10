@@ -64,3 +64,15 @@ bool isOneOf (const char subject, const std::string &candidates)
 {
   return (candidates.find(subject) != std::string::npos);
 }
+
+/**
+ * Returns true if 'subject' contains only the characters in 'candidates'
+ */
+bool containsOnly (const std::string &subject, const std::string &candidates)
+{
+  for(size_t pos = 0; pos < subject.length(); pos++) {
+    if (!isOneOf(subject[pos], candidates))
+      return false;
+  }
+  return true;
+}

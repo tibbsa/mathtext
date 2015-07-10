@@ -38,4 +38,10 @@ bool strBeginsWith (const std::string subject, const std::string search);
  */
 bool isOneOf (const char subject, const std::string &candidates);  
 
+/**
+ * Returns true if 'subject' contains only some combination of the characters
+ * in 'candidates'.
+ */
+bool containsOnly (const std::string &subject, const std::string &candidates);
+
 #endif /* __UTILITY_H__ */
