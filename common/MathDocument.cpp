@@ -449,6 +449,7 @@ bool MathDocument::interpretGreekLetter (MDEVector &target,
     CHARMAP('d', delta, 'D', Delta)
     CHARMAP('e', epsilon, 'E', Epsilon)
     CHARMAP('z', zeta, 'Z', Zeta)
+    CHARMAP('h', eta, 'H', Eta)
     CHARMAP('t', theta, 'T', Theta)
     CHARMAP('i', iota, 'I', Iota)
     CHARMAP('k', kappa, 'K', Kappa)

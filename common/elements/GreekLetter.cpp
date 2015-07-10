@@ -39,6 +39,7 @@ std::string MDE_GreekLetter::getName (void) const
     CHARMAP(alpha, Alpha, beta, Beta)
     CHARMAP(gamma, Gamma, delta, Delta)
     CHARMAP(epsilon, Epsilon, zeta, Zeta)
+    CHARMAP2(eta, Eta)
     CHARMAP(theta, Theta, iota, Iota)
     CHARMAP(kappa, Kappa, lambda, Lambda)
     CHARMAP(mu, Mu, nu, Nu)
