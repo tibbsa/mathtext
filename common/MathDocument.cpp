@@ -465,8 +465,8 @@ bool MathDocument::interpretGreekLetter (MDEVector &target,
     CHARMAP('u', upsilon, 'U', Upsilon)
     CHARMAP('v', phi, 'V', Phi)
     CHARMAP('c', chi, 'C', Chi)
-    CHARMAP('y', psi, 'Y', Psi)
-    CHARMAP('f', omega, 'F', Omega)
+    CHARMAP('f', psi, 'F', Psi)
+    CHARMAP('w', omega, 'W', Omega)
     ;
   
   if (src [i] != '%' || (i+1) >= src.length())
