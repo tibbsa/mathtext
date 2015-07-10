@@ -139,7 +139,8 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
   }
 
   output += s;
-  isStartOfLine = false;
+  if (!doingInternalRender())
+    isStartOfLine = false;
 
   logDecreaseIndent();
   LOG_TRACE << "exit LaTeXRenderer::renderMathContent: " << output;
