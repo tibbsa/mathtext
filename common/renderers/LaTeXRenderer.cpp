@@ -433,6 +433,17 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
   return renderMathContent(map[e->getSymbol()]);
 }
 
+std::string LaTeXRenderer::renderBarred (const MDE_Barred *e)
+{
+  std::string renderedArgument;
+
+  beginInternalRender();
+  renderedArgument = renderFromVector (e->getArgument());
+  endInternalRender();
+
+  return renderMathContent(boost::str(boost::format("\\overline{%s} ") % renderedArgument));
+}
+
 std::string LaTeXRenderer::renderRoot (const MDE_Root *e)
 {
   std::string renderedIndex, renderedArgument;

@@ -55,6 +55,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(Comparator);
   RX(GreekLetter);
   RX(Symbol);
+  RX(Barred);
 
   RX(Root);
   RX(Fraction);
@@ -87,6 +88,7 @@ PLACEHOLDER(Operator);
 PLACEHOLDER(Comparator);
 PLACEHOLDER(GreekLetter);
 PLACEHOLDER(Symbol);
+PLACEHOLDER(Barred);
 
 PLACEHOLDER(Root);
 PLACEHOLDER(Fraction);

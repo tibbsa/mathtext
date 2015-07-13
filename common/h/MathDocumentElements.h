@@ -243,6 +243,22 @@ class MDE_Symbol : public MathDocumentElement
 };
 
 /**
+ * A conjugate or 'barred' symbol(s)
+ */
+class MDE_Barred : public MathDocumentElement
+{
+ protected:
+  MDEVector argument;
+
+ public:
+  MDE_Barred(const MDEVector arg);
+
+  MDEVector getArgument(void) const;
+
+  virtual std::string getString (void) const;
+};
+
+/**
  * A root sign
  */
 class MDE_Root : public MathDocumentElement

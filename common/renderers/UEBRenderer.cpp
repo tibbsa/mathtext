@@ -494,6 +494,28 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
 
 }
 
+std::string UEBRenderer::renderBarred (const MDE_Barred *e)
+{
+  std::string output;
+  std::string renderedArgument;
+
+  LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
+  logIncreaseIndent();
+
+  beginInternalRender();
+  status.isNumericMode = false;
+  renderedArgument = renderFromVector(e->getArgument());
+  endInternalRender();
+
+  //## TODO: Grouping indicators, etc. are not needed for simple barred 
+  // items (such as a number).  Optimize.
+  output = renderMathContent(UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END + UEB_OVERBAR);
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  return output;
+}
+
 std::string UEBRenderer::renderRoot (const MDE_Root *e)
 {
   std::string output;

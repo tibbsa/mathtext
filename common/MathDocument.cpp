@@ -104,7 +104,7 @@ std::string MathDocument::getErrorMessage (const unsigned long errorCode)
     (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MDM_ROOT_INDEX_NOT_TERMINATED, "Root includes a complex index with opening bracket '[' but is never terminated with a closing bracket ']'")
     (MDM_ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
-
+    (MDM_BARRED_NOT_TERMINATED, "Barred/conjugate begins with opening paren '(' but is never terminated with a closing paren ')'");
     ;
 
   assert (error_map.count(errorCode) > 0);
@@ -256,6 +256,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
     ATTEMPT(Symbol);
+    ATTEMPT(Barred);
     ATTEMPT(Fraction);
     ATTEMPT(Root); // do this before a subscript to avoid confusion
     ATTEMPT(Exponent);
@@ -593,6 +594,52 @@ bool MathDocument::interpretSymbol (MDEVector &target,
 
   return false;
 }
+
+
+bool MathDocument::interpretBarred (MDEVector &target,
+				    const std::string &src,
+				    size_t &i)
+{
+  if (src.substr(i, 4) != "`BAR") {
+    if (src.substr(i, 3) != "`CJ") {
+      return false;
+    } else {
+      i += 3;
+    }
+  } else {
+    i += 4;
+  }
+
+  std::string argument;
+
+  // skip any whitespace
+  while (i < src.length() && isspace(src[i]))
+    i++;
+
+  // If this is followed by an open paren '(', read until the closing 
+  // paren
+  if (src [i] == '(') {
+    if (!extractGroup(argument, src, i)) {
+      MSG_ERROR(MDM_BARRED_NOT_TERMINATED, boost::str(boost::format("text in barred item: '%s'") % argument));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+  } else if (src [i] == '@') {
+    if (!extractGroup(argument, src, i, "@", "#", true)) {
+      MSG_ERROR(MDM_BARRED_NOT_TERMINATED, boost::str(boost::format("text in fractional barred item: '%s'") % argument));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
+    }
+  } else {
+    extractItem(argument, src, i);
+  }
+
+  LOG_TRACE << "* found barred item: " << argument;
+
+  MDEVector v;
+  v = interpretBuffer (argument);
+  target.push_back (boost::make_shared<MDE_Barred>(v));
+  return true;
+}
+
 
 /**
  * Attempts to interpret a fraction: @num~den#

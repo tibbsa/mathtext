@@ -42,6 +42,7 @@
 #define MDM_SUBSCRIPT_NOT_TERMINATED 3002
 #define MDM_ROOT_INDEX_NOT_TERMINATED 3003
 #define MDM_ROOT_NOT_TERMINATED 3004
+#define MDM_BARRED_NOT_TERMINATED 3005
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
@@ -70,6 +71,7 @@ class MathDocument
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretGreekLetter (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSymbol (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretBarred (MDEVector &target, const std::string &src, size_t &i);
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
   bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSubscript (MDEVector &target, const std::string &src, size_t &i);

@@ -65,6 +65,10 @@
 #define UEB_TIMES_SIGN       BD_5 BD_236
 #define UEB_UNEQUAL_SIGN     " " BD_5 BD_2356 BD_4 BD_156 " "
 
+// Over/under symbols
+#define UEB_OVERBAR          BD_156
+#define UEB_UNDERBAR         BD_6 BD_156
+
 // Greek alphabet
 #define UEB_GREEK_ALPHA      "A"
 #define UEB_GREEK_BETA       "B"
@@ -133,6 +137,7 @@ class UEBRenderer : public MathRenderer
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);
   DECL_RENDER_FUNC(Symbol);
+  DECL_RENDER_FUNC(Barred);
 
   DECL_RENDER_FUNC(Root);
   DECL_RENDER_FUNC(Fraction);
