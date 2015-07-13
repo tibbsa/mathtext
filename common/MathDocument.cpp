@@ -699,92 +699,21 @@ bool MathDocument::interpretExponent (MDEVector &target,
 
   std::string exponent_contents;
 
-
   // If this is followed by an open paren '(', read until the closing 
   // paren
   i++;
   if (src [i] == '(') {
-    int num_nested_parens = 0;
-    bool foundTerminator = false;
-    size_t pos;
-    for (pos = i+1; pos < src.length(); pos++) {
-      // Skip escaped characters
-      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
-	pos += 2;
-
-      // Look for nested parentheses
-      if (src [pos] == '(')
-	num_nested_parens++;
-      else // Look for the closing parens
-	if (src [pos] == ')') {
-	  if (!num_nested_parens) {
-	    foundTerminator = true;
-	    break;
-	  }
-	  else
-	    num_nested_parens--;
-	}
-  
-      // Add this character to the contents of the exponent 
-      exponent_contents += src [pos];
-    }
-
-    if (!foundTerminator) {
+    if (!extractGroup(exponent_contents, src, i)) {
       MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
       BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    // advance cursor
-    i = pos + 1;
-  } else  {
-    std::string exponent_terminators = ",+/*=<>()[]{} ~@#_";
-    size_t pos;
-
-    // Copy characters until we encounter any of the above-mentioned 
-    // terminators.  
-    //
-    // The semi-colon is specifically designated as a terminator, 
-    // and should be skipped if it arises.
-    //
-    // Special cases:
-    // - fractions (exponent can begin with a fraction in which case we 
-    //   take the whole fraction)
-    // - negative numbers (exponent can begin with a minus sign '-' but 
-    //   only in the first character)
-    if (src [i] == '@') {
-      LOG_TRACE << "- found a fractional exponent: handing over to fractions";
-      MDEVector fracvec;
-      assert (interpretFraction (fracvec, src, i));
-      target.push_back (boost::make_shared<MDE_Exponent>(fracvec));
-      return true;
+  } else if (src [i] == '@') {
+    if (!extractGroup(exponent_contents, src, i, "@", "#", true)) {
+      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    for (pos = i; pos < src.length(); pos++) {
-      // skip escaped characters
-      if (src [pos] == '\\') {
-	pos++;
-	continue;
-      }
-
-      // On exponent terminators, skip -- the semi-colon should not be part 
-      // of the final output.
-      if (src [pos] == ';') {
-	pos++;
-	break;
-      }
-
-      // On other terminators, do not "lose them" -- they should wind 
-      // up in the final output.
-      if (isOneOf (src [pos], exponent_terminators))
-	break;
-
-      if (pos == i) 
-	exponent_terminators += '-';
-
-      exponent_contents += src [pos];
-    }
-
-    i = pos;
+  } else {
+    extractItem(exponent_contents, src, i);
   }
 
   LOG_TRACE << "* found exponent: " << exponent_contents;
@@ -823,89 +752,17 @@ bool MathDocument::interpretSubscript (MDEVector &target,
   // paren
   i++;
   if (src [i] == '(') {
-    int num_nested_parens = 0;
-    bool foundTerminator = false;
-    size_t pos;
-    for (pos = i+1; pos < src.length(); pos++) {
-      // Skip escaped characters
-      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
-	pos += 2;
-
-      // Look for nested parentheses
-      if (src [pos] == '(')
-	num_nested_parens++;
-      else // Look for the closing parens
-	if (src [pos] == ')') {
-	  if (!num_nested_parens) {
-	    foundTerminator = true;
-	    break;
-	  }
-	  else
-	    num_nested_parens--;
-	}
-  
-      // Add this character to the contents of the exponent 
-      subscript_contents += src [pos];
-    }
-
-    if (!foundTerminator) {
+    if (!extractGroup(subscript_contents, src, i)) {
       MSG_ERROR(MDM_SUBSCRIPT_NOT_TERMINATED, boost::str(boost::format("text in subscript: '%s'") % subscript_contents));
       BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    // advance cursor
-    i = pos + 1;
-  } else  {
-    std::string subscript_terminators = ",+/*=<>()[]{} ~@#_";
-    size_t pos;
-
-    // Copy characters until we encounter any of the above-mentioned 
-    // terminators.  
-    //
-    // The semi-colon is specifically designated as a terminator, 
-    // and should be skipped if it arises.
-    //
-    // Special cases:
-    // - fractions (subscript can begin with a fraction in which case we 
-    //   take the whole fraction)
-    // - negative numbers (subsscript can begin with a minus sign '-' but 
-    //   only in the first character)
-    if (src [i] == '@') {
-      LOG_TRACE << "- found a fractional subscript: handing over to fractions";
-      MDEVector fracvec;
-      assert (interpretFraction (fracvec, src, i));
-      target.push_back (boost::make_shared<MDE_Exponent>(fracvec));
-      return true;
+  } else if (src [i] == '@') {
+    if (!extractGroup(subscript_contents, src, i, "@", "#", true)) {
+      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in fractional subscript: '%s'") % subscript_contents));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    for (pos = i; pos < src.length(); pos++) {
-      // skip escaped characters
-      if (src [pos] == '\\') {
-	pos++;
-	continue;
-      }
-
-      // On subscript terminators, skip -- the semi-colon should not be part 
-      // of the final output.
-      if (src [pos] == ';') {
-	pos++;
-	break;
-      }
-
-      // On other terminators, do not "lose them" -- they should wind 
-      // up in the final output.
-      if (isOneOf (src [pos], subscript_terminators))
-	break;
-
-      // If this is the first character considered, add '-' to the list of 
-      // possible terminators going forward
-      if (pos == i) 
-	subscript_terminators += '-';
-
-      subscript_contents += src [pos];
-    }
-
-    i = pos;
+  } else {
+    extractItem(subscript_contents, src, i);
   }
 
   LOG_TRACE << "* found subscript: " << subscript_contents;
@@ -1145,6 +1002,119 @@ void MathDocument::sniffTextForMath (const std::string &buffer)
   }
 }
 #undef CONTAINS
+
+/**
+ * Extracts the next "item" from the input buffer, which could be:
+ * - an entire fraction
+ * - a number or other construct, up to the next terminator
+ * 
+ * A semi-colon will termiante the extraction as well (and not be copied into 
+ * the target buffer).
+ *
+ * Returns TRUE on success, or FALSE on error.
+ */
+ bool MathDocument::extractItem (std::string &target,
+				 const std::string &src,
+				 size_t &i,
+				 const std::string &terminators)
+{
+  std::string current_terminators = terminators;
+  size_t pos = i;
+
+  // Skip over any white space that might come before this group
+  while (pos < src.length() && isspace(src[pos]))
+    pos++;
+
+  // Copy characters until we encounter any of the above-mentioned 
+  // terminators.  
+  //
+  // The semi-colon is specifically designated as a terminator, 
+  // and should be skipped if it arises.
+  //
+  // Special cases:
+  // - negative numbers (items can begin with a minus sign '-' but 
+  //   only in the first character)
+  for (; pos < src.length(); pos++) {
+    if (src [pos] == ';') {
+      pos++;
+      break;
+    }
+    
+    // On other terminators, do not "lose them" -- they should wind 
+    // up in the final output.
+    if (isOneOf (src [pos], current_terminators))
+      break;
+    
+    if (pos == i) 
+      current_terminators += '-';
+    
+    target += src [pos];
+  }
+
+  i = pos;
+
+  boost::trim(target);
+  return (!target.empty());
+}
+
+/**
+ * Extracts the next group of symbols, bounded by groupOpen/groupClose.  
+ *
+ * Used to grab argments to exponents, etc. e.g. 2x^(1 + @1~y#)
+ * If 'retainGroupDelims' is TRUE (default false), the group delimeters 
+ * 'groupOpen' and 'groupClose' are included in 'target'.
+ *
+ * Returns TRUE on success, FALSE on error (typically, an unclosed group).
+ */
+bool MathDocument::extractGroup (std::string &target, const std::string &buffer, size_t &i, const std::string &groupOpen, const std::string &groupClose, bool retainGroupDelims)
+{
+  int groupNestingLevel = 0;
+  bool foundTerminator = false;
+  size_t pos = i;
+
+  // Skip over any white space that might come before this group
+  while (pos < buffer.length() && isspace(buffer[pos]))
+    pos++;
+
+  // Fail if the next character is not a group open indicator
+  if (buffer.substr(pos, groupOpen.length()) != groupOpen)
+    return false;
+
+  pos += groupOpen.length();
+
+  if (retainGroupDelims)
+    target += groupOpen;
+
+  for (; pos < buffer.length(); pos++) {
+    // If we see a 'nested' group opening, we don't want to prematurely end
+    // when that group ends.  Make note of it.
+    if (buffer.substr(pos, groupOpen.length()) == groupOpen) {
+      groupNestingLevel++;
+    } else if (buffer.substr(pos, groupClose.length()) == groupClose) {
+      if (!groupNestingLevel) {
+	foundTerminator = true;
+	pos += groupClose.length();
+	break;
+      }
+
+      groupNestingLevel--;
+    }
+  
+    // Add this character to the contents of the exponent 
+    target += buffer[pos];
+  }
+
+  i = pos;
+  if (foundTerminator) {
+    if (retainGroupDelims)
+      target += groupClose;
+
+    return true;
+  }
+  else
+    return false;
+}
+
 
 /**
  * Adds a warning/info/notice message to the log for later perusal.
