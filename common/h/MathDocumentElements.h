@@ -201,9 +201,10 @@ class MDE_Symbol : public MathDocumentElement
 {
  public:
   typedef enum { 
+    COMMA, /* , (outside of a number) */
     FACTORIAL, /* ! */
-    THEREFORE, /* /\ (3 dot triangle) */
     PERCENT, /* %% (percent sign) */
+    THEREFORE, /* /\ (3 dot triangle) */
   } Symbol;
 
   MDE_Symbol (const Symbol s);

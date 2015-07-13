@@ -513,9 +513,10 @@ bool MathDocument::interpretSymbol (MDEVector &target,
   // Be sure to update MAX_SYMBOL_LEN if longer symbols get added to
   // this table.  Place longer symbols at the top.
   static const std::vector<SymbolMap> map = boost::assign::list_of 
-    ( SymbolMap("/\\", MDE_Symbol::THEREFORE) )
     ( SymbolMap("%%", MDE_Symbol::PERCENT) )
+    ( SymbolMap("/\\", MDE_Symbol::THEREFORE) )
     ( SymbolMap("!", MDE_Symbol::FACTORIAL) )
+    ( SymbolMap(",", MDE_Symbol::COMMA) )
     ;
   
   const std::string temp = src.substr(i, MAX_SYMBOL_LEN);

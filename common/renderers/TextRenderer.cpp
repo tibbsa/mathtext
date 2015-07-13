@@ -43,7 +43,7 @@ std::string TextRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
   std::string blockText = boost::trim_copy(e->getText());
   if (blockText.empty())
-    return std::string();
+    return std::string(" ");
   else
     return boost::str(boost::format("«%s» ") % blockText);
 }
@@ -110,6 +110,9 @@ std::string TextRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 std::string TextRenderer::renderSymbol (const MDE_Symbol *e)
 {
   switch (e->getSymbol()) {
+  case MDE_Symbol::COMMA:
+    return std::string ("<");
+
   case MDE_Symbol::FACTORIAL:
     return std::string ("!");
 

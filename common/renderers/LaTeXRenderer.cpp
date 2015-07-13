@@ -308,10 +308,7 @@ std::string LaTeXRenderer::renderTextBlock (const MDE_TextBlock *e)
 
 std::string LaTeXRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
-  if (boost::trim_copy(e->getText()).empty())
-    return std::string();
-  else
-    return renderMathContent(e->getText());
+  return renderMathContent(e->getText());
 }
 
 std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
@@ -414,6 +411,9 @@ std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
 {
   switch (e->getSymbol()) {
+  case MDE_Symbol::COMMA:
+    return std::string (",");
+
   case MDE_Symbol::FACTORIAL:
     return std::string ("!");
 

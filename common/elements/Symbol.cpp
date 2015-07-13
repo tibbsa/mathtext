@@ -37,12 +37,14 @@ std::string MDE_Symbol::getString (void) const
 {
   std::string output;
 
-  if (symbol == FACTORIAL)
+  if (symbol == COMMA)
+    output = "<,>";
+  else if (symbol == FACTORIAL)
     output = "<!>";
-  else if (symbol == THEREFORE)
-    output = "<therefore>";
   else if (symbol == PERCENT)
     output = "<%>";
+  else if (symbol == THEREFORE)
+    output = "<therefore>";
   else
     assert (false);
 
