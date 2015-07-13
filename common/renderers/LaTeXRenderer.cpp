@@ -319,6 +319,11 @@ std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
   return renderMathContent(qnumber);
 }
 
+std::string LaTeXRenderer::renderNumber (const MDE_Number *e)
+{
+  return renderMathContent(e->getStandardNotation());
+}
+
 std::string LaTeXRenderer::renderOperator (const MDE_Operator *e)
 {
   switch (e->getOperator()) {

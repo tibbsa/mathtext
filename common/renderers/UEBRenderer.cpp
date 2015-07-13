@@ -80,43 +80,43 @@ std::string UEBRenderer::translateBrailleNumbers (const std::string &s)
 
   for (size_t pos = 0; pos < s.length(); pos++) {
     char c = s [pos];
-    
-    // Insert a number sign if we are starting in on a number
-    if (isdigit (c)) {
-      if (!isNumericMode) {
+    char c2 = (pos < (s.length() - 1)) ? s [pos+1] : 0;
+
+    if (!isNumericMode) {
+      // Insert a number sign before the first digit, or before the decimal 
+      // point if we get a number like ".74". 
+      if (isdigit(c) || (c == '.' && isdigit(c2))) {
 	output += UEB_NUMBER_SIGN;
 	isNumericMode = true;
       }
-      
-      // In braille, numbers 1-9(0) are represented by letters A-J.  On the 
-      // ASCII tables, numbers 1-9 are code 49-57, and number 0 is code 48.
-      // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
-      // In other words, adding 16 to the digit will get the uppercase letter.
-      if (c == '0')
-	output += "J";
-      else
-	output += boost::str(boost::format("%c") % (char)(16 + (int)c));
-      
-	continue;
+      else {
+	output += c;
+	continue;   
+      }   
     }
 
-    // Insert grade 1/numeric mode end indicator (;, dots 5-6) if we reach a 
-    // letter (A-J) while in numeric mode
-    if (isNumericMode) {
-      if ((c >= 'a' && c <= 'j') || (c >= 'A' && c <= 'J')) {
+    // In braille, numbers 1-9(0) are represented by letters A-J.  On the 
+    // ASCII tables, numbers 1-9 are code 49-57, and number 0 is code 48.
+    // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
+    // In other words, adding 16 to the digit will get the uppercase letter.
+
+    // Pass decmials through as-is for now
+    if (c == '.')
+      output += ".";
+    else if (c == '0') // handle 0
+      output += "J";
+    else if (isdigit(c))  // handle 1-9
+      output += boost::str(boost::format("%c") % (char)(16 + (int)c));
+    else {
+      // If a number is followed by letters A-J, insert a grade 1 (aka 
+      // 'letter' indicator) to return to alphabet mode
+      if ((c >= 'a' && c <= 'j') || (c >= 'A' && c <= 'J'))
 	output += UEB_G1;
-      } else if (c == '.') {
-	// periods are allowed in numeric mode and will be translated later, 
-	// but copy over verbatim for now
-	// do nothing, but don't cancel numeric mode
-      } else {
-	isNumericMode = false;
-      }
+
+      output += c;
+      isNumericMode = false;
     }
-
-    output += c;
   }
-
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -279,12 +279,11 @@ std::string UEBRenderer::renderTextBlock (const MDE_TextBlock *e)
 std::string UEBRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
   std::string output;
-  std::string trimmed;
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  output = renderMathContent(translateToBraille(trimmed));
+  output = renderMathContent(translateToBraille(e->getText()));
   
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -299,6 +298,19 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
   logIncreaseIndent();
 
   output = renderMathContent(translateToBraille(e->getText() + " "));
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  return output;
+}
+
+std::string UEBRenderer::renderNumber (const MDE_Number *e)
+{
+  std::string output;
+  LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
+  logIncreaseIndent();
+
+  output = renderMathContent(translateToBraille(e->getStandardNotation()));
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";

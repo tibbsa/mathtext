@@ -251,6 +251,7 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     if (inTextMode)
       goto HandleTextBlocks;
 
+    ATTEMPT(Number);
     ATTEMPT(Operator);
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
@@ -289,6 +290,57 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
   logDecreaseIndent();
   LOG_TRACE << "exit interpretBuffer";
   return elements;
+}
+
+/**
+ * Attempts to interpret a number or set of digits.
+ */
+bool MathDocument::interpretNumber (MDEVector &target,
+				    const std::string &src, 
+				    size_t &i)
+{
+  // Case 1: .24 (decmial with no leading numbers)
+  if (src [i] == '.') {
+    if (i <= (src.length() - 1)) {
+      if (isdigit (src [i+1])) {
+	std::string rhs;
+	i++;
+	while (i < src.length() && isdigit (src [i])) {
+	  rhs += src.substr(i, 1);
+	  i++;
+	}
+	
+	LOG_TRACE << "* adding decimal number w/o whole portion: ." << rhs;
+	target.push_back (boost::make_shared<MDE_Number>(std::string(), rhs));
+	return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Case 2: 121 (plain old number)
+  if (isdigit (src[i])) {
+    std::string lhs, rhs;
+    while (i < src.length() && isdigit (src [i])) {
+      lhs += src.substr(i, 1);
+      i++;
+    }
+    
+    // Case 3: 121.25 (with decmial portion)
+    if (i < src.length() && src [i] == '.') {
+      i++;
+      while (i < src.length() && isdigit (src [i])) {
+	rhs += src.substr(i, 1);
+	i++;
+      }
+    }
+
+    LOG_TRACE << "* adding decimal number: " << lhs << "." << rhs;
+    target.push_back (boost::make_shared<MDE_Number>(lhs, rhs));
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -1048,7 +1100,7 @@ MathDocumentElementPtr MathDocument::makeGeneric (const std::string &buffer)
     e = boost::make_shared<MDE_TextBlock>(buffer);
   }
   else
-    e = boost::make_shared<MDE_MathBlock>(buffer);
+    e = boost::make_shared<MDE_MathBlock>(boost::trim_copy(buffer));
 
   return e;
 }

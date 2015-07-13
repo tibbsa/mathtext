@@ -53,6 +53,11 @@ std::string TextRenderer::renderItemNumber (const MDE_ItemNumber *e)
   return (e->getText() + " ");
 }
 
+std::string TextRenderer::renderNumber (const MDE_Number *e)
+{
+  return (e->getStandardNotation());
+}
+
 std::string TextRenderer::renderOperator (const MDE_Operator *e)
 {
   switch (e->getOperator()) {

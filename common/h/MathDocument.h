@@ -64,6 +64,7 @@ class MathDocument
   /* Interpretation functions */
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
+  bool interpretNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretItemNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);

@@ -118,6 +118,24 @@ class MDE_MathBlock : public MDE_GenericText
 };
 
 /**
+ * A number or set of digits.  Left-hand-side (whole numbers) and 
+ * right-hand-side (decimal portion) are separately stored in case a 
+ * special representation is needed in the output (e.g. EBAE braille).
+ */
+class MDE_Number : public MathDocumentElement
+{
+ protected:
+  std::string lhs, rhs; 
+ public:
+  MDE_Number (const std::string &whole, const std::string &decimals);
+  std::string getWholePortion (void) const;
+  std::string getDecimalPortion (void) const;
+  std::string getStandardNotation (void) const;
+
+  virtual std::string getString (void) const;
+};
+
+/**
  * A question or item number (that appears at the start of a line)
  */
 class MDE_ItemNumber : public MDE_TextBlock

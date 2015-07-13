@@ -30,6 +30,8 @@
 
 // General puncutation
 #define UEB_COMMA            BD_2
+#define UEB_DEGREES          BD_46 BD_245
+#define UEB_PERCENT          BD_46 BD_356
 #define UEB_PERIOD           BD_256 
 
 // Math symbols
@@ -48,7 +50,6 @@
 #define UEB_LEVEL_DOWN       BD_26
 #define UEB_LEVEL_UP         BD_35
 #define UEB_MINUS_SIGN       BD_5 BD_36
-#define UEB_PERCENT          BD_46 BD_256
 #define UEB_PLUS_SIGN        BD_5 BD_235
 #define UEB_ROOT_BEGIN       BD_146
 #define UEB_ROOT_END         BD_346
@@ -116,6 +117,7 @@ class UEBRenderer : public MathRenderer
   DECL_RENDER_FUNC(TextBlock);
   DECL_RENDER_FUNC(MathBlock);
   DECL_RENDER_FUNC(ItemNumber);
+  DECL_RENDER_FUNC(Number);
 
   DECL_RENDER_FUNC(Operator);
   DECL_RENDER_FUNC(Comparator);
