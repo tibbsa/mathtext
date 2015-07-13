@@ -25,7 +25,6 @@
 #include "MathExceptions.h"
 #include "MathSourceFile.h"
 #include "LaTeXRenderer.h"
-#include "TextRenderer.h"
 #include "UEBRenderer.h"
 
 using namespace std;
@@ -123,10 +122,6 @@ int main (const int argc, const char **argv)
 	cout << "- " << *it << endl;
       }
     }
-
-    TextRenderer rt(doc);
-    LOG_INFO << endl <<  "===================== Text Render ====================" << endl;
-    LOG_INFO << rt.render();
 
     if (generateLaTeX) {
       LOG_INFO << endl << "====================== LaTeX Render ===================" << endl;

@@ -193,6 +193,7 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
     }
   }
 
+  //## TODO: sanity check 's' for latex problems and escapes
   output += s;
   isStartOfLine = false;
 
@@ -400,7 +401,7 @@ std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
     MAP(rho) MAPTO(Rho, "P")
     MAP(sigma) MAP(Sigma)
     MAP(tau) MAPTO(Tau, "T")
-    MAP(upsilon) MAP(upsilon)
+    MAP(upsilon) MAP(Upsilon)
     MAP(phi) MAP(Phi)
     MAP(chi) MAPTO(Chi, "X")
     MAP(psi) MAP(Psi)
@@ -409,29 +410,27 @@ std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 
 #undef MAP
 #undef MAPTO
-
+  assert(charmap.count(e->getValue()) == 1);
   return renderMathContent(charmap [e->getValue()]);
 }
 
 std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
 {
-  switch (e->getSymbol()) {
-  case MDE_Symbol::COMMA:
-    return std::string (",");
+  static std::map<MDE_Symbol::Symbol,std::string> map = ba::map_list_of
+    ( MDE_Symbol::COMMA, "," )
+    ( MDE_Symbol::FACTORIAL, "!" )
+    ( MDE_Symbol::LEFT_BRACE, "\\{" )
+    ( MDE_Symbol::LEFT_BRACKET, "[" )
+    ( MDE_Symbol::LEFT_PAREN, "(" )
+    ( MDE_Symbol::PERCENT, "\\%" )
+    ( MDE_Symbol::RIGHT_BRACE, "\\}" )
+    ( MDE_Symbol::RIGHT_BRACKET, "]" )
+    ( MDE_Symbol::RIGHT_PAREN, ")" )
+    ( MDE_Symbol::THEREFORE, "\\therefore " )
+    ;
 
-  case MDE_Symbol::FACTORIAL:
-    return std::string ("!");
-
-  case MDE_Symbol::THEREFORE:
-    return std::string ("\\therefore ");
-
-  case MDE_Symbol::PERCENT:
-    return std::string ("\\%");
-
-  default:
-    assert(false);
-    return renderTextContent (" **SYMBOL ERROR** ");
-  }
+  assert (map.count(e->getSymbol()) == 1);
+  return renderMathContent(map[e->getSymbol()]);
 }
 
 std::string LaTeXRenderer::renderRoot (const MDE_Root *e)

@@ -28,8 +28,9 @@ namespace ba = boost::assign;
 UEBRenderer::UEBRenderer (const MathDocument &md) : MathRenderer(md)
 {
   internalRenderCount = 0;
-  isNumericMode = false;
-  isStartOfLine = true;
+  
+  status.isNumericMode = false;
+  status.isStart = true;
 }
 
 UEBRenderer::~UEBRenderer()
@@ -40,6 +41,10 @@ UEBRenderer::~UEBRenderer()
 void UEBRenderer::beginInternalRender (void)
 {
   internalRenderCount++;
+  statusStack.push (status);
+
+  LOG_TRACE << "## Internal render begun, nesting level " << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart;
+  logIncreaseIndent();
 }
 
 bool UEBRenderer::doingInternalRender (void) const
@@ -51,6 +56,11 @@ void UEBRenderer::endInternalRender (void)
 {
   assert (internalRenderCount != 0);
   internalRenderCount--;
+  status = statusStack.top();
+  statusStack.pop();
+
+  logDecreaseIndent();
+  LOG_TRACE << "## Internal render end, nesting level " << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart;
 }
 
 std::string UEBRenderer::translateToBraille (const std::string &s)
@@ -76,18 +86,33 @@ std::string UEBRenderer::translateBrailleNumbers (const std::string &s)
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  isNumericMode = false;
-
+  // If we are already in numeric mode, and the next character is not
+  // a number but could be confused as such, add a grade 1 terminator.
   for (size_t pos = 0; pos < s.length(); pos++) {
     char c = s [pos];
     char c2 = (pos < (s.length() - 1)) ? s [pos+1] : 0;
+    LOG_TRACE << "@" << pos << ": c=" << c << ", c2=" << c2 << ", INM=" << status.isNumericMode;
 
-    if (!isNumericMode) {
+    if (status.isNumericMode && !isdigit(c) && c != '.') {
+      // If a number is followed by letters A-J, insert a grade 1 (aka 
+      // 'letter' indicator) to return to alphabet mode
+      if ((c >= 'a' && c <= 'j') || (c >= 'A' && c <= 'J')) {
+	LOG_TRACE << " -- inserting grade 1 indicator for following letter";
+	output += UEB_G1;
+      }
+
+      output += c;
+      status.isNumericMode = false;
+      continue;
+    }
+
+    if (!status.isNumericMode) {
       // Insert a number sign before the first digit, or before the decimal 
       // point if we get a number like ".74". 
       if (isdigit(c) || (c == '.' && isdigit(c2))) {
+	LOG_TRACE << " -- adding number sign and entering numeric mode";
 	output += UEB_NUMBER_SIGN;
-	isNumericMode = true;
+	status.isNumericMode = true;
       }
       else {
 	output += c;
@@ -101,20 +126,18 @@ std::string UEBRenderer::translateBrailleNumbers (const std::string &s)
     // In other words, adding 16 to the digit will get the uppercase letter.
 
     // Pass decmials through as-is for now
-    if (c == '.')
+    if (c == '.') {
+      LOG_TRACE << " -- passing through decimal";
       output += ".";
-    else if (c == '0') // handle 0
+    } else if (c == '0') { // handle 0
+      LOG_TRACE << " -- handling '0' digit";
       output += "J";
-    else if (isdigit(c))  // handle 1-9
+    } else if (isdigit(c)) { // handle 1-9
+      LOG_TRACE << " -- handling '1-9' digit";
       output += boost::str(boost::format("%c") % (char)(16 + (int)c));
-    else {
-      // If a number is followed by letters A-J, insert a grade 1 (aka 
-      // 'letter' indicator) to return to alphabet mode
-      if ((c >= 'a' && c <= 'j') || (c >= 'A' && c <= 'J'))
-	output += UEB_G1;
-
-      output += c;
-      isNumericMode = false;
+    } else {
+      // Should never get here.
+      assert(0);
     }
   }
 
@@ -207,13 +230,13 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   braille_string = std::string(showString(braille_buffer.get(), outlen));
   output += braille_string.substr(1, braille_string.length()-2);
 
-  isNumericMode = false;
+  status.isNumericMode = false;
 
   if (!doingInternalRender())
     isStartOfLine = false;
 
   logDecreaseIndent();
-  LOG_TRACE << "exit UEBRenderer::renderTextContent: " << output;
+  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
 
   return output;
 }
@@ -249,8 +272,8 @@ std::string UEBRenderer::renderLineBreak (const MDE_LineBreak *e)
   logIncreaseIndent();
 
   output += "\n";
-  isNumericMode = false;
-  isStartOfLine = true;
+  status.isNumericMode = false;
+  status.isStart = true;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -265,11 +288,11 @@ std::string UEBRenderer::renderTextBlock (const MDE_TextBlock *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (!isStartOfLine)
+  if (!status.isStart)
     output = " ";
 
   output += renderTextContent(e->getText());
-  isStartOfLine = false;
+  status.isStart = false;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -442,7 +465,13 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
   static std::map<MDE_Symbol::Symbol,std::string> symmap = ba::map_list_of
     ( MDE_Symbol::COMMA, UEB_COMMA " ")
     ( MDE_Symbol::FACTORIAL, UEB_FACTORIAL )
+    ( MDE_Symbol::LEFT_BRACE, UEB_LEFT_BRACE )
+    ( MDE_Symbol::LEFT_BRACKET, UEB_LEFT_BRACKET )
+    ( MDE_Symbol::LEFT_PAREN, UEB_LEFT_PAREN )
     ( MDE_Symbol::PERCENT, UEB_PERCENT )
+    ( MDE_Symbol::RIGHT_BRACE, UEB_RIGHT_BRACE )
+    ( MDE_Symbol::RIGHT_BRACKET, UEB_RIGHT_BRACKET )
+    ( MDE_Symbol::RIGHT_PAREN, UEB_RIGHT_PAREN )
     ( MDE_Symbol::THEREFORE, UEB_THEREFORE )
     ;
 
@@ -476,6 +505,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
     std::string renderedRootArgument;
 
     beginInternalRender();
+    status.isNumericMode = false;
     renderedRootArgument = renderFromVector(e->getArgument());
     endInternalRender();
 
@@ -492,7 +522,10 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
     index_exponent = boost::make_shared<MDE_Exponent>(e->getIndex());
 
     beginInternalRender();
+    status.isNumericMode = false;
     renderedRootIndex = renderElement(index_exponent.get());
+
+    status.isNumericMode = false;
     renderedRootArgument = renderFromVector(e->getArgument());
     endInternalRender();
 
@@ -516,7 +549,10 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   logIncreaseIndent();
 
   beginInternalRender();
+  status.isNumericMode = false;
   renderedNumerator = renderFromVector (e->getNumerator());
+
+  status.isNumericMode = false;
   renderedDenominator = renderFromVector (e->getDenominator());
   endInternalRender();
 
@@ -539,6 +575,7 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
   logIncreaseIndent();
 
   beginInternalRender();
+  status.isNumericMode = false;
   renderedExponent = renderFromVector (e->getValue());
   endInternalRender();
 
@@ -566,6 +603,7 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   logIncreaseIndent();
 
   beginInternalRender();
+  status.isNumericMode = false;
   renderedSubscript = renderFromVector (e->getValue());
   endInternalRender();
 

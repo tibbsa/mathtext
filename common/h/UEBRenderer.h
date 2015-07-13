@@ -9,6 +9,7 @@
 #ifndef __UEB_RENDERER_H__
 #define __UEB_RENDERER_H__
 
+#include <stack>
 #include <string>
 
 #include "MathDocument.h"
@@ -31,8 +32,14 @@
 // General puncutation
 #define UEB_COMMA            BD_2
 #define UEB_DEGREES          BD_46 BD_245
+#define UEB_LEFT_BRACE       BD_456 BD_126
+#define UEB_LEFT_BRACKET     BD_46 BD_126
+#define UEB_LEFT_PAREN       BD_5 BD_126
 #define UEB_PERCENT          BD_46 BD_356
 #define UEB_PERIOD           BD_256 
+#define UEB_RIGHT_BRACE      BD_456 BD_345
+#define UEB_RIGHT_BRACKET    BD_46 BD_345
+#define UEB_RIGHT_PAREN      BD_5 BD_345
 
 // Math symbols
 #define UEB_APPROX_EQUAL     " " BD_456 BD_35 " "
@@ -87,16 +94,19 @@
 
 class UEBRenderer : public MathRenderer
 {
- private:
-  std::string status (void) const;
-
-  void setWriteMode (void);
-
  protected:
   bool isStartOfLine;
   bool isNumericMode;
-  unsigned internalRenderCount;
 
+  typedef struct { 
+    bool isNumericMode; 
+    bool isStart;
+  } UEBRenderStatus;
+
+  UEBRenderStatus status;
+  std::stack<UEBRenderStatus> statusStack;
+
+  unsigned internalRenderCount;
   void beginInternalRender (void);
   bool doingInternalRender (void) const;
   void endInternalRender (void);

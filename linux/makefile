@@ -23,7 +23,7 @@ $(BUILD_NUMBER_FILE): $(CPP_FILES)
 	@echo $$(($$(cat $(BUILD_NUMBER_FILE)) + 1)) > $(BUILD_NUMBER_FILE)
 
 clean: 
-	rm $(OBJ_FILES)
+	rm ../build/obj/*
 	rm mathtext
 
 -include $(OBJ_FILES:.o=.d)

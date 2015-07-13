@@ -187,7 +187,7 @@ void MathDocument::interpretLine (const MathDocumentLine &mdl)
  * Interprets the selected text and returns an array of 
  * document elements.
  */
-#define PUSH_CATCH_BUFFER { if (!catch_buffer.empty()) {  elements.push_back (makeGeneric (catch_buffer));  catch_buffer.erase(); } }
+#define PUSH_CATCH_BUFFER { if (!boost::trim_copy(catch_buffer).empty()) { elements.push_back (makeGeneric(catch_buffer)); } catch_buffer.erase(); }
 
 #define ATTEMPT(class) { if (interpret##class (temp_elements, buffer, i)) { PUSH_CATCH_BUFFER; elements.insert (elements.end(), temp_elements.begin(), temp_elements.end()); goto NextChar; } }
 
@@ -567,8 +567,14 @@ bool MathDocument::interpretSymbol (MDEVector &target,
   static const std::vector<SymbolMap> map = boost::assign::list_of 
     ( SymbolMap("%%", MDE_Symbol::PERCENT) )
     ( SymbolMap("/\\", MDE_Symbol::THEREFORE) )
-    ( SymbolMap("!", MDE_Symbol::FACTORIAL) )
     ( SymbolMap(",", MDE_Symbol::COMMA) )
+    ( SymbolMap("{", MDE_Symbol::LEFT_BRACE) )
+    ( SymbolMap("[", MDE_Symbol::LEFT_BRACKET) )
+    ( SymbolMap("(", MDE_Symbol::LEFT_PAREN) )
+    ( SymbolMap("!", MDE_Symbol::FACTORIAL) )
+    ( SymbolMap("}", MDE_Symbol::RIGHT_BRACE) )
+    ( SymbolMap("]", MDE_Symbol::RIGHT_BRACKET) )
+    ( SymbolMap(")", MDE_Symbol::RIGHT_PAREN) )
     ;
   
   const std::string temp = src.substr(i, MAX_SYMBOL_LEN);
@@ -731,7 +737,7 @@ bool MathDocument::interpretExponent (MDEVector &target,
     // advance cursor
     i = pos + 1;
   } else  {
-    std::string exponent_terminators = "+/*=<>()[]{} ~@#_";
+    std::string exponent_terminators = ",+/*=<>()[]{} ~@#_";
     size_t pos;
 
     // Copy characters until we encounter any of the above-mentioned 
@@ -850,7 +856,7 @@ bool MathDocument::interpretSubscript (MDEVector &target,
     // advance cursor
     i = pos + 1;
   } else  {
-    std::string subscript_terminators = "+/*=<>()[]{} ~@#_";
+    std::string subscript_terminators = ",+/*=<>()[]{} ~@#_";
     size_t pos;
 
     // Copy characters until we encounter any of the above-mentioned 
@@ -1033,7 +1039,7 @@ bool MathDocument::interpretRoot (MDEVector &target,
     // advance cursor
     i = pos + 1;
   } else  {
-    std::string root_terminators = "+/*=<>()[]{} ~@#_";
+    std::string root_terminators = ",+/*=<>()[]{} ~@#_";
     size_t pos;
 
     // Copy characters until we encounter any of the above-mentioned 
@@ -1098,9 +1104,9 @@ MathDocumentElementPtr MathDocument::makeGeneric (const std::string &buffer)
   if (inTextMode) {
     sniffTextForMath (buffer);
     e = boost::make_shared<MDE_TextBlock>(buffer);
-  }
-  else
+  } else {
     e = boost::make_shared<MDE_MathBlock>(boost::trim_copy(buffer));
+  }
 
   return e;
 }

@@ -9,6 +9,10 @@
 
 #include <assert.h>
 
+#include <map>
+
+#include <boost/assign.hpp>
+
 #include "logging.h"
 #include "MathDocumentElements.h"
 
@@ -35,20 +39,22 @@ void MDE_Symbol::setSymbol (const MDE_Symbol::Symbol s)
  */
 std::string MDE_Symbol::getString (void) const
 {
-  std::string output;
+  static std::map<MDE_Symbol::Symbol,std::string> map = boost::assign::map_list_of
+    (COMMA, ",")
+    (FACTORIAL, "!")
+    (LEFT_BRACE, "{")
+    (LEFT_BRACKET, "[")
+    (LEFT_PAREN, "(")
+    (PERCENT, "%")
+    (RIGHT_BRACE, "}")
+    (RIGHT_BRACKET, "]")
+    (RIGHT_PAREN, ")")
+    (THEREFORE, "therefore")
+    ;
 
-  if (symbol == COMMA)
-    output = "<,>";
-  else if (symbol == FACTORIAL)
-    output = "<!>";
-  else if (symbol == PERCENT)
-    output = "<%>";
-  else if (symbol == THEREFORE)
-    output = "<therefore>";
-  else
-    assert (false);
+  assert (map.count(symbol) == 1);
 
-  return output;
+  return std::string("<" + map[symbol] + ">");
 }
 
 
