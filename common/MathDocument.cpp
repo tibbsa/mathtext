@@ -818,39 +818,10 @@ bool MathDocument::interpretRoot (MDEVector &target,
     root_index = mr[1];
     i += root_index.length();
   } else if (src [i] == '[') {
-    // read until the closing square bracket
-    int num_nested_brackets = 0;
-    bool foundTerminator = false;
-    size_t pos;
-    for (pos = i+1; pos < src.length(); pos++) {
-      // Skip escaped characters
-      if (src.substr (pos, 2) == "\\[" || src.substr(pos, 2) == "\\]")
-	pos += 2;
-
-      // Look for nested brackets
-      if (src [pos] == '[')
-	num_nested_brackets++;
-      else // Look for the closing brackets
-	if (src [pos] == ']') {
-	  if (!num_nested_brackets) {
-	    foundTerminator = true;
-	    break;
-	  }
-	  else
-	    num_nested_brackets--;
-	}
-  
-      // Add this character to the contents of the root index
-      root_index += src [pos];
-    }
-
-    if (!foundTerminator) {
+    if (!extractGroup(root_index, src, i, "[", "]")) {
       MSG_ERROR(MDM_ROOT_INDEX_NOT_TERMINATED, boost::str(boost::format("text in root index: '%s'") % root_index));
       BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    // advance cursor
-    i = pos + 1;
   }
 
   if (!root_index.empty()) {
@@ -862,84 +833,19 @@ bool MathDocument::interpretRoot (MDEVector &target,
 
   // If this is followed by an open paren '(', read until the closing 
   // paren; otherwise, read until the end of the item
-  if (src [i] == '(') {
-    int num_nested_parens = 0;
-    bool foundTerminator = false;
-    size_t pos;
-    for (pos = i+1; pos < src.length(); pos++) {
-      // Skip escaped characters
-      if (src.substr (pos, 2) == "\\(" || src.substr(pos, 2) == "\\)")
-	pos += 2;
-
-      // Look for nested parentheses
-      if (src [pos] == '(')
-	num_nested_parens++;
-      else // Look for the closing parens
-	if (src [pos] == ')') {
-	  if (!num_nested_parens) {
-	    foundTerminator = true;
-	    break;
-	  }
-	  else
-	    num_nested_parens--;
-	}
   
-      // Add this character to the contents of the root
-      root_argument += src [pos];
+  if (src [i] == '@') {
+    if (!extractGroup(root_argument, src, i, "@", "#", true)) {
+      MSG_ERROR(MDM_ROOT_NOT_TERMINATED, boost::str(boost::format("text in fractional root: '%s'") % root_argument));
+      BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    if (!foundTerminator) {
+  } else if (src [i] == '(') {
+    if (!extractGroup(root_argument, src, i)) {
       MSG_ERROR(MDM_ROOT_NOT_TERMINATED, boost::str(boost::format("text in root: '%s'") % root_argument));
       BOOST_THROW_EXCEPTION (MathDocumentParseException());
     }
-
-    // advance cursor
-    i = pos + 1;
-  } else  {
-    std::string root_terminators = ",+/*=<>()[]{} ~@#_";
-    size_t pos;
-
-    // Copy characters until we encounter any of the above-mentioned 
-    // terminators.  
-    //
-    // The semi-colon is specifically designated as a terminator, 
-    // and should be skipped if it arises.
-    //
-    // Special cases:
-    // - fractions (root can begin with a fraction in which case we 
-    //   take the whole fraction)
-    if (src [i] == '@') {
-      LOG_TRACE << "- for the fractional root, generating root argument via fraction handling";
-      MDEVector fracvec;
-      assert (interpretFraction (fracvec, src, i));
-
-      target.push_back (boost::make_shared<MDE_Root>(root_index_vector, fracvec));
-      return true;
-    }
-
-    for (pos = i; pos < src.length(); pos++) {
-      // skip escaped characters
-      if (src [pos] == '\\') {
-	pos++;
-	continue;
-      }
-
-      // On terminators, skip -- the semi-colon should not be part 
-      // of the final output.
-      if (src [pos] == ';') {
-	pos++;
-	break;
-      }
-
-      // On other terminators, do not "lose them" -- they should wind 
-      // up in the final output.
-      if (isOneOf (src [pos], root_terminators))
-	break;
-
-      root_argument += src [pos];
-    }
-
-    i = pos;
+  } else {
+    extractItem(root_argument, src, i);
   }
 
   LOG_TRACE << "* found root: index='" << root_index << "', argument: '" << root_argument << "'";
