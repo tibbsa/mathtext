@@ -2,6 +2,10 @@ linux/g
 linux/test.*
 linux/mathtext.log
 
+# test files
+test/mttest
+test/mttest.log
+
 # Final files
 build
 linux/mathtext

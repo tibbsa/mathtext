@@ -16,7 +16,11 @@
 #include "utility.h" // for "whitespace" manipualtor
 
 // the logs are also written to LOGFILE
+#ifndef TEST
 #define LOGFILE "mathtext.log"
+#else
+#define LOGFILE "mttest.lgo"
+#endif
 
 // just log messages with severity >= SEVERITY_THRESHOLD are written
 #define SEVERITY_THRESHOLD logging::trivial::trace

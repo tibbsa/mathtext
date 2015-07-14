@@ -49,10 +49,6 @@ namespace expr = boost::log::expressions;
 namespace sinks = boost::log::sinks;
 namespace attrs = boost::log::attributes;
 
-/*
-BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", unsigned int)
-BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp, "TimeStamp", boost::posix_time::ptime)
-*/
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", logging::trivial::severity_level)
 
 BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
@@ -66,7 +62,9 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
   sink->locked_backend()->add_stream(boost::make_shared<std::ofstream>(LOGFILE));
 
   // add "console" output stream to our sink
+#ifndef MT_NO_CONSOLE_LOG
   sink->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
+#endif
 
   // specify the format of the log message
   logging::formatter formatter = expr::stream << expr::smessage;

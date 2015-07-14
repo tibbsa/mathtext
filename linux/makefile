@@ -3,9 +3,6 @@ CORE_CPP_FILES := $(wildcard ../common/*.cpp) $(wildcard ../common/elements/*.cp
 CORE_OBJ_FILES := $(addprefix ../build/obj/,$(notdir $(CORE_CPP_FILES:.cpp=.o)))
 MT_CPP_FILES := main.cpp
 MT_OBJ_FILES := ../build/obj/main.o
-TEST_CPP_FILES := mttest.cpp
-TEST_OBJ_FILES := ../build/obj/mttest.o
-
 BOOST_PATH := ../../boost_1_58_0
 LIBLOUIS_PATH := ../../liblouis
 LD_FLAGS := -g -L$(BOOST_PATH)/stage/lib -L$(LIBLOUIS_PATH)/lib
@@ -14,11 +11,6 @@ CC_FLAGS := -Wall -g -I../common/h -I$(BOOST_PATH) -I$(LIBLOUIS_PATH)/include
 CC_FLAGS += -DMATHTEXT_VERSION_BUILD=$(shell cat makefile.bld)
 CC_FLAGS += -MMD
 VPATH=.:../common:../common/elements:../common/renderers
-
-all: mathtext mttest
-
-mttest: $(TEST_OBJ_FILES) $(CORE_OBJ_FILES)
-	g++ $(LD_FLAGS) -o $@ $^ $(LD_LIBS)
 
 mathtext: $(MT_OBJ_FILES) $(CORE_OBJ_FILES)
 	g++ $(LD_FLAGS) -o $@ $^ $(LD_LIBS)
@@ -35,7 +27,6 @@ $(BUILD_NUMBER_FILE): $(CPP_FILES)
 clean: 
 	rm ../build/obj/*
 	rm mathtext
-	rm mttest
 
 -include $(OBJ_FILES:.o=.d)
 

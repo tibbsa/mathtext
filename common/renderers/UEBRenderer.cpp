@@ -22,7 +22,6 @@
 #include "MathExceptions.h"
 #include "UEBRenderer.h"
 
-
 namespace ba = boost::assign;
 
 UEBRenderer::UEBRenderer() : MathRenderer()
