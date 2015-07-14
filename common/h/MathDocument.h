@@ -42,7 +42,8 @@
 #define MDM_SUBSCRIPT_NOT_TERMINATED 3002
 #define MDM_ROOT_INDEX_NOT_TERMINATED 3003
 #define MDM_ROOT_NOT_TERMINATED 3004
-#define MDM_BARRED_NOT_TERMINATED 3005
+#define MDM_MODIFIER_MISSING_ARGUMENT 3005
+#define MDM_MODIFIER_NOT_TERMINATED 3006
 
 /**
  * A MathDocument holds the contents of an interpreted math file./
@@ -71,7 +72,7 @@ class MathDocument
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretGreekLetter (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSymbol (MDEVector &target, const std::string &src, size_t &i);
-  bool interpretBarred (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretModifier (MDEVector &target, const std::string &src, size_t &i);
   bool interpretFraction (MDEVector &target, const std::string &src, size_t &i);
   bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSubscript (MDEVector &target, const std::string &src, size_t &i);
@@ -82,7 +83,7 @@ class MathDocument
   /* Support functions */
   void sniffTextForMath (const std::string &buffer);
   bool extractItem (std::string &target, const std::string &src, size_t &i, 
-		    const std::string &terminators = ",+/*=<>()[]{} ~@#_");
+		    const std::string &terminators = ",+/*=<>()[]{} ~@#");
   bool extractGroup (std::string &target, const std::string &src, size_t &i,
 		     const std::string &groupOpen = "(", 
 		     const std::string &groupClose = ")",

@@ -494,10 +494,10 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
 
 }
 
-std::string UEBRenderer::renderBarred (const MDE_Barred *e)
+std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
 {
-  std::string output;
   std::string renderedArgument;
+  std::string output;
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
@@ -507,9 +507,28 @@ std::string UEBRenderer::renderBarred (const MDE_Barred *e)
   renderedArgument = renderFromVector(e->getArgument());
   endInternalRender();
 
-  //## TODO: Grouping indicators, etc. are not needed for simple barred 
+  //## TODO: Grouping indicators, etc. are not needed for simple modified 
   // items (such as a number).  Optimize.
-  output = renderMathContent(UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END + UEB_OVERBAR);
+  output = UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END;
+
+  switch (e->getModifier()) {
+  case MDE_Modifier::OVER_ARROW_RIGHT:
+    output += UEB_OVER_ARROW_RIGHT;
+    break;
+
+  case MDE_Modifier::OVER_BAR:
+    output += UEB_OVER_BAR;
+    break;
+
+  case MDE_Modifier::OVER_HAT:
+    output += UEB_OVER_HAT;
+    break;
+
+  default:
+    assert(0);
+  }
+
+  output = renderMathContent(output);
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";

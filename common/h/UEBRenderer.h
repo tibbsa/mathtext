@@ -66,8 +66,14 @@
 #define UEB_UNEQUAL_SIGN     " " BD_5 BD_2356 BD_4 BD_156 " "
 
 // Over/under symbols
-#define UEB_OVERBAR          BD_156
-#define UEB_UNDERBAR         BD_6 BD_156
+#define UEB_OVER_ARROW_RIGHT BD_45 BD_156
+#define UEB_OVER_BAR         BD_156
+#define UEB_OVER_DOT         BD_45 BD_256
+#define UEB_OVER_HAT         BD_5 BD_156
+#define UEB_UNDER_ARROW_RIGHT BD_6 BD_45 BD_156
+#define UEB_UNDER_BAR        BD_6 BD_156
+#define UEB_UNDER_DOT        BD_6 BD_45 BD_256
+#define UEB_UNDER_HAT        BD_6 BD_5 BD_156
 
 // Greek alphabet
 #define UEB_GREEK_ALPHA      "A"
@@ -137,7 +143,7 @@ class UEBRenderer : public MathRenderer
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);
   DECL_RENDER_FUNC(Symbol);
-  DECL_RENDER_FUNC(Barred);
+  DECL_RENDER_FUNC(Modifier);
 
   DECL_RENDER_FUNC(Root);
   DECL_RENDER_FUNC(Fraction);

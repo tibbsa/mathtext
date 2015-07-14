@@ -433,15 +433,33 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
   return renderMathContent(map[e->getSymbol()]);
 }
 
-std::string LaTeXRenderer::renderBarred (const MDE_Barred *e)
+std::string LaTeXRenderer::renderModifier (const MDE_Modifier *e)
 {
   std::string renderedArgument;
+  std::string output;
 
   beginInternalRender();
   renderedArgument = renderFromVector (e->getArgument());
   endInternalRender();
 
-  return renderMathContent(boost::str(boost::format("\\overline{%s} ") % renderedArgument));
+  switch (e->getModifier()) {
+  case MDE_Modifier::OVER_ARROW_RIGHT:
+    output = boost::str(boost::format("\\overrightarrow{%s}") % renderedArgument);
+    break;
+
+  case MDE_Modifier::OVER_BAR:
+    output = boost::str(boost::format("\\overline{%s}") % renderedArgument);
+    break;
+
+  case MDE_Modifier::OVER_HAT:
+    output = boost::str(boost::format("\\hat{%s}") % renderedArgument);
+    break;
+
+  default:
+    assert(0);
+  }
+
+  return renderMathContent(output);
 }
 
 std::string LaTeXRenderer::renderRoot (const MDE_Root *e)

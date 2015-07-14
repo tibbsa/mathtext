@@ -243,20 +243,31 @@ class MDE_Symbol : public MathDocumentElement
 };
 
 /**
- * A conjugate or 'barred' symbol(s)
+ * A special symbol that has at least one argument attached to it, 
+ * typically for showing 'modified' symbols (e.g. with an arrow above, 
+ * or a hat over top, or a line below, or what have you).  
  */
-class MDE_Barred : public MathDocumentElement
+class MDE_Modifier : public MathDocumentElement
 {
- protected:
-  MDEVector argument;
-
  public:
-  MDE_Barred(const MDEVector arg);
+  typedef enum { 
+    OVER_ARROW_RIGHT, // (right-facing arrow above argment - vectors)
+    OVER_BAR, // (horizontal bar above argument - conjugates, etc.)
+    OVER_HAT, // (hat ^ above argment - unit vectors)
+  } Modifier;
 
-  MDEVector getArgument(void) const;
+  MDE_Modifier (const Modifier m, const MDEVector arg);
+  Modifier getModifier (void) const;
+  MDEVector getArgument (void) const;
 
   virtual std::string getString (void) const;
+
+ protected:
+  Modifier modifier;
+  MDEVector argument;
+
 };
+
 
 /**
  * A root sign

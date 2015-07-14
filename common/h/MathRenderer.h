@@ -37,7 +37,7 @@ class MathRenderer
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);
   DECL_RENDER_FUNC(Symbol);
-  DECL_RENDER_FUNC(Barred);
+  DECL_RENDER_FUNC(Modifier);
 
   DECL_RENDER_FUNC(Root);
   DECL_RENDER_FUNC(Fraction);
