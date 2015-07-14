@@ -1,0 +1,29 @@
+
+=== RENDERING 
+
+--- ELEMENTS
+
+Element            EBAE	    UEB     LaTeX
+----------------   ----     ---     -----
+SourceLine	   -	    -	    -
+
+MathModeMarker	   -	    -	    -
+TextModeMarker	   -	    -	    -	
+LineBreak	   -	    -	    -
+
+TextBlock	   -	    -	    -
+MathBlock	   -	    -	    -
+ItemNumber	   -	    -	    -
+Number		   -	    Y	    -
+
+Operator	   -	    -	    -
+Comparator	   -	    -	    -
+GreekLetter	   -	    -	    -
+Symbol		   -	    -	    -
+Modifier	   -	    -	    -
+
+Root		   -	    -	    -
+Fraction	   -	    -	    -
+
+Exponent	   -	    -	    -
+Subscript	   -	    -	    -

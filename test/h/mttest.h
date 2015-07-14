@@ -14,5 +14,6 @@
 #include "catch.hpp"
 
 #define S(str) std::string(str)
+#define CHARSTR(c) std::string(1, c)
 
 #endif 
