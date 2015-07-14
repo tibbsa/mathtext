@@ -25,7 +25,7 @@
 
 namespace ba = boost::assign;
 
-UEBRenderer::UEBRenderer (const MathDocument &md) : MathRenderer(md)
+UEBRenderer::UEBRenderer() : MathRenderer()
 {
   internalRenderCount = 0;
   
@@ -504,7 +504,7 @@ std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
 
   beginInternalRender();
   status.isNumericMode = false;
-  renderedArgument = renderFromVector(e->getArgument());
+  renderedArgument = renderVector(e->getArgument());
   endInternalRender();
 
   //## TODO: Grouping indicators, etc. are not needed for simple modified 
@@ -547,7 +547,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
 
     beginInternalRender();
     status.isNumericMode = false;
-    renderedRootArgument = renderFromVector(e->getArgument());
+    renderedRootArgument = renderVector(e->getArgument());
     endInternalRender();
 
     LOG_TRACE << "- rendered root: " << renderedRootArgument;
@@ -567,7 +567,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
     renderedRootIndex = renderElement(index_exponent.get());
 
     status.isNumericMode = false;
-    renderedRootArgument = renderFromVector(e->getArgument());
+    renderedRootArgument = renderVector(e->getArgument());
     endInternalRender();
 
     LOG_TRACE << "- rendered index: " << renderedRootIndex;
@@ -591,10 +591,10 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
 
   beginInternalRender();
   status.isNumericMode = false;
-  renderedNumerator = renderFromVector (e->getNumerator());
+  renderedNumerator = renderVector (e->getNumerator());
 
   status.isNumericMode = false;
-  renderedDenominator = renderFromVector (e->getDenominator());
+  renderedDenominator = renderVector (e->getDenominator());
   endInternalRender();
 
   LOG_TRACE << "- rendered numerator:   " << renderedNumerator;
@@ -617,7 +617,7 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
 
   beginInternalRender();
   status.isNumericMode = false;
-  renderedExponent = renderFromVector (e->getValue());
+  renderedExponent = renderVector (e->getValue());
   endInternalRender();
 
   // If the exponent is only a number, do not use grouping symbols
@@ -645,7 +645,7 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
 
   beginInternalRender();
   status.isNumericMode = false;
-  renderedSubscript = renderFromVector (e->getValue());
+  renderedSubscript = renderVector (e->getValue());
   endInternalRender();
 
   // If the subscript is only a number, do not use grouping symbols
@@ -663,7 +663,3 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   return output;
 }
 
-std::string UEBRenderer::renderUnsupported (const MathDocumentElement *e)
-{
-  return boost::str(boost::format("<? %s ?>") % typeid(*e).name());
-}

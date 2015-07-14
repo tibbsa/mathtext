@@ -128,6 +128,10 @@ class UEBRenderer : public MathRenderer
   std::string renderMathContent (const std::string &s);
   std::string renderTextContent (const std::string &s);
   
+ public:
+  UEBRenderer();
+  ~UEBRenderer ();
+
   DECL_RENDER_FUNC(SourceLine);
 
   DECL_RENDER_FUNC(MathModeMarker);
@@ -150,12 +154,6 @@ class UEBRenderer : public MathRenderer
 
   DECL_RENDER_FUNC(Exponent);
   DECL_RENDER_FUNC(Subscript);
-
-  virtual std::string renderUnsupported (const MathDocumentElement *e);
-
- public:
-  UEBRenderer (const MathDocument &md);
-  ~UEBRenderer ();
 };
 
 

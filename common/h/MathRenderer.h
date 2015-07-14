@@ -18,9 +18,8 @@
 
 class MathRenderer
 {
- protected:
-  std::string output;
-  const MDEVector &doc;
+ public:
+  MathRenderer();
 
   DECL_RENDER_FUNC(SourceLine);
 
@@ -45,15 +44,9 @@ class MathRenderer
   DECL_RENDER_FUNC(Exponent);
   DECL_RENDER_FUNC(Subscript);
 
-
-  virtual std::string renderFromVector (const MDEVector &v);
   virtual std::string renderElement (const MathDocumentElement *e);
-  virtual std::string renderUnsupported (const MathDocumentElement *e);
-
- public:
-  MathRenderer (const MathDocument &md);
-
-  virtual std::string render (void);
+  virtual std::string renderVector (const MDEVector &v);
+  virtual std::string renderDocument (const MathDocument &document);
 };
 
 

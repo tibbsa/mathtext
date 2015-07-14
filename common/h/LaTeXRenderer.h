@@ -39,7 +39,10 @@ class LaTeXRenderer : public MathRenderer
 
   std::string renderMathContent (const std::string &s);
   std::string renderTextContent (const std::string &s);
-  
+
+ public:
+  LaTeXRenderer();
+
   DECL_RENDER_FUNC(SourceLine);
 
   DECL_RENDER_FUNC(MathModeMarker);
@@ -62,11 +65,6 @@ class LaTeXRenderer : public MathRenderer
 
   DECL_RENDER_FUNC(Exponent);
   DECL_RENDER_FUNC(Subscript);
-
-  virtual std::string renderUnsupported (const MathDocumentElement *e);
-
- public:
-  LaTeXRenderer (const MathDocument &md);
 };
 
 

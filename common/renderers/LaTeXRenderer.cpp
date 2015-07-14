@@ -21,7 +21,7 @@
 
 namespace ba = boost::assign;
 
-LaTeXRenderer::LaTeXRenderer (const MathDocument &md) : MathRenderer(md)
+LaTeXRenderer::LaTeXRenderer() : MathRenderer()
 {
   currentBlockType = MATH;
   currentSegmentType = MATH;
@@ -439,7 +439,7 @@ std::string LaTeXRenderer::renderModifier (const MDE_Modifier *e)
   std::string output;
 
   beginInternalRender();
-  renderedArgument = renderFromVector (e->getArgument());
+  renderedArgument = renderVector (e->getArgument());
   endInternalRender();
 
   switch (e->getModifier()) {
@@ -467,8 +467,8 @@ std::string LaTeXRenderer::renderRoot (const MDE_Root *e)
   std::string renderedIndex, renderedArgument;
 
   beginInternalRender();
-  renderedIndex = renderFromVector (e->getIndex());
-  renderedArgument = renderFromVector (e->getArgument());
+  renderedIndex = renderVector (e->getIndex());
+  renderedArgument = renderVector (e->getArgument());
   endInternalRender();
 
   if (!renderedIndex.empty()) {
@@ -483,8 +483,8 @@ std::string LaTeXRenderer::renderFraction (const MDE_Fraction *e)
   std::string renderedNumerator, renderedDenominator;
 
   beginInternalRender();
-  renderedNumerator = renderFromVector (e->getNumerator());
-  renderedDenominator = renderFromVector (e->getDenominator());
+  renderedNumerator = renderVector (e->getNumerator());
+  renderedDenominator = renderVector (e->getDenominator());
   endInternalRender();
 
   return renderMathContent(boost::str(boost::format("\\frac{%s}{%s}") % renderedNumerator % renderedDenominator));
@@ -495,7 +495,7 @@ std::string LaTeXRenderer::renderExponent (const MDE_Exponent *e)
   std::string renderedExponent;
 
   beginInternalRender();
-  renderedExponent = renderFromVector (e->getValue());
+  renderedExponent = renderVector (e->getValue());
   endInternalRender();
 
   return renderMathContent(boost::str(boost::format("^{%s}") % renderedExponent));
@@ -506,13 +506,8 @@ std::string LaTeXRenderer::renderSubscript (const MDE_Subscript *e)
   std::string renderedSubscript;
 
   beginInternalRender();
-  renderedSubscript = renderFromVector (e->getValue());
+  renderedSubscript = renderVector (e->getValue());
   endInternalRender();
 
   return renderMathContent(boost::str(boost::format("_{%s}") % renderedSubscript));
-}
-
-std::string LaTeXRenderer::renderUnsupported (const MathDocumentElement *e)
-{
-  return boost::str(boost::format("<? %s ?>") % typeid(*e).name());
 }

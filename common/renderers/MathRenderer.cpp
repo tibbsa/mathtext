@@ -11,17 +11,17 @@
 #include "MathExceptions.h"
 #include "MathRenderer.h"
 
-MathRenderer::MathRenderer (const MathDocument &md) : doc(md.m_document)
+MathRenderer::MathRenderer()
 {
 }
 
 
-std::string MathRenderer::render (void)
+std::string MathRenderer::renderDocument (const MathDocument &document)
 {
-  return renderFromVector (doc);
+  return renderVector (document.m_document);
 }
 
-std::string MathRenderer::renderFromVector (const MDEVector &v)
+std::string MathRenderer::renderVector (const MDEVector &v)
 {
   std::string temp;
 
@@ -71,8 +71,12 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
 }
 
 #define PLACEHOLDER(class) \
-  std::string MathRenderer::render##class (const MDE_##class *e)		\
-  { return renderUnsupported (dynamic_cast<const MathDocumentElement*>(e)); }
+  std::string MathRenderer::render##class (const MDE_##class *e) { \
+    std::ostringstream os; \
+    os << "Render callback not implemented in class " << typeid(*this).name() << " for " << typeid(*e).name(); \
+    BOOST_THROW_EXCEPTION (MathDocumentRenderException() << \
+                           mdx_error_info(os.str())); \
+  } 
 
 PLACEHOLDER(SourceLine);
 PLACEHOLDER(MathModeMarker);
@@ -96,10 +100,3 @@ PLACEHOLDER(Fraction);
 PLACEHOLDER(Exponent);
 PLACEHOLDER(Subscript);
 
-std::string MathRenderer::renderUnsupported (const MathDocumentElement *e)
-{
-  std::ostringstream os;
-  os << "Render callback not implemented for type " << typeid(*e).name();
-  BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
-			 mdx_error_info(os.str()));
-}

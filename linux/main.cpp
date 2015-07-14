@@ -126,9 +126,9 @@ int main (const int argc, const char **argv)
     if (generateLaTeX) {
       LOG_INFO << endl << "====================== LaTeX Render ===================" << endl;
       
-      LaTeXRenderer ltr(doc);
+      LaTeXRenderer ltr;
       std::string output;
-      output = ltr.render();
+      output = ltr.renderDocument(doc);
       LOG_INFO << output;
 
       ofstream ofs;
@@ -149,11 +149,11 @@ int main (const int argc, const char **argv)
     }
   
     if (generateBraille) {
-      UEBRenderer ueb(doc);
+      UEBRenderer ueb;
       LOG_INFO << endl << "====================== UEB Render ===================" << endl;
 
       std::string output;
-      output = ueb.render();
+      output = ueb.renderDocument(doc);
       LOG_INFO << output;
 
       ofstream ofs;
@@ -184,7 +184,10 @@ int main (const int argc, const char **argv)
     LOG_FATAL << boost::diagnostic_information(e);
     LOG_FATAL << "=======================================" << endl;
 
-    assert (error != NULL);
+    if (error)
+      cerr << *error;
+    else
+      cerr << "Unspecified error ";
       
     cerr << *error;
     if (file)
