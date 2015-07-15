@@ -27,7 +27,8 @@
 #define UEB_GROUP_BEGIN      BD_126
 #define UEB_GROUP_END        BD_345
 #define UEB_NUMBER_SIGN      BD_3456 
-#define UEB_NUMERIC_MODE_SYMBOLS "ABCDEFGHIJ4"
+#define UEB_NUMERIC_SPACE    BD_5
+#define UEB_NUMERIC_MODE_SYMBOLS "ABCDEFGHIJ" UEB_COMMA UEB_PERIOD UEB_NUMERIC_SPACE
 
 // General puncutation
 #define UEB_COMMA            BD_2
@@ -105,9 +106,6 @@
 class UEBRenderer : public MathRenderer
 {
  protected:
-  bool isStartOfLine;
-  bool isNumericMode;
-
   typedef struct { 
     bool isNumericMode; 
     bool isStart;
@@ -122,7 +120,7 @@ class UEBRenderer : public MathRenderer
   void endInternalRender (void);
 
   std::string translateToBraille (const std::string &s);
-  std::string translateBrailleNumbers (const std::string &s);
+  std::string translateBrailleLetterIndicators (const std::string &s);
   std::string translateBraillePunctuation (const std::string &s);
 
   std::string renderMathContent (const std::string &s);

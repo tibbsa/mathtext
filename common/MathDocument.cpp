@@ -251,8 +251,8 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
     if (inTextMode)
       goto HandleTextBlocks;
 
-    ATTEMPT(Number);
     ATTEMPT(Operator);
+    ATTEMPT(Number);
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
     ATTEMPT(Symbol);
@@ -295,24 +295,49 @@ MDEVector MathDocument::interpretBuffer (const std::string &buffer)
 
 /**
  * Attempts to interpret a number or set of digits.
+ *
+ * A number may follow the form:
+ * 1   1.1   .1   -1   -1.1   -.1
+ * 1,024  2,048,576   4 122 133
+ * All are valid.
  */
 bool MathDocument::interpretNumber (MDEVector &target,
 				    const std::string &src, 
 				    size_t &i)
 {
+  size_t pos = i;
+  bool sawNegative = false;
+  int curDigitGroupCount = 0;
+
+  if (src [pos] == '-') {
+    sawNegative = true;
+    pos++;
+  }
+
   // Case 1: .24 (decmial with no leading numbers)
-  if (src [i] == '.') {
-    if (i <= (src.length() - 1)) {
-      if (isdigit (src [i+1])) {
+  // Allow numeric spaces here if escaped (\ ) but not commas.
+  if (src [pos] == '.') {
+    if (pos <= (src.length() - 1)) {
+      if (isdigit (src [pos+1])) {
 	std::string rhs;
-	i++;
-	while (i < src.length() && isdigit (src [i])) {
-	  rhs += src.substr(i, 1);
-	  i++;
+	pos++;
+
+	while (pos < src.length()) {
+	  if (isdigit (src [pos])) {
+	    rhs += src.substr(pos, 1);
+	    pos++;
+	  } else if (src.substr(pos, 2) == "\\ ") {
+	    rhs += " ";
+	    pos += 2;
+	  }
+	  else
+	    break;
 	}
 	
-	LOG_TRACE << "* adding decimal number w/o whole portion: ." << rhs;
-	target.push_back (boost::make_shared<MDE_Number>(std::string(), rhs));
+	LOG_TRACE << "* adding decimal number w/o whole portion: (neg=" << sawNegative << ") " << rhs;
+	target.push_back (boost::make_shared<MDE_Number>(sawNegative, std::string(), rhs));
+
+	i = pos;
 	return true;
       }
     }
@@ -321,26 +346,76 @@ bool MathDocument::interpretNumber (MDEVector &target,
   }
 
   // Case 2: 121 (plain old number)
-  if (isdigit (src[i])) {
+  if (isdigit (src[pos])) {
     std::string lhs, rhs;
-    while (i < src.length() && isdigit (src [i])) {
-      lhs += src.substr(i, 1);
-      i++;
+
+    // Left hand side: allow numeric spaces (\ ) and comma separations of
+    // thousands.
+    while (pos < src.length()) {
+      if (isdigit(src [pos])) {
+	curDigitGroupCount++;
+	lhs += src.substr(pos, 1);
+	pos++;
+	continue;
+      }
+      else if (src[pos] == ',') {
+	if (curDigitGroupCount <= 3 && (src.length() - pos) >= 3) {
+	  // If we see "," followed by 3 digits and then a non-digit, 
+	  // assume this is a comma within a number
+	  boost::regex re("^\\,\\d{3}");
+	  boost::smatch matches;
+	  if (boost::regex_search(src.substr(pos, 4), matches, re)) {
+	    // If the next character is NOT a number, we assume this 
+	    // was a set of thousands and add it in.  If we see yet 
+	    // another number, then this was not a thousands separator
+	    // and we abort.
+	    // Example when we continue: 1,024,576
+	    // Example when we do not: 1,24837,23872 (treat as separate)
+	    if ((src.length() - pos == 3) || !isdigit(src [pos+4])) {
+	      lhs += src.substr(pos, 4);
+	      pos += 4;
+	      curDigitGroupCount = 0;
+	    }
+	    else
+	      break;
+	  }
+	  else
+	    break;
+	}
+	else
+	  break;
+      } else if (src.substr(pos, 2) == "\\ ") {
+	lhs += " ";
+	pos += 2;
+      }
+      else
+	break;
     }
     
     // Case 3: 121.25 (with decmial portion)
-    if (i < src.length() && src [i] == '.') {
-      i++;
-      while (i < src.length() && isdigit (src [i])) {
-	rhs += src.substr(i, 1);
-	i++;
+    if (pos < src.length() && src [pos] == '.') {
+      pos++;
+
+      while (pos < src.length()) {
+	if (isdigit (src [pos])) {
+	  rhs += src.substr(pos, 1);
+	  pos++;
+	} else if (src.substr(pos, 2) == "\\ ") {
+	  rhs += " ";
+	  pos += 2;
+	}
+	else
+	  break;
       }
     }
 
-    LOG_TRACE << "* adding decimal number: " << lhs << "." << rhs;
-    target.push_back (boost::make_shared<MDE_Number>(lhs, rhs));
+    LOG_TRACE << "* adding decimal number: (neg=" << sawNegative << ") " << lhs << "." << rhs;
+    target.push_back (boost::make_shared<MDE_Number>(sawNegative, lhs, rhs));
+
+    i = pos;
     return true;
   }
+
   return false;
 }
 
@@ -417,6 +492,16 @@ bool MathDocument::interpretOperator (MDEVector &target,
     target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::MULTIPLICATION));
     i++;
   } else if (temp[0] == '-') {
+    // If we see a number immediately after the minus sign, interpret that 
+    // as a negative number instead.
+    if (temp.length() > 1 && isdigit(temp[1])) {
+      LOG_TRACE << "- subtraction sign might be a negative number instead";
+      if (interpretNumber(target, src, i)) {
+	// got added as a number; do nothing
+	return true;
+      }
+    }
+
     LOG_TRACE << "* adding subtraction sign";
     target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::SUBTRACTION));
     i++;

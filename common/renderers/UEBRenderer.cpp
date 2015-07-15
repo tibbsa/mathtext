@@ -69,8 +69,8 @@ std::string UEBRenderer::translateToBraille (const std::string &s)
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  output = translateBrailleNumbers (s);
-  output = translateBraillePunctuation (output);
+  output = translateBraillePunctuation (s);
+  output = translateBrailleLetterIndicators (output);
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -78,66 +78,35 @@ std::string UEBRenderer::translateToBraille (const std::string &s)
   return output;
 }
 
-std::string UEBRenderer::translateBrailleNumbers (const std::string &s)
+std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
 {
   std::string output;
 
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  // If we are already in numeric mode, and the next character is not
-  // a number but could be confused as such, add a grade 1 terminator.
+  bool inNumericMode = false;
+
   for (size_t pos = 0; pos < s.length(); pos++) {
     char c = s [pos];
-    char c2 = (pos < (s.length() - 1)) ? s [pos+1] : 0;
-    LOG_TRACE << "@" << pos << ": c=" << c << ", c2=" << c2 << ", INM=" << status.isNumericMode;
 
-    if (status.isNumericMode && !isdigit(c) && c != '.') {
-      // If a number is followed by letters A-J, insert a grade 1 (aka 
-      // 'letter' indicator) to return to alphabet mode
-      if ((c >= 'a' && c <= 'j') || (c >= 'A' && c <= 'J')) {
-	LOG_TRACE << " -- inserting grade 1 indicator for following letter";
-	output += UEB_G1;
-      }
-
+    if (c == '#') {
+      inNumericMode = true;
       output += c;
-      status.isNumericMode = false;
       continue;
     }
 
-    if (!status.isNumericMode) {
-      // Insert a number sign before the first digit, or before the decimal 
-      // point if we get a number like ".74". 
-      if (isdigit(c) || (c == '.' && isdigit(c2))) {
-	LOG_TRACE << " -- adding number sign and entering numeric mode";
-	output += UEB_NUMBER_SIGN;
-	status.isNumericMode = true;
+    // End numeric mode if we find anything other than "A-F", "4" (period), 
+    // "2" (comma)
+    if (inNumericMode) {
+      if (!isOneOf(c, UEB_NUMERIC_MODE_SYMBOLS)) {
+	inNumericMode = false;
       }
-      else {
-	output += c;
-	continue;   
-      }   
+    } else if (c >= 'A' && c <= 'Z') {
+      output += UEB_CAPITAL_SIGN;
     }
 
-    // In braille, numbers 1-9(0) are represented by letters A-J.  On the 
-    // ASCII tables, numbers 1-9 are code 49-57, and number 0 is code 48.
-    // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
-    // In other words, adding 16 to the digit will get the uppercase letter.
-
-    // Pass decmials through as-is for now
-    if (c == '.') {
-      LOG_TRACE << " -- passing through decimal";
-      output += ".";
-    } else if (c == '0') { // handle 0
-      LOG_TRACE << " -- handling '0' digit";
-      output += "J";
-    } else if (isdigit(c)) { // handle 1-9
-      LOG_TRACE << " -- handling '1-9' digit";
-      output += boost::str(boost::format("%c") % (char)(16 + (int)c));
-    } else {
-      // Should never get here.
-      assert(0);
-    }
+    output += c;
   }
 
   logDecreaseIndent();
@@ -185,9 +154,17 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  output = s;
-  if (!doingInternalRender())
-    isStartOfLine = false;
+  // If we're in numeric mode, we might need a letter indicator here.
+  if (status.isNumericMode) {
+    if (isOneOf(s[0], "abcdefghij")) {
+      LOG_TRACE << "- inserting letter indicator before string b/c in math mode";
+      output = UEB_G1;
+      status.isNumericMode = false;
+    }
+  }
+
+  output += s;
+  status.isStart = false;
   
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -230,9 +207,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   output += braille_string.substr(1, braille_string.length()-2);
 
   status.isNumericMode = false;
-
-  if (!doingInternalRender())
-    isStartOfLine = false;
+  status.isStart = false;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -301,11 +276,13 @@ std::string UEBRenderer::renderTextBlock (const MDE_TextBlock *e)
 std::string UEBRenderer::renderMathBlock (const MDE_MathBlock *e)
 {
   std::string output;
+  std::string brl;
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  output = renderMathContent(translateToBraille(e->getText()));
+  brl = translateToBraille(e->getText());
+  output = renderMathContent(brl);
   
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -319,7 +296,8 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  output = renderMathContent(translateToBraille(e->getText() + " "));
+  //## todo fix up
+  output = e->getText();
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
@@ -329,10 +307,53 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
 std::string UEBRenderer::renderNumber (const MDE_Number *e)
 {
   std::string output;
+  std::string printNumber;
+  std::string brailleNumber;
+
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  output = renderMathContent(translateToBraille(e->getStandardNotation()));
+  size_t pos = 0;
+  printNumber = e->getStandardNotation();
+  if (printNumber[pos] == '-') {
+    brailleNumber = "-";
+    pos++;
+  }
+
+  brailleNumber += UEB_NUMBER_SIGN;
+  
+  // If we are already in numeric mode, and the next character is not
+  // a number but could be confused as such, add a grade 1 terminator.
+  while (pos < printNumber.length()) {
+    char c = printNumber[pos];
+
+    // We should only see "0-9", ".", "," and a space here.
+    LOG_TRACE << "@" << (unsigned)pos << ", char " << c;
+    assert (isdigit(c) || (c == '.') || (c == ',') || (c == ' '));
+
+    if (isdigit(c)) {
+      // In braille, numbers 1-9(0) are represented by letters A-J.  On the 
+      // ASCII tables, numbers 1-9 are code 49-57, and number 0 is code 48.
+      // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
+      // In other words, adding 16 to the digit will get the uppercase letter.
+      brailleNumber += (c == '0') 
+	? "J" 
+	: boost::str(boost::format("%c") % (char)(16 + (int)c));
+    } else if (c == '.') {
+      brailleNumber += UEB_PERIOD;
+    } else if (c == ',') {
+      brailleNumber += UEB_COMMA;
+    } else if (c == ' ') {
+      brailleNumber += UEB_NUMERIC_SPACE;
+    } else {
+      assert(0);
+    }
+
+    pos++;
+  }
+
+  output = renderMathContent(brailleNumber);
+  status.isNumericMode = true;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
