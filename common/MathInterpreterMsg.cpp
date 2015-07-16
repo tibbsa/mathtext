@@ -6,9 +6,15 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <assert.h>
+
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
+
+#include <boost/assign.hpp>
+#include <boost/format.hpp>
 
 #include "MathInterpreterMsg.h"
 
@@ -23,11 +29,11 @@
  * @param text Contents of the line
  */
 MathInterpreterMsg::MathInterpreterMsg (const MathInterpreterMsg::Category category,
-				  const unsigned long msgCode,
-				  const std::string &source_filename,
-				  const unsigned long source_linenumber1, 
-				  const unsigned long source_linenumber2, 
-				  const std::string &msg) : m_category(category), m_code(msgCode), m_filename(source_filename), m_line1(source_linenumber1), m_line2(source_linenumber2), m_message(msg)
+					const MathInterpreterMsg::Code msgCode,
+					const std::string &source_filename,
+					const unsigned long source_linenumber1, 
+					const unsigned long source_linenumber2, 
+					const std::string &msg) : m_category(category), m_code(msgCode), m_filename(source_filename), m_line1(source_linenumber1), m_line2(source_linenumber2), m_message(msg)
 {
 }
 
@@ -44,7 +50,7 @@ MathInterpreterMsg::Category MathInterpreterMsg::getCategory (void) const
 /**
  * Retrieve the numberic message code associated with this message.
  */
-unsigned long MathInterpreterMsg::getCode (void) const
+MathInterpreterMsg::Code MathInterpreterMsg::getCode (void) const
 {
   return m_code;
 }
@@ -86,7 +92,24 @@ unsigned long MathInterpreterMsg::getEndLineNumber (void) const
  */
 std::string MathInterpreterMsg::getMessage (void) const
 {
-  return m_message;
+  static std::map<MathInterpreterMsg::Code,std::string> error_map = boost::assign::map_list_of 
+    (NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
+    (NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
+    (SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
+    (SUSPECT_TEXT_IN_MATH, "Suspected text material in a math passage")
+    (SUSPECT_FRACTION, "Suspect missing open fraction symbol (@)")
+    (UNKNOWN_GREEK, "Unknown Greek character symbol")
+    (FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
+    (EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (ROOT_INDEX_NOT_TERMINATED, "Root includes a complex index with opening bracket '[' but is never terminated with a closing bracket ']'")
+    (ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (MODIFIER_NOT_TERMINATED, "Text attached to a symbol begins with opening paren '(' but is never terminated with a closing paren ')'")
+    ;
+
+  assert (error_map.count(m_code) == 1);
+
+  return (boost::str(boost::format("%s - %s") % error_map[m_code] % m_message));
 }
 
 /**

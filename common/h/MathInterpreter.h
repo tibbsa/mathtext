@@ -19,30 +19,14 @@
 /**
  * Macros to help with message adding
  */
-#define MSG_INFO(code,msg) addMessage(MathInterpreterMsg::INFO, code, msg)
-#define MSG_INFOX(code) addMessage(MathInterpreterMsg::INFO, code)
-#define MSG_NOTICE(code,msg) addMessage(MathInterpreterMsg::NOTICE, code, msg)
-#define MSG_NOTICEX(code) addMessage(MathInterpreterMsg::NOTICE, code)
-#define MSG_WARNING(code,msg) addMessage(MathInterpreterMsg::WARNING, code, msg)
-#define MSG_WARNINGX(code) addMessage(MathInterpreterMsg::WARNING, code)
-#define MSG_ERROR(code,msg) addMessage(MathInterpreterMsg::ERROR, code, msg)
-#define MSG_ERRORX(code) addMessage(MathInterpreterMsg::ERROR, code)
-
-/**
- * Message codes: 1xxx are notices, 2xxx are warnings, 3xxx are errors
- */
-#define MDM_NESTED_TEXT_MODE 2000
-#define MDM_NESTED_MATH_MODE 2001
-#define MDM_SUSPECT_MATH_IN_TEXT 2010
-#define MDM_SUSPECT_FRACTION 2011
-#define MDM_UNKNOWN_GREEK 2030
-#define MDM_FRACTION_NOT_TERMINATED 3000
-#define MDM_EXPONENT_NOT_TERMINATED 3001
-#define MDM_SUBSCRIPT_NOT_TERMINATED 3002
-#define MDM_ROOT_INDEX_NOT_TERMINATED 3003
-#define MDM_ROOT_NOT_TERMINATED 3004
-#define MDM_MODIFIER_MISSING_ARGUMENT 3005
-#define MDM_MODIFIER_NOT_TERMINATED 3006
+#define MSG_INFO(code,msg) addMessage(MathInterpreterMsg::INFO, MathInterpreterMsg::code, msg)
+#define MSG_INFOX(code) addMessage(MathInterpreterMsg::INFO, MathInterpreterMsg::code)
+#define MSG_NOTICE(code,msg) addMessage(MathInterpreterMsg::NOTICE, MathInterpreterMsg::code, msg)
+#define MSG_NOTICEX(code) addMessage(MathInterpreterMsg::NOTICE, MathInterpreterMsg::code)
+#define MSG_WARNING(code,msg) addMessage(MathInterpreterMsg::WARNING, MathInterpreterMsg::code, msg)
+#define MSG_WARNINGX(code) addMessage(MathInterpreterMsg::WARNING, MathInterpreterMsg::code)
+#define MSG_ERROR(code,msg) addMessage(MathInterpreterMsg::ERROR, MathInterpreterMsg::code, msg)
+#define MSG_ERRORX(code) addMessage(MathInterpreterMsg::ERROR, MathInterpreterMsg::code)
 
 class MathInterpreter
 {
@@ -87,7 +71,7 @@ class MathInterpreter
 
   /* Reporting functions */
   void addMessage (const MathInterpreterMsg::Category category, 
-		   const unsigned long msgCode,
+		   const MathInterpreterMsg::Code msgCode,
 		   const std::string &msg = std::string());
 
  public:
@@ -95,8 +79,6 @@ class MathInterpreter
   void interpret (void);
   bool haveMessages (void) const;
   const std::vector<MathInterpreterMsg> &getMessages (void) const;
-
-  static std::string getErrorMessage (const unsigned long errorCode);
 
   friend class MathRenderer;
 };

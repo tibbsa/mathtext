@@ -94,29 +94,6 @@ const std::vector<MathInterpreterMsg> &MathInterpreter::getMessages (void) const
 }
 
 /**
- * Returns a textual description of a particular error message.
- */
-std::string MathInterpreter::getErrorMessage (const unsigned long errorCode)
-{
-  static std::map<unsigned long,std::string> error_map = boost::assign::map_list_of 
-    (MDM_NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
-    (MDM_NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
-    (MDM_SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")
-    (MDM_SUSPECT_FRACTION, "Suspect missing open fraction symbol (@)")
-    (MDM_UNKNOWN_GREEK, "Unknown Greek character symbol")
-    (MDM_FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
-    (MDM_EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
-    (MDM_SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")
-    (MDM_ROOT_INDEX_NOT_TERMINATED, "Root includes a complex index with opening bracket '[' but is never terminated with a closing bracket ']'")
-    (MDM_ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
-    (MDM_MODIFIER_NOT_TERMINATED, "Text attached to a symbol begins with opening paren '(' but is never terminated with a closing paren ')'");
-    ;
-
-  assert (error_map.count(errorCode) > 0);
-  return error_map [errorCode];
-}
-
-/**
  * Interprets a single line in the document
  *
  * @param mdl A single line in the document
@@ -148,7 +125,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
 
       m_doc.addElementPtr (boost::make_shared<MDE_TextModeMarker>());
     } else {
-      MSG_WARNING(MDM_NESTED_TEXT_MODE, boost::str(boost::format("text block began at line %u") % textBlockBeganLine));
+      MSG_WARNING(NESTED_TEXT_MODE, boost::str(boost::format("text block began at line %u") % textBlockBeganLine));
     }
 
     goto EOL;
@@ -164,7 +141,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
 
       m_doc.addElementPtr (boost::make_shared<MDE_MathModeMarker>());
     } else {
-      MSG_WARNING(MDM_NESTED_MATH_MODE, boost::str(boost::format("math block began at line %u") % mathBlockBeganLine));
+      MSG_WARNING(NESTED_MATH_MODE, boost::str(boost::format("math block began at line %u") % mathBlockBeganLine));
     }
 
     goto EOL;
@@ -225,7 +202,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 	elements.push_back (boost::make_shared<MDE_MathModeMarker>());
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in math mode";
-	MSG_WARNINGX(MDM_NESTED_MATH_MODE);
+	MSG_WARNINGX(NESTED_MATH_MODE);
       }
 
       goto AdvanceNextChar;
@@ -239,7 +216,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 	elements.push_back (boost::make_shared<MDE_TextModeMarker>());
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in text mode";
-	MSG_WARNINGX(MDM_NESTED_TEXT_MODE);
+	MSG_WARNINGX(NESTED_TEXT_MODE);
       }
 
       goto AdvanceNextChar;
@@ -632,7 +609,7 @@ bool MathInterpreter::interpretGreekLetter (MDEVector &target,
     }
   }
 
-  MSG_WARNING(MDM_UNKNOWN_GREEK, boost::str(boost::format("'%%%c' does not represent a greek letter") % c));
+  MSG_WARNING(UNKNOWN_GREEK, boost::str(boost::format("'%%%c' does not represent a greek letter") % c));
   return false;
 }
 
@@ -730,7 +707,7 @@ bool MathInterpreter::interpretModifier (MDEVector &target,
       i++;
 
     if (i == src.length()) {
-      MSG_ERROR(MDM_MODIFIER_MISSING_ARGUMENT, boost::str(boost::format("%s symbol") % mi.modifierName));
+      MSG_ERROR(MODIFIER_MISSING_ARGUMENT, boost::str(boost::format("%s symbol") % mi.modifierName));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
 
@@ -739,12 +716,12 @@ bool MathInterpreter::interpretModifier (MDEVector &target,
     std::string argument;
     if (src [i] == '(') {
       if (!extractGroup(argument, src, i)) {
-	MSG_ERROR(MDM_MODIFIER_NOT_TERMINATED, boost::str(boost::format("text found inside %s symbol so far: '%s'") % mi.modifierName % argument));
+	MSG_ERROR(MODIFIER_NOT_TERMINATED, boost::str(boost::format("text found inside %s symbol so far: '%s'") % mi.modifierName % argument));
 	BOOST_THROW_EXCEPTION (MathInterpreterException());
       }
     } else if (src [i] == '@') {
       if (!extractGroup(argument, src, i, "@", "#", true)) {
-	MSG_ERROR(MDM_MODIFIER_NOT_TERMINATED, boost::str(boost::format("partial fraction inside %s symbol so far: '%s'") % mi.modifierName % argument));
+	MSG_ERROR(MODIFIER_NOT_TERMINATED, boost::str(boost::format("partial fraction inside %s symbol so far: '%s'") % mi.modifierName % argument));
 	BOOST_THROW_EXCEPTION (MathInterpreterException());
       }
     } else {
@@ -775,7 +752,7 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
 				      size_t &i)
 {
   if (src [i] == '#' || src [i] == '~') {
-    MSG_WARNING(MDM_SUSPECT_FRACTION, boost::str(boost::format("found '%c' modifier outside of a fraction") % src [i]));
+    MSG_WARNING(SUSPECT_FRACTION, boost::str(boost::format("found '%c' modifier outside of a fraction") % src [i]));
     return false;
   }
 
@@ -824,7 +801,7 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
   }
 
   if (!foundTerminator) {
-    MSG_ERROR(MDM_FRACTION_NOT_TERMINATED, boost::str(boost::format("end of line encountered while still inside %d fraction%s") % (num_nested_fractions+1) % (num_nested_fractions >= 2 ? "s" : "")));
+    MSG_ERROR(FRACTION_NOT_TERMINATED, boost::str(boost::format("end of line encountered while still inside %d fraction%s") % (num_nested_fractions+1) % (num_nested_fractions >= 2 ? "s" : "")));
 
     BOOST_THROW_EXCEPTION (MathInterpreterException());
   }
@@ -872,12 +849,12 @@ bool MathInterpreter::interpretExponent (MDEVector &target,
   i++;
   if (src [i] == '(') {
     if (!extractGroup(exponent_contents, src, i)) {
-      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
+      MSG_ERROR(EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else if (src [i] == '@') {
     if (!extractGroup(exponent_contents, src, i, "@", "#", true)) {
-      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
+      MSG_ERROR(EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in exponent: '%s'") % exponent_contents));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else {
@@ -921,12 +898,12 @@ bool MathInterpreter::interpretSubscript (MDEVector &target,
   i++;
   if (src [i] == '(') {
     if (!extractGroup(subscript_contents, src, i)) {
-      MSG_ERROR(MDM_SUBSCRIPT_NOT_TERMINATED, boost::str(boost::format("text in subscript: '%s'") % subscript_contents));
+      MSG_ERROR(SUBSCRIPT_NOT_TERMINATED, boost::str(boost::format("text in subscript: '%s'") % subscript_contents));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else if (src [i] == '@') {
     if (!extractGroup(subscript_contents, src, i, "@", "#", true)) {
-      MSG_ERROR(MDM_EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in fractional subscript: '%s'") % subscript_contents));
+      MSG_ERROR(EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in fractional subscript: '%s'") % subscript_contents));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else {
@@ -987,7 +964,7 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
     i += root_index.length();
   } else if (src [i] == '[') {
     if (!extractGroup(root_index, src, i, "[", "]")) {
-      MSG_ERROR(MDM_ROOT_INDEX_NOT_TERMINATED, boost::str(boost::format("text in root index: '%s'") % root_index));
+      MSG_ERROR(ROOT_INDEX_NOT_TERMINATED, boost::str(boost::format("text in root index: '%s'") % root_index));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   }
@@ -1004,12 +981,12 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
   
   if (src [i] == '@') {
     if (!extractGroup(root_argument, src, i, "@", "#", true)) {
-      MSG_ERROR(MDM_ROOT_NOT_TERMINATED, boost::str(boost::format("text in fractional root: '%s'") % root_argument));
+      MSG_ERROR(ROOT_NOT_TERMINATED, boost::str(boost::format("text in fractional root: '%s'") % root_argument));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else if (src [i] == '(') {
     if (!extractGroup(root_argument, src, i)) {
-      MSG_ERROR(MDM_ROOT_NOT_TERMINATED, boost::str(boost::format("text in root: '%s'") % root_argument));
+      MSG_ERROR(ROOT_NOT_TERMINATED, boost::str(boost::format("text in root: '%s'") % root_argument));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else {
@@ -1072,7 +1049,7 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
     suspicious_items.push_back ("Absolute Values");
 
   if (!suspicious_items.empty()) {
-    MSG_WARNING(MDM_SUSPECT_MATH_IN_TEXT, boost::str(boost::format("found %s in '%s'") % ba::join(suspicious_items, ", ") % buffer));
+    MSG_WARNING(SUSPECT_MATH_IN_TEXT, boost::str(boost::format("found %s in '%s'") % ba::join(suspicious_items, ", ") % buffer));
   }
 }
 #undef CONTAINS
@@ -1194,25 +1171,20 @@ bool MathInterpreter::extractGroup (std::string &target, const std::string &buff
  * Adds a warning/info/notice message to the log for later perusal.
  */
 void MathInterpreter::addMessage (const MathInterpreterMsg::Category category,
-			       const unsigned long msgCode,
-			       const std::string &msg)
+				  const MathInterpreterMsg::Code msgCode,
+				  const std::string &msg)
 {
   assert (pCurLine != NULL);
 
-  std::string message;
-  message = getErrorMessage(msgCode);
-  if (!msg.empty())
-    message = message + " - " + msg;
+  MathInterpreterMsg message(category, 
+			     msgCode,
+			     pCurLine->getFilename(),
+			     pCurLine->getStartLineNumber(),
+			     pCurLine->getEndLineNumber(),
+			     msg);
 
-  MathInterpreterMsg mdm(category, 
-		      msgCode,
-		      pCurLine->getFilename(),
-		      pCurLine->getStartLineNumber(),
-		      pCurLine->getEndLineNumber(),
-		      message);
-
-  m_messages.push_back(mdm);
-  LOG_INFO << "MSG: " << mdm;
+  m_messages.push_back(message);
+  LOG_INFO << "MSG: " << message;
 }
 
 /* ========================= PRIVATE FUNCTIONS =========================== */
