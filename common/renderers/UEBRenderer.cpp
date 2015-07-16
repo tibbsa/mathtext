@@ -197,7 +197,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
     LOG_ERROR << "! Braille translation error on '" << s << "'!";
     std::ostringstream os;
     os << "Error occurred while trying to render braille for text: '" << s << "'";
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
   }
 
@@ -378,7 +378,7 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
     LOG_ERROR << "! Operator translation error - unknown operator on " << (*e);
     std::ostringstream os;
     os << "The braille generator encountered a mathematical operator it does not understand. Please contact technical support for assistance. (Operator: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
   }
 
@@ -410,7 +410,7 @@ std::string UEBRenderer::renderComparator (const MDE_Comparator *e)
     LOG_ERROR << "! Comparator translation error - unknown comparator on " << (*e);
     std::ostringstream os;
     os << "The braille generator encountered a mathematical comparator it does not understand. Please contact technical support for assistance. (Comparator: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
   }
 
@@ -467,7 +467,7 @@ std::string UEBRenderer::renderGreekLetter (const MDE_GreekLetter *e)
     LOG_ERROR << "! Greek translation error - unknown character on " << (*e);
     std::ostringstream os;
     os << "The braille generator encountered a Greek letter it does not understand. Please contact technical support for assistance. (Letter: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
   }
 
@@ -502,7 +502,7 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
     LOG_ERROR << "! Symbol translation error - unknown symbol on " << (*e);
     std::ostringstream os;
     os << "The braille generator encountered a mathematical symbol it does not understand. Please contact technical support for assistance. (Symbol: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
   }
 

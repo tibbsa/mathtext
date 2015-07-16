@@ -18,7 +18,7 @@ MathRenderer::MathRenderer()
 
 std::string MathRenderer::renderDocument (const MathDocument &document)
 {
-  return renderVector (document.m_document);
+  return renderVector (document.getDocument());
 }
 
 std::string MathRenderer::renderVector (const MDEVector &v)
@@ -65,7 +65,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
 
   std::ostringstream os;
   os << "Unsupported element type in MathRenderer::renderElement(): " << typeid(*e).name();
-  BOOST_THROW_EXCEPTION (MathDocumentRenderException() <<
+  BOOST_THROW_EXCEPTION (MathRenderException() <<
 			 mdx_error_info(os.str()));
   
 }
@@ -74,7 +74,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   std::string MathRenderer::render##class (const MDE_##class *e) { \
     std::ostringstream os; \
     os << "Render callback not implemented in class " << typeid(*this).name() << " for " << typeid(*e).name(); \
-    BOOST_THROW_EXCEPTION (MathDocumentRenderException() << \
+    BOOST_THROW_EXCEPTION (MathRenderException() << \
                            mdx_error_info(os.str())); \
   } 
 
