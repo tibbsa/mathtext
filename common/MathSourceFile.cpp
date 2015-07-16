@@ -23,8 +23,6 @@
 namespace ba = boost::algorithm;
 
 
-/* ========================= PUBLIC FUNCTION =============================== */
-
 /**
  * Loads a source document from the specified file.
  *
@@ -37,9 +35,6 @@ namespace ba = boost::algorithm;
  */
 void MathSourceFile::loadFromFile (const std::string &filename)
 {
-  LOG_TRACE << "enter MathSourceFile::loadFromFile (" << filename << ")";
-  logIncreaseIndent();
-
   assert (!filename.empty());
   
   std::ifstream ifs;
@@ -74,20 +69,7 @@ void MathSourceFile::loadFromFile (const std::string &filename)
   // \r characters as we do not care about them.
   boost::replace_all(file_contents, "\r", "");
   ingest (filename, file_contents);
-
-  /*
-  LOG_TRACE << "Ingested document:";
-  for (std::vector<MathDocumentLine>::iterator it = m_document.begin();
-       it != m_document.end(); ++it) {
-    LOG_TRACE << *it;
-  }
-  */
-
-  logDecreaseIndent();
-  LOG_TRACE << "exit MathSourceFile::loadFromFile (" << filename << ")";
 }
-
-/* ========================= INTERNAL FUNCTIONS =========================== */
 
 /**
 * Appends text from a buffer (sourced from 'filename') to the document.
@@ -104,10 +86,6 @@ void MathSourceFile::ingest (const std::string &filename,
   unsigned long lineNumber = 1;
   unsigned long continuedLineStartedNumber = 0;
   std::string curLine;
-
-  LOG_TRACE << "enter MathSourceFile::ingest (" << filename << ")";
-  logIncreaseIndent();
-  LOG_INFO << "Ingesting from " << filename;
 
   for (unsigned i = 0; i < buffer.length(); i++, lineNumber++) {
     // Grab a whole line of text
@@ -193,9 +171,6 @@ void MathSourceFile::ingest (const std::string &filename,
     curLine.clear();
     continuedLineStartedNumber = 0;
   }
-
-  logDecreaseIndent();
-  LOG_TRACE << "exit MathSourceFile::ingest (" << filename << ")";
 }
 
 /* ========================= PRIVATE FUNCTIONS =========================== */

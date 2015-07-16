@@ -24,14 +24,16 @@ class MathSourceFile
   std::vector<MathDocumentLine> m_document;
 
   /**
+   * Initiate processing of a math document from the given file.
+   */
+  void loadFromFile (const std::string &filename);
+
+ protected:
+  /**
    * Pull document text into the m_document buffer.
    */
   void ingest (const std::string &filename, const std::string &buffer);
 
-  /**
-   * Initiate processing of a math document from the given file.
-   */
-  void loadFromFile (const std::string &filename);
 };
 
 #endif /* __MATH_SOURCE_FILE_H__ */
