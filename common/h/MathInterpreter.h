@@ -36,12 +36,11 @@ class MathInterpreter
   std::vector<MathInterpreterMsg> m_messages;
   
   /* Translation "current status" parameters */
-  const MathDocumentLine *pCurLine;
-  bool inTextBlock; // lines default to being 'text' lines if enabled
-  bool inTextMode; // whether translator is currently seeing 'text'
-  bool isStartOfLine;
-  unsigned long textBlockBeganLine;
-  unsigned long mathBlockBeganLine;
+  const MathDocumentLine *m_pCurLine;
+  bool m_inTextBlock; // lines default to being 'text' lines if enabled
+  bool m_inTextMode; // whether translator is currently seeing 'text'
+  bool m_isStartOfLine;
+  unsigned long m_blockBeganLineNum; // line at which current block began
 
   /* Interpretation functions */
   void interpretLine (const MathDocumentLine &mdl);
@@ -79,8 +78,6 @@ class MathInterpreter
   void interpret (void);
   bool haveMessages (void) const;
   const std::vector<MathInterpreterMsg> &getMessages (void) const;
-
-  friend class MathRenderer;
 };
 
 #endif /* __MATH_INTERPRETER_H__ */

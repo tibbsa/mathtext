@@ -49,10 +49,9 @@ void MathInterpreter::interpret (void)
   logIncreaseIndent();
 
   // Reset interpreter setup
-  inTextMode = false;
-  inTextBlock = false;
-  textBlockBeganLine = 0;
-  mathBlockBeganLine = 0;
+  m_inTextMode = false;
+  m_inTextBlock = false;
+  m_blockBeganLineNum = 1;
 
   const std::vector<MathDocumentLine> &srcDoc = m_src.getDocument();
   for (std::vector<MathDocumentLine>::const_iterator it = srcDoc.begin(); 
@@ -105,43 +104,40 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
   LOG_TRACE << "enter MathInterpreter::interpretLine(" << mdl << ")";
   logIncreaseIndent();
 
-  pCurLine = &mdl;
+  m_pCurLine = &mdl;
   std::string buffer = mdl.getContent();
 
   /* Set defaults for this line */
-  inTextMode = inTextBlock;
-  isStartOfLine = true;
+  m_inTextMode = m_inTextBlock;
+  m_isStartOfLine = true;
 
   /*
    * MAIN MODE SWITCHES
    */
   if (buffer == "&&") {
-    if (!inTextBlock) {
+    if (!m_inTextBlock) {
       LOG_TRACE << "* entering text block mode";
-      inTextBlock = true;
-      inTextMode = true;
-      textBlockBeganLine = mdl.getStartLineNumber();
-      mathBlockBeganLine = 0;
+      m_inTextBlock = true;
+      m_inTextMode = true;
+      m_blockBeganLineNum  = mdl.getStartLineNumber();
 
       m_doc.addElementPtr (boost::make_shared<MDE_TextModeMarker>());
     } else {
-      MSG_WARNING(NESTED_TEXT_MODE, boost::str(boost::format("text block began at line %u") % textBlockBeganLine));
+      MSG_WARNING(NESTED_TEXT_MODE, boost::str(boost::format("text block began at line %u") % m_blockBeganLineNum));
     }
 
     goto EOL;
   }
 
   if (buffer == "$$") {
-    if (inTextBlock) {
+    if (m_inTextBlock) {
       LOG_TRACE << "* entering math block mode";
-      inTextBlock = false;
-      inTextMode = false;
-      mathBlockBeganLine = mdl.getStartLineNumber();
-      textBlockBeganLine = 0;
-
+      m_inTextBlock = false;
+      m_inTextMode = false;
+      m_blockBeganLineNum = mdl.getStartLineNumber();
       m_doc.addElementPtr (boost::make_shared<MDE_MathModeMarker>());
     } else {
-      MSG_WARNING(NESTED_MATH_MODE, boost::str(boost::format("math block began at line %u") % mathBlockBeganLine));
+      MSG_WARNING(NESTED_MATH_MODE, boost::str(boost::format("math block began at line %u") % m_blockBeganLineNum));
     }
 
     goto EOL;
@@ -187,7 +183,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     MDEVector temp_elements;
 
     char c = buffer[i];
-    LOG_TRACE << "At pos " << i << ", char '" << c << "', " << (inTextBlock ? "T" : "M") << (inTextMode ? "t" : "m");
+    LOG_TRACE << "At pos " << i << ", char '" << c << "', " << (m_inTextBlock ? "T" : "M") << (m_inTextMode ? "t" : "m");
     logIncreaseIndent();
  
     /**
@@ -195,10 +191,10 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
      * this point whenever there is a mode change.
      */
     if (c == '$') {
-      if (inTextMode) {
+      if (m_inTextMode) {
 	LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
-	inTextMode = false;
+	m_inTextMode = false;
 	elements.push_back (boost::make_shared<MDE_MathModeMarker>());
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in math mode";
@@ -209,10 +205,10 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     }
 
     if (c == '&') {
-      if (!inTextMode) {
+      if (!m_inTextMode) {
 	LOG_TRACE << "* entering text mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
-	inTextMode = true;
+	m_inTextMode = true;
 	elements.push_back (boost::make_shared<MDE_TextModeMarker>());
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in text mode";
@@ -225,12 +221,12 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     // If this is the first thing we're seeing on the line, check to see
     // if the first blob appears to be an 'item number' (as might appear 
     // in homework).
-    if (isStartOfLine && !inTextMode) {
+    if (m_isStartOfLine && !m_inTextMode) {
       ATTEMPT(ItemNumber);
-      isStartOfLine = false;
+      m_isStartOfLine = false;
     }
 
-    if (inTextMode)
+    if (m_inTextMode)
       goto HandleTextBlocks;
 
     ATTEMPT(Operator);
@@ -1007,9 +1003,9 @@ MathDocumentElementPtr MathInterpreter::makeGeneric (const std::string &buffer)
 {
   MathDocumentElementPtr e;
 
-  LOG_TRACE << "creating generic block(" << buffer << "), TextMode=" << inTextMode;
+  LOG_TRACE << "creating generic block(" << buffer << "), TextMode=" << m_inTextMode;
 
-  if (inTextMode) {
+  if (m_inTextMode) {
     sniffTextForMath (buffer);
     e = boost::make_shared<MDE_TextBlock>(buffer);
   } else {
@@ -1174,17 +1170,16 @@ void MathInterpreter::addMessage (const MathInterpreterMsg::Category category,
 				  const MathInterpreterMsg::Code msgCode,
 				  const std::string &msg)
 {
-  assert (pCurLine != NULL);
+  assert (m_pCurLine != NULL);
 
   MathInterpreterMsg message(category, 
 			     msgCode,
-			     pCurLine->getFilename(),
-			     pCurLine->getStartLineNumber(),
-			     pCurLine->getEndLineNumber(),
+			     m_pCurLine->getFilename(),
+			     m_pCurLine->getStartLineNumber(),
+			     m_pCurLine->getEndLineNumber(),
 			     msg);
 
   m_messages.push_back(message);
   LOG_INFO << "MSG: " << message;
 }
 
-/* ========================= PRIVATE FUNCTIONS =========================== */
