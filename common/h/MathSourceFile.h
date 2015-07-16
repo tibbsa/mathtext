@@ -9,8 +9,9 @@
 #ifndef __MATH_SOURCE_FILE_H__
 #define __MATH_SOURCE_FILE_H__
 
-#include <string>
-#include <vector>
+#ifndef __COMMON_INCLUDES_H__
+#include "common-includes.h"
+#endif
 
 #include "MathDocumentLine.h"
 

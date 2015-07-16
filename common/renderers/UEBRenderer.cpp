@@ -6,21 +6,11 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <assert.h>
-
-#include <map>
-#include <sstream>
-
-#include <boost/assign.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/format.hpp>
-#include <boost/scoped_array.hpp>
-
-#include "logging.h"
+#include "common-includes.h"
 #include "liblouis-mt.h"
-#include "MathDocument.h"
-#include "MathExceptions.h"
+#include "logging.h"
 #include "UEBRenderer.h"
+#include "MathExceptions.h"
 
 namespace ba = boost::assign;
 

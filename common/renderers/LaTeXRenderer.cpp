@@ -6,16 +6,9 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <assert.h>
-
-#include <map>
-
-#include <boost/assign.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/format.hpp>
-
+#include "common-includes.h"
 #include "logging.h"
-#include "MathDocument.h"
+
 #include "MathExceptions.h"
 #include "LaTeXRenderer.h"
 

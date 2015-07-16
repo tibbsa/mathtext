@@ -11,15 +11,18 @@
 #ifndef __LOGGING_H__
 #define __LOGGING_H__
 
-#include <boost/log/trivial.hpp>
-#include <boost/log/sources/global_logger_storage.hpp>
-#include "utility.h" // for "whitespace" manipualtor
+#ifndef __COMMON_INCLUDES_H__
+#include "common-includes.h"
+#endif
+#ifndef __UTILITY_H__
+#include "utility.h"
+#endif
 
 // the logs are also written to LOGFILE
 #ifndef TEST
 #define LOGFILE "mathtext.log"
 #else
-#define LOGFILE "mttest.lgo"
+#define LOGFILE "mttest.log"
 #endif
 
 // just log messages with severity >= SEVERITY_THRESHOLD are written

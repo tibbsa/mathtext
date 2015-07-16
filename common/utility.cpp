@@ -6,10 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <string>
-
-#include <boost/algorithm/string.hpp>
-
+#include "common-includes.h"
 #include "utility.h"
 
 /**

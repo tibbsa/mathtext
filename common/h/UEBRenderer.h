@@ -9,10 +9,10 @@
 #ifndef __UEB_RENDERER_H__
 #define __UEB_RENDERER_H__
 
-#include <stack>
-#include <string>
+#ifndef __COMMON_INCLUDES_H__
+#include "common-includes.h"
+#endif
 
-#include "MathDocument.h"
 #include "MathRenderer.h"
 
 #define BRAILLE_TRANSLATION_BUFFER_SIZE 16384

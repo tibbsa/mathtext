@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "logging.h"
+#include "common-includes.h"
 #include "MathDocumentElements.h"
 
 
@@ -34,16 +34,7 @@ MathDocumentElement::~MathDocumentElement()
  */
 std::string MathDocumentElement::getString (void) const
 {
-  std::string output;
-
-  /*
-  if(exponent)
-    output += "^(" + exponent->getString() + ")";
-  if(subscript)
-    output += "_(" + subscript->getString() + ")";
-  */
-
-  return output;
+  return std::string();
 }
 
 

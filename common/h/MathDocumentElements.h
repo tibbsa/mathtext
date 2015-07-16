@@ -9,8 +9,9 @@
 #ifndef __MATH_DOCUMENT_ELEMENTS_H__
 #define __MATH_DOCUMENT_ELEMENTS_H__
 
-#include <vector>
-#include <boost/shared_ptr.hpp>
+#ifndef __COMMON_INCLUDES_H__
+#include "common-includes.h"
+#endif
 
 class MathDocumentElement;
 typedef boost::shared_ptr<MathDocumentElement> MathDocumentElementPtr;

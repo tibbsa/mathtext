@@ -1,18 +1,17 @@
 /**
- * @file MDE_ItemNumber.cpp
- * A special kind of text block that represents an "item number" (as might 
- * appear in homework) at the start of a line.
+ * @file MDE_TextBlock.cpp
+ * "Generic" text content block (unprocessed)
  * 
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
 
-#include "logging.h"
+#include "common-includes.h"
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_ItemNumber::MDE_ItemNumber(const std::string &contents) : 
-  MDE_TextBlock(contents)
+MDE_TextBlock::MDE_TextBlock(const std::string &contents) : 
+  MDE_GenericText(contents)
 {
 }
 
@@ -22,13 +21,11 @@ MDE_ItemNumber::MDE_ItemNumber(const std::string &contents) :
  *
  * @return string representation of this element
  */
-std::string MDE_ItemNumber::getString (void) const
+std::string MDE_TextBlock::getString (void) const
 {
   std::string output;
 
-  output = "<ITEMNO>" + payload + "</ITEMNO>";
+  output = "<T>" + payload + MathDocumentElement::getString() + "</T>";
 
   return output;
 }
-
-

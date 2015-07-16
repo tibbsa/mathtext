@@ -6,16 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <assert.h>
-
-#include <iostream>
-#include <map>
-#include <sstream>
-#include <string>
-
-#include <boost/assign.hpp>
-#include <boost/format.hpp>
-
+#include "common-includes.h"
 #include "MathInterpreterMsg.h"
 
 /**

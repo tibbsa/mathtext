@@ -9,9 +9,10 @@
 #ifndef __LATEX_RENDERER_H__
 #define __LATEX_RENDERER_H__
 
-#include <string>
+#ifndef __COMMON_INCLUDES_H__
+#include "common-includes.h"
+#endif
 
-#include "MathDocument.h"
 #include "MathRenderer.h"
 
 class LaTeXRenderer : public MathRenderer

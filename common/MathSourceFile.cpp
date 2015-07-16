@@ -6,15 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <assert.h>
-#include <string.h>
-#include <errno.h>
-#include <fstream>
-#include <sstream>
-#include <string>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/format.hpp>
+#include "common-includes.h"
 
 #include "logging.h"
 #include "MathExceptions.h"

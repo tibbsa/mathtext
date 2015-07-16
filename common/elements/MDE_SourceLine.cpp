@@ -6,12 +6,8 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "logging.h"
+#include "common-includes.h"
 #include "MathDocumentElements.h"
-
-#include <string>
-
-#include <boost/format.hpp>
 
 /* ========================= PUBLIC FUNCTION =============================== */
 MDE_SourceLine::MDE_SourceLine(const std::string &fname,

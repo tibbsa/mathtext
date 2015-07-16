@@ -6,25 +6,18 @@
  * This project is released under the GNU General Public License.
 */
 
+#include "common-includes.h"
 
-#include <assert.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-
-#include <boost/exception/diagnostic_information.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
 #include "logging.h"
 #include "utility.h"
 
 #include "mathtext.h"
-#include "MathDocument.h"
-#include "MathInterpreter.h"
-#include "MathInterpreterMsg.h"
 #include "MathExceptions.h"
 #include "MathSourceFile.h"
+#include "MathDocument.h"
+#include "MathInterpreter.h"
 #include "LaTeXRenderer.h"
 #include "UEBRenderer.h"
 

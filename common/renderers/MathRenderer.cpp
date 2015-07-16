@@ -5,11 +5,9 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <sstream>
-
-#include "MathDocument.h"
-#include "MathExceptions.h"
+#include "common-includes.h"
 #include "MathRenderer.h"
+#include "MathExceptions.h"
 
 MathRenderer::MathRenderer()
 {

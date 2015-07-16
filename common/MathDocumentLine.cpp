@@ -6,10 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <iostream>
-#include <sstream>
-#include <string>
-
+#include "common-includes.h"
 #include "MathDocumentLine.h"
 
 /**
