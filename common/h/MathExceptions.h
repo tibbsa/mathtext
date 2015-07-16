@@ -26,7 +26,7 @@ typedef boost::error_info<struct mdx_element,MathDocumentElement> mdx_element_in
 
 class MathDocumentException : public boost::exception, public std::exception {};
 class MathDocumentFileException : public MathDocumentException {};
-class MathDocumentParseException : public MathDocumentException {};
-class MathDocumentRenderException : public MathDocumentException {};
+class MathInterpreterException : public MathDocumentException {};
+class MathRenderException : public MathDocumentException {};
 
 #endif /* __MATH_EXCEPTIONS_H__ */

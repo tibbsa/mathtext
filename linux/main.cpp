@@ -21,7 +21,8 @@
 
 #include "mathtext.h"
 #include "MathDocument.h"
-#include "MathDocumentMsg.h"
+#include "MathInterpreter.h"
+#include "MathInterpreterMsg.h"
 #include "MathExceptions.h"
 #include "MathSourceFile.h"
 #include "LaTeXRenderer.h"
@@ -105,18 +106,16 @@ int main (const int argc, const char **argv)
       return 2;
     }
     
-
     MathSourceFile srcfile;
-    srcfile.loadFromFile(inputFilename);
-      
     MathDocument doc;
-    doc.interpret (srcfile);
-
-    if (doc.haveMessages()) {
-      const std::vector<MathDocumentMsg> &msgs = doc.getMessages();
+    MathInterpreter interp(srcfile, doc);
+    srcfile.loadFromFile(inputFilename);
+    interp.interpret();
+    if (interp.haveMessages()) {
+      const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();
       cout << msgs.size() << " message(s):" << endl;
 
-      for (std::vector<MathDocumentMsg>::const_iterator it = msgs.begin();
+      for (std::vector<MathInterpreterMsg>::const_iterator it = msgs.begin();
 	   it != msgs.end();
 	   ++it) {
 	cout << "- " << *it << endl;

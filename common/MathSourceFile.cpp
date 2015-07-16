@@ -23,6 +23,11 @@
 namespace ba = boost::algorithm;
 
 
+const std::vector<MathDocumentLine> &MathSourceFile::getDocument (void) const
+{
+  return m_document;
+}
+
 /**
  * Loads a source document from the specified file.
  *
@@ -123,7 +128,7 @@ void MathSourceFile::ingest (const std::string &filename,
 
       if (++numIncludeLevels >= 5) {
 	BOOST_THROW_EXCEPTION (
-	  MathDocumentParseException() <<
+	  MathDocumentFileException() <<
 	  mdx_filename_info(filename) <<
 	  mdx_lineno_info(lineNumber) <<
 	  mdx_error_info("You cannot nest #included files more than five levels deep!"));

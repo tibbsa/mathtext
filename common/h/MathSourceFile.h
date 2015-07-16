@@ -21,14 +21,16 @@
 class MathSourceFile
 {
  public:
-  std::vector<MathDocumentLine> m_document;
-
   /**
    * Initiate processing of a math document from the given file.
    */
   void loadFromFile (const std::string &filename);
 
+  const std::vector<MathDocumentLine> &getDocument (void) const;
+
  protected:
+  std::vector<MathDocumentLine> m_document;
+
   /**
    * Pull document text into the m_document buffer.
    */
