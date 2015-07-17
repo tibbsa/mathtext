@@ -27,6 +27,8 @@ MathInterpreter::MathInterpreter (const MathSourceFile &srcFile,
 				  MathDocument &targetDoc) 
   : m_src(srcFile), m_doc(targetDoc)
 {
+  registerCommand("ExtraOperatorSpacing");
+  registerCommand("ExtraComparatorSpacing");
 }
   
   
@@ -66,6 +68,24 @@ void MathInterpreter::interpret (void)
     MathDocumentElementPtr e = *it;
     LOG_TRACE << *e;
   }
+}
+
+/**
+ * Called, typically by a renderer, to add a command to the 'known' commands
+ * list.
+ */
+void MathInterpreter::registerCommand (const std::string &cmd)
+{
+  assert (!isCommand(cmd));
+  m_knownCommands.push_back(cmd);
+}
+
+/**
+ * Returns TRUE if the specified 'command' is known to the interpreter.
+ */
+bool MathInterpreter::isCommand (const std::string &cmd) const
+{
+  return (std::count(m_knownCommands.begin(), m_knownCommands.end(), cmd) == 1);
 }
 
 /**
@@ -177,6 +197,10 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     char c = buffer[i];
     LOG_TRACE << "At pos " << i << ", char '" << c << "', " << (m_inTextBlock ? "T" : "M") << (m_inTextMode ? "t" : "m");
     logIncreaseIndent();
+
+    if (m_isStartOfLine) {
+      ATTEMPT(Command);
+    }
  
     /**
      * Mode changes: text to math or math to text. Dump what we have up to 
@@ -209,6 +233,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 
       goto AdvanceNextChar;
     }
+
 
     // If this is the first thing we're seeing on the line, check to see
     // if the first blob appears to be an 'item number' (as might appear 

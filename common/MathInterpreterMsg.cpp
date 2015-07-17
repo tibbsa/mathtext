@@ -84,6 +84,7 @@ unsigned long MathInterpreterMsg::getEndLineNumber (void) const
 std::string MathInterpreterMsg::getMessage (void) const
 {
   static std::map<MathInterpreterMsg::Code,std::string> error_map = boost::assign::map_list_of 
+    (UNKNOWN_COMMAND, "Invalid or unknown interpreter command found")
     (NESTED_TEXT_MODE, "Text mode indicator (&&) found while already in text mode")
     (NESTED_MATH_MODE, "Math mode indicator ($$) found while already in math mode")
     (SUSPECT_MATH_IN_TEXT, "Suspected math symbols in a text passage")

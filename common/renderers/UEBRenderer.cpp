@@ -229,6 +229,15 @@ std::string UEBRenderer::renderSourceLine (const MDE_SourceLine *e)
   return output;
 }
 
+std::string UEBRenderer::renderCommand (const MDE_Command *e)
+{
+  std::string output;
+
+  LOG_TRACE << "%% COMMAND: " << e->getString();
+
+  return output;
+}
+
 std::string UEBRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 {
   std::string output;
@@ -332,7 +341,6 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
     char c = printNumber[pos];
 
     // We should only see "0-9", ".", "," and a space here.
-    LOG_TRACE << "@" << (unsigned)pos << ", char " << c;
     assert (isdigit(c) || (c == '.') || (c == ',') || (c == ' '));
 
     if (isdigit(c)) {

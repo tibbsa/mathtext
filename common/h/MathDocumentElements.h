@@ -62,6 +62,24 @@ class MDE_SourceLine : public MathDocumentElement
   
 };
 
+
+/**
+ * An "option", "feature", or "configuration" command
+ */
+class MDE_Command : public MathDocumentElement
+{
+ protected:
+  std::string name;
+  std::string parameters;
+
+ public:
+  MDE_Command(const std::string &cmdName, const std::string &cmdParam);
+  const std::string &getName (void) const;
+  const std::string &getParameters (void) const;
+
+  virtual std::string getString (void) const;
+};
+
 /**
  * An internal marker used to indicate that the following material is 
  * primarily mathematical or primary textual in nature.

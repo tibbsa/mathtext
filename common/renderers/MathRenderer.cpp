@@ -39,6 +39,7 @@ std::string MathRenderer::renderVector (const MDEVector &v)
 std::string MathRenderer::renderElement (const MathDocumentElement *e)
 {
   RX(SourceLine);
+  RX(Command);
 
   RX(MathModeMarker);
   RX(TextModeMarker);
@@ -77,6 +78,8 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   } 
 
 PLACEHOLDER(SourceLine);
+PLACEHOLDER(Command);
+
 PLACEHOLDER(MathModeMarker);
 PLACEHOLDER(TextModeMarker);
 PLACEHOLDER(LineBreak);

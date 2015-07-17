@@ -124,9 +124,10 @@ class UEBRenderer : public MathRenderer
   
  public:
   UEBRenderer();
-  ~UEBRenderer ();
+  ~UEBRenderer();
 
   DECL_RENDER_FUNC(SourceLine);
+  DECL_RENDER_FUNC(Command);
 
   DECL_RENDER_FUNC(MathModeMarker);
   DECL_RENDER_FUNC(TextModeMarker);

@@ -37,7 +37,8 @@ class MathInterpreter
   const MathSourceFile &m_src;
   MathDocument &m_doc;
   std::vector<MathInterpreterMsg> m_messages;
-  
+  std::vector<std::string> m_knownCommands;
+
   /* Translation "current status" parameters */
   const MathDocumentLine *m_pCurLine;
   bool m_inTextBlock; // lines default to being 'text' lines if enabled
@@ -48,6 +49,7 @@ class MathInterpreter
   /* Interpretation functions */
   void interpretLine (const MathDocumentLine &mdl);
   MDEVector interpretBuffer (const std::string &buffer);
+  bool interpretCommand (MDEVector &target, const std::string &src, size_t &i);
   bool interpretNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretItemNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
@@ -79,6 +81,8 @@ class MathInterpreter
  public:
   MathInterpreter(const MathSourceFile &srcFile, MathDocument &targetDoc);
   void interpret (void);
+  void registerCommand (const std::string &cmd);
+  bool isCommand (const std::string &cmd) const;
   bool haveMessages (void) const;
   const std::vector<MathInterpreterMsg> &getMessages (void) const;
 };

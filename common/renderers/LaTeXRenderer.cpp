@@ -207,6 +207,16 @@ std::string LaTeXRenderer::renderSourceLine (const MDE_SourceLine *e)
   return output;
 }
 
+std::string LaTeXRenderer::renderCommand (const MDE_Command *e)
+{
+  std::string output;
+
+  output = "%% COMMAND: " + e->getString() + "\n";
+  LOG_TRACE << output;
+
+  return output;
+}
+
 std::string LaTeXRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 {
   std::string output;

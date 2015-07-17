@@ -179,8 +179,7 @@ int main (const int argc, const char **argv)
       cerr << *error;
     else
       cerr << "Unspecified error ";
-      
-    cerr << *error;
+
     if (file)
       cerr << " [" << *file << "]";
     if (desc)
