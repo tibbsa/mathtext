@@ -286,8 +286,7 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  //## todo fix up
-  output = e->getText();
+  output = renderTextContent(e->getText() + " ");
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
