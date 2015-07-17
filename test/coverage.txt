@@ -13,7 +13,7 @@ LineBreak	   -	    -	    -
 
 TextBlock	   -	    -	    -
 MathBlock	   -	    -	    -
-ItemNumber	   -	    -	    -
+ItemNumber	   -	    Y	    -
 Number		   -	    Y	    -
 
 Operator	   -	    -	    -
