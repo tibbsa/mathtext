@@ -9,10 +9,10 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Number::MDE_Number(const bool isNeg, 
+MDE_Number::MDE_Number(const MDE_Number::NumberType type, 
 		       const std::string &whole, 
 		       const std::string &decimals)
-  : negative(isNeg), lhs(whole), rhs(decimals)
+  : numType(type), lhs(whole), rhs(decimals)
 {
 }
 
@@ -30,14 +30,14 @@ std::string MDE_Number::getDecimalPortion (void) const
 std::string MDE_Number::getStandardNotation (void) const 
 {
   if (!rhs.empty()) 
-    return std::string((negative ? "-" : "") + getWholePortion() + "." + getDecimalPortion());
+    return std::string((isNegative() ? "-" : "") + getWholePortion() + "." + getDecimalPortion());
   else
-    return std::string((negative ? "-" : "") + getWholePortion());
+    return std::string((isNegative() ? "-" : "") + getWholePortion());
 }
 
 bool MDE_Number::isNegative (void) const
 {
-  return negative;
+  return (numType == NEGATIVE);
 }
 
 /**

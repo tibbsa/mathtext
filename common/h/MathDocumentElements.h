@@ -125,18 +125,22 @@ class MDE_MathBlock : public MDE_GenericText
  */
 class MDE_Number : public MathDocumentElement
 {
- protected:
-  bool negative;
-  std::string lhs, rhs; 
+ public:
+  typedef enum { NEGATIVE, POSITIVE } NumberType;
 
  public:
-  MDE_Number (const bool isNeg, const std::string &whole, const std::string &decimals);
+  MDE_Number (const MDE_Number::NumberType type, const std::string &whole, const std::string &decimals);
   bool isNegative (void) const;
   std::string getWholePortion (void) const;
   std::string getDecimalPortion (void) const;
   std::string getStandardNotation (void) const;
 
   virtual std::string getString (void) const;
+
+ protected:
+  NumberType numType;
+  std::string lhs, rhs; 
+
 };
 
 /**

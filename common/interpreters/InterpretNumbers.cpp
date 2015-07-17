@@ -24,13 +24,15 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 				    size_t &i)
 {
   size_t pos = i;
-  bool sawNegative = false;
   int curDigitGroupCount = 0;
+  MDE_Number::NumberType numType;
 
   if (src [pos] == '-') {
-    sawNegative = true;
+    numType = MDE_Number::NEGATIVE;
     pos++;
   }
+  else
+    numType = MDE_Number::POSITIVE;
 
   // Case 1: .24 (decmial with no leading numbers)
   // Allow numeric spaces here if escaped (\ ) but not commas.
@@ -52,8 +54,8 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	    break;
 	}
 	
-	LOG_TRACE << "* adding decimal number w/o whole portion: (neg=" << sawNegative << ") " << rhs;
-	target.push_back (boost::make_shared<MDE_Number>(sawNegative, std::string(), rhs));
+	LOG_TRACE << "* adding decimal number w/o whole portion: (neg=" << ((numType == MDE_Number::NEGATIVE) ? 1 : 0) << ") " << rhs;
+	target.push_back (boost::make_shared<MDE_Number>(numType, std::string(), rhs));
 
 	i = pos;
 	return true;
@@ -127,8 +129,8 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
       }
     }
 
-    LOG_TRACE << "* adding decimal number: (neg=" << sawNegative << ") " << lhs << "." << rhs;
-    target.push_back (boost::make_shared<MDE_Number>(sawNegative, lhs, rhs));
+    LOG_TRACE << "* adding decimal number: (neg=" << ((numType == MDE_Number::NEGATIVE) ? 1 : 0) << ") " << lhs << "." << rhs;
+    target.push_back (boost::make_shared<MDE_Number>(numType, lhs, rhs));
 
     i = pos;
     return true;
