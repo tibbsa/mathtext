@@ -21,36 +21,36 @@
     CHECK(r.renderNumber(&n) == result); \
   }
 
-TEST_CASE("render/ueb/numbers", "[render][ueb]") {
+TEST_CASE("render/ueb/Number", "[render][UEB][Number]") {
   UEBRenderer r;
 
   // UEB Rulebook 6.1 ----------------------------------------------
-  SECTION ("number mapping is correct") { X(false, "0123456789", "", "#JABCDEFGHI") }
+  SECTION ("number mapping is correct") { X(MDE_Number::POSITIVE, "0123456789", "", "#JABCDEFGHI") }
 
   // Examples: 100, -100, 1.25, -1.25, .25, -.25
-  SECTION ("positive integers") { X(false, "100", "", "#AJJ") }
-  SECTION ("negative integers") { X(true, "100", "", "-#AJJ") }
-  SECTION ("positive decmial + leading digits") { X(false, "1", "25", "#A4BE") }
-  SECTION ("negative decmial + leading digits") { X(true, "1", "25", "-#A4BE") }
-  SECTION ("positive decmial w/o leading digits") { X(false, "", "25", "#4BE") }
-  SECTION ("negative decmial w/o leading digits") { X(true, "", "25", "-#4BE") }
+  SECTION ("positive integers") { X(MDE_Number::POSITIVE, "100", "", "#AJJ") }
+  SECTION ("negative integers") { X(MDE_Number::NEGATIVE, "100", "", "-#AJJ") }
+  SECTION ("positive decmial + leading digits") { X(MDE_Number::POSITIVE, "1", "25", "#A4BE") }
+  SECTION ("negative decmial + leading digits") { X(MDE_Number::NEGATIVE, "1", "25", "-#A4BE") }
+  SECTION ("positive decmial w/o leading digits") { X(MDE_Number::POSITIVE, "", "25", "#4BE") }
+  SECTION ("negative decmial w/o leading digits") { X(MDE_Number::NEGATIVE,"", "25", "-#4BE") }
 }
 
-TEST_CASE("render/ueb/numbers/divided", "[render][ueb]") {
+TEST_CASE("render/ueb/Number/divided", "[Number]") {
   UEBRenderer r;
 
   // UEB Rulebook 6.2.1 (commas) ------------------------------------------
   // Example: 1,024
-  SECTION ("thousands dividers (commas) are correct") { X(false, "1,024", "", "#A1JBD") }
+  SECTION ("thousands dividers (commas) are correct") { X(MDE_Number::POSITIVE, "1,024", "", "#A1JBD") }
 
   // UEB Rulebook 6.6.1 (numeric space)------------------------------------
   // Example: 1 024
-  SECTION ("numeric spaces are correct, lhs") { X(false, "1 024", "", "#A\"JBD") }
+  SECTION ("numeric spaces are correct, lhs") { X(MDE_Number::POSITIVE, "1 024", "", "#A\"JBD") }
   // Example: 3.141 592 653
-  SECTION ("numeric spaces are correct, rhs") { X(false, "3", "141 592 653", "#C4ADA\"EIB\"FEC") }
+  SECTION ("numeric spaces are correct, rhs") { X(MDE_Number::POSITIVE, "3", "141 592 653", "#C4ADA\"EIB\"FEC") }
 }
 
-TEST_CASE("render/ueb/numbers/followedByLetters", "[render][ueb]") {
+TEST_CASE("render/ueb/Number/followedByLetters", "[Number]") {
   UEBRenderer r;
 
   // UEB Rulebook 6.5 ----------------------------------------------
@@ -58,7 +58,7 @@ TEST_CASE("render/ueb/numbers/followedByLetters", "[render][ueb]") {
   // 
   SECTION ("where a number ends in a digit") {
     MDEVector v;
-    v.push_back (boost::make_shared<MDE_Number>(false, S("10"), S("")));
+    v.push_back (boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, S("10"), S("")));
 
     // Example: 10a
     SECTION ("and a-j follow, expect letter indicator") {
@@ -92,7 +92,7 @@ TEST_CASE("render/ueb/numbers/followedByLetters", "[render][ueb]") {
   //
   SECTION ("where a number ends in a period") {
     MDEVector v;
-    v.push_back (boost::make_shared<MDE_Number>(false, S("10"), S("")));
+    v.push_back (boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, S("10"), S("")));
     v.push_back (boost::make_shared<MDE_MathBlock>(S(".")));
 
     // Example: 10.a
@@ -127,7 +127,7 @@ TEST_CASE("render/ueb/numbers/followedByLetters", "[render][ueb]") {
   //
   SECTION ("where a number ends in a comma") {
     MDEVector v;
-    v.push_back (boost::make_shared<MDE_Number>(false, S("10"), S("")));
+    v.push_back (boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, S("10"), S("")));
     v.push_back (boost::make_shared<MDE_MathBlock>(S(",")));
 
     // Example: 10.a
@@ -160,4 +160,3 @@ TEST_CASE("render/ueb/numbers/followedByLetters", "[render][ueb]") {
 }
 
 
-#undef TEST

@@ -51,11 +51,18 @@
 #define BD_6 ","
 
 
+// Type maps
 #define ll_widechar unsigned short int
 #define ll_formtype unsigned char
 
-extern "C" {
+// Tables to use
+#define LIBLOUIS_UEB_G1_TABLE "en-ueb-g1.ctb"
 
+// LibLouiS uses the MAXSTRING value internally for certain buffers and so 
+// we cannot exceed that here.  
+#define LIBLOUIS_MAXSTRING 512
+
+extern "C" {
 
   int extParseChars (const char *inString, ll_widechar * outString);
   char *showString (ll_widechar const *chars, int length);

@@ -23,7 +23,7 @@ mttest: $(OBJ_FILES)
 	@g++ $(CC_FLAGS) -c -o $@ $<
 
 ../build/test-obj/%.o: %.cpp
-	@echo $@: 
+	@echo $<: 
 	@g++ $(CC_FLAGS) -c -o $@ $<
 
 clean: 

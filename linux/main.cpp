@@ -41,7 +41,6 @@ int main (const int argc, const char **argv)
   bool generateBraille = false;
   string brfOutputFilename;
      
-
   LOG_INFO << endl;
   LOG_INFO << "=====================================================";
 

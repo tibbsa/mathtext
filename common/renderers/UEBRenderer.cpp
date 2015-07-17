@@ -170,20 +170,34 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  boost::scoped_array<ll_widechar> input_buffer (new ll_widechar [BRAILLE_TRANSLATION_BUFFER_SIZE+1]);
-  boost::scoped_array<ll_widechar> braille_buffer (new ll_widechar [BRAILLE_TRANSLATION_BUFFER_SIZE+1]);
+  // Assume that the braille could grow to be a bit larger than our max 
+  // LibLouis buffer size.  If this will likely be a problem, abort.
+  //## TODO: Split long strings into ~500-byte chunks (using a "period space" 
+  // or just a space as a likely split point) and feed to LibLouis in smaller 
+  // sections to get around this limitation.
+  if (s.length() >= (0.90 * LIBLOUIS_MAXSTRING)) {
+    LOG_ERROR << "! Braille translation max buffer size error on '" << s << "'!";
+    std::ostringstream os;
+    os << "This text is too long to translate to braille, and a workaround has not yet been implemented: '" << s << "'";
+    BOOST_THROW_EXCEPTION (MathRenderException() <<
+			   mdx_error_info(os.str()));
+  }
+
+  boost::scoped_array<ll_widechar> input_buffer (new ll_widechar [LIBLOUIS_MAXSTRING]);
+  boost::scoped_array<ll_widechar> braille_buffer (new ll_widechar [LIBLOUIS_MAXSTRING]);
 
   int inlen = extParseChars(s.c_str(), input_buffer.get());
-  int outlen;
-  
-  if (!lou_translateString(BRAILLE_TRANSLATION_TABLE,
+  int outlen = LIBLOUIS_MAXSTRING;
+
+  LOG_TRACE << "Sending " << inlen << " chars to louis using table '" << LIBLOUIS_UEB_G1_TABLE << "': {" << showString(input_buffer.get(), inlen) << "}, max output size=" << outlen;
+  if (!lou_translateString(LIBLOUIS_UEB_G1_TABLE,
 			   input_buffer.get(), 
 			   &inlen,
 			   braille_buffer.get(),
 			   &outlen,
 			   NULL /* no typeform checking */,
 			   NULL /* don't care about spacing info */,
-			   1 /* noContractions */)) {
+			   0 /* no modes set */)) {
     LOG_ERROR << "! Braille translation error on '" << s << "'!";
     std::ostringstream os;
     os << "Error occurred while trying to render braille for text: '" << s << "'";
@@ -193,6 +207,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 
   // showString returns the braille encapsulated in single quotation marks 
   // ('), so we have to trim those out before returning
+  LOG_TRACE << "Louis returned " << outlen << " chars: {" << showString(braille_buffer.get(), outlen) << "}";
   braille_string = std::string(showString(braille_buffer.get(), outlen));
   output += braille_string.substr(1, braille_string.length()-2);
 

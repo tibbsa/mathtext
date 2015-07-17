@@ -15,10 +15,6 @@
 
 #include "MathRenderer.h"
 
-#define BRAILLE_TRANSLATION_BUFFER_SIZE 16384
-#define BRAILLE_TRANSLATION_TABLE "en-ueb-g1.ctb"
-
-
 // Technical braille symbols
 #define UEB_CAPITAL_SIGN     BD_6
 #define UEB_G1               BD_56
