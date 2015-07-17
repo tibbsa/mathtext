@@ -16,7 +16,7 @@ MathBlock	   -	    -	    -
 ItemNumber	   -	    Y	    -
 Number		   -	    Y	    -
 
-Operator	   -	    -	    -
+Operator	   -	    Y	    -
 Comparator	   -	    -	    -
 GreekLetter	   -	    -	    -
 Symbol		   -	    -	    -
