@@ -36,13 +36,24 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
   i += 2;
   std::string commandName, commandParameters;
 
+  // Handle $$+EnableMoreFeatures and $$-EnableMoreFeatures.  Include a 
+  // trailing space in case more parameters show up below
+  if (src [i] == '+') {
+    commandParameters = "true ";
+    i++;
+  } else if (src [i] == '-') {
+    commandParameters = "false ";
+    i++;
+  }
+
   // Grab the command name
   while (i < src.length() && isalpha(src [i])) {
     commandName += src[i];
     i++;
   }
 
-  // Grab the parameters, if there are any, to EOL
+  // Grab the parameters, if there are any, to EOL.  If there is already 
+  // a parameter there, add a space after it.
   while (i < src.length() && src[i] != '\n') {
     commandParameters += src[i];
     i++;
