@@ -45,7 +45,7 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
     commandParameters = "false ";
     i++;
   }
-
+  
   // Grab the command name
   while (i < src.length() && isalpha(src [i])) {
     commandName += src[i];
@@ -54,16 +54,11 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
 
   // Grab the parameters, if there are any, to EOL.  If there is already 
   // a parameter there, add a space after it.
-  while (i < src.length() && src[i] != '\n') {
+  while (i < src.length()) {
     commandParameters += src[i];
     i++;
   }
   boost::trim(commandParameters);
-
-  // Skip the new line, if necessary, since we don't want a command like 
-  // this to result in extra blank lines in the output file.
-  if (i < src.length() && src[i] == '\n')
-    i++;
 
   if (!isCommand(commandName)) {
     LOG_TRACE << "* found unrecognized command: " << commandName << " // " << commandParameters;
@@ -74,7 +69,6 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
   LOG_TRACE << "* found command: " << commandName << " // " << commandParameters;
 
   MathDocumentElementPtr e = boost::make_shared<MDE_Command>(commandName, commandParameters);
-
 
   target.push_back (e);
   return true;

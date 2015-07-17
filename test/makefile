@@ -26,6 +26,9 @@ mttest: $(OBJ_FILES)
 	@echo $<: 
 	@g++ $(CC_FLAGS) -c -o $@ $<
 
+clean-pch:
+	rm ../common/h/common-includes.h.gch
+
 clean: 
 	rm ../common/h/common-includes.h.gch
 	rm ../build/test-obj/*

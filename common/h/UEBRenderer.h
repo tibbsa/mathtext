@@ -105,6 +105,7 @@ class UEBRenderer : public MathRenderer
   typedef struct { 
     bool isNumericMode; 
     bool isStart;
+    bool isUsingSpacedOperators;
   } UEBRenderStatus;
 
   UEBRenderStatus status;

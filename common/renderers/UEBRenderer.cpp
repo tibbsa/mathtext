@@ -20,6 +20,7 @@ UEBRenderer::UEBRenderer() : MathRenderer()
   
   status.isNumericMode = false;
   status.isStart = true;
+  status.isUsingSpacedOperators = false;
 }
 
 UEBRenderer::~UEBRenderer()
@@ -32,7 +33,8 @@ void UEBRenderer::beginInternalRender (void)
   internalRenderCount++;
   statusStack.push (status);
 
-  LOG_TRACE << "## Internal render begun, nesting level " << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart;
+  LOG_TRACE << "** push render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart << ", spaceOp=" << status.isUsingSpacedOperators;
+
   logIncreaseIndent();
 }
 
@@ -49,7 +51,7 @@ void UEBRenderer::endInternalRender (void)
   statusStack.pop();
 
   logDecreaseIndent();
-  LOG_TRACE << "## Internal render end, nesting level " << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart;
+  LOG_TRACE << "** pop render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart << ", spaceOp=" << status.isUsingSpacedOperators;
 }
 
 std::string UEBRenderer::translateToBraille (const std::string &s)
@@ -234,6 +236,10 @@ std::string UEBRenderer::renderCommand (const MDE_Command *e)
   std::string output;
 
   LOG_TRACE << "%% COMMAND: " << e->getString();
+  if (boost::iequals(e->getName(), "ExtraOperatorSpacing")) {
+    status.isUsingSpacedOperators = (e->getParameters() == "true");
+    LOG_TRACE << "- extra operator spacing: " << status.isUsingSpacedOperators;
+  }
 
   return output;
 }
@@ -394,7 +400,10 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
 			   mdx_error_info(os.str()));
   }
 
-  output = opmap [e->getOperator()];
+  if (status.isUsingSpacedOperators) 
+    output = " " + opmap[e->getOperator()] + " ";
+  else
+    output = opmap [e->getOperator()];
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
