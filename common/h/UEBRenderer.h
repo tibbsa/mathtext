@@ -79,7 +79,7 @@
 #define UEB_GREEK_DELTA      "D"
 #define UEB_GREEK_EPSILON    "E"
 #define UEB_GREEK_ZETA       "Z"
-#define UEB_GREEK_ETA        "H"
+#define UEB_GREEK_ETA        BD_156
 #define UEB_GREEK_THETA      BD_1456
 #define UEB_GREEK_IOTA       "I"
 #define UEB_GREEK_KAPPA      "K"

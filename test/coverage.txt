@@ -17,7 +17,7 @@ ItemNumber	   -	    Y	    -
 Number		   -	    Y	    -
 
 Operator	   -	    Y	    -
-Comparator	   -	    -	    -
+Comparator	   -	    Y	    -
 GreekLetter	   -	    -	    -
 Symbol		   -	    -	    -
 Modifier	   -	    -	    -
