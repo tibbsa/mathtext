@@ -18,8 +18,8 @@ Number		   -	    Y	    -
 
 Operator	   -	    Y	    -
 Comparator	   -	    Y	    -
-GreekLetter	   -	    -	    -
-Symbol		   -	    -	    -
+GreekLetter	   -	    Y	    -
+Symbol		   -	    Y	    -
 Modifier	   -	    -	    -
 
 Root		   -	    -	    -
