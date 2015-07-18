@@ -46,8 +46,8 @@
 #define UEB_FRAC_BEGIN       BD_12356
 #define UEB_FRAC_DIVIDER     BD_46 BD_34
 #define UEB_FRAC_END         BD_23456
-#define UEB_GREATER_THAN     " " BD_5 BD_345 " "
-#define UEB_GREATER_THAN_EQ  " " BD_456 BD_5 BD_345 " "
+#define UEB_GREATER_THAN     " " BD_4 BD_345 " "
+#define UEB_GREATER_THAN_EQ  " " BD_456 BD_4 BD_345 " "
 #define UEB_GREEK_SIGN       BD_46
 #define UEB_LESS_THAN        " " BD_4 BD_126 " "
 #define UEB_LESS_THAN_EQ     " " BD_456 BD_4 BD_126 " "
