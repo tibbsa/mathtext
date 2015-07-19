@@ -137,6 +137,50 @@ std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
   return output;
 }
 
+// Returns true if the provided vector consists of a single 'item', as that
+// is defined by the Technical Guidelines, s. 7.1 or 12.1
+// (An 'item' is: a number; a fraction; a radical; a narrow; a shape; 
+//  anything in paranthesees, square brackets, or braces; anything in
+//  braille grouping indicators; or the previous character)
+bool UEBRenderer::isBrailleItem (const MDEVector &v) const
+{
+  // any vector containing multiple items will be, by definition, not an 
+  // item
+  if (v.empty() || v.size() > 1)
+    return false;
+  
+  const MathDocumentElementPtr element = v.front();
+  const MathDocumentElement *ptr = element.get();
+
+  // Case 1: Positive numbers.  (Negative numbers can't be considered
+  // an item because the minus sign is itself an item.)
+  if (const MDE_Number *mn = dynamic_cast<const MDE_Number *>(ptr)) {
+    if (!mn->isNegative())
+      return true;
+    else
+      return false;
+  }
+
+  // Case 2: Fractions, roots, and operators are always items in and of
+  // themselves.  (See Technical Guidelines, section 7.6.)
+  if (dynamic_cast<const MDE_Fraction *>(ptr) ||
+      dynamic_cast<const MDE_Root *>(ptr) ||
+      dynamic_cast<const MDE_Operator *>(ptr))
+    return true;
+
+  // Case 3: Single letters can be an item unto their own
+  if (const MDE_MathBlock *mb = dynamic_cast<const MDE_MathBlock *>(ptr)) {
+    std::string contents = mb->getText();
+    if (contents.length() == 1 && isalpha(contents[0])) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  return false;
+}
+
 // called to output what is known to be 'math' material. takes care of 
 // any necessary mode switches, etc., 
 std::string UEBRenderer::renderMathContent (const std::string &s)
@@ -548,9 +592,12 @@ std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
   renderedArgument = renderVector(e->getArgument());
   endInternalRender();
 
-  //## TODO: Grouping indicators, etc. are not needed for simple modified 
-  // items (such as a number).  Optimize.
-  output = UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END;
+  // Include grouping indicators only if the symbol to be modified is
+  // something more than an 'item'.  See isBrailleItem() for details.
+  if (!isBrailleItem(e->getArgument()))
+    output = UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END;
+  else
+    output = renderedArgument;
 
   switch (e->getModifier()) {
   case MDE_Modifier::OVER_ARROW_RIGHT:
@@ -661,11 +708,9 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
   renderedExponent = renderVector (e->getValue());
   endInternalRender();
 
-  // If the exponent is only a number, do not use grouping symbols
-  //## TODO: There are other things that count as a 'single item' for this 
-  //         purpose, such as fractions.  Optimize for other items?
-  if (renderedExponent.substr(0,1) == UEB_NUMBER_SIGN && 
-      containsOnly(renderedExponent.substr(1), UEB_NUMERIC_MODE_SYMBOLS)) {
+  // Insert grouping symbols only if the exponent contents is not an 'item'
+  // (See isBrailleItem() for details)
+  if (isBrailleItem(e->getValue())) {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP "%s") % renderedExponent));
   } else {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
@@ -689,11 +734,9 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   renderedSubscript = renderVector (e->getValue());
   endInternalRender();
 
-  // If the subscript is only a number, do not use grouping symbols
-  //## TODO: There are other things that count as a 'single item' for this 
-  //         purpose, such as fractions.  Optimize for other items?
-  if (renderedSubscript.substr(0, 1) == UEB_NUMBER_SIGN && 
-      containsOnly(renderedSubscript.substr(1), UEB_NUMERIC_MODE_SYMBOLS)) {
+  // Insert grouping symbols only if the subscript contents is not an 'item'
+  // (See isBrailleItem() for details)
+  if (isBrailleItem(e->getValue())) {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN "%s") % renderedSubscript));
   } else {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
