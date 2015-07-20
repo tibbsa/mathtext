@@ -6,6 +6,9 @@
 */
 
 #include "common-includes.h"
+
+#include "logging.h"
+
 #include "MathRenderer.h"
 #include "MathExceptions.h"
 
@@ -23,6 +26,14 @@ std::string MathRenderer::renderVector (const MDEVector &v)
 {
   std::string temp;
 
+  std::string logtemp;
+  BOOST_FOREACH (const MathDocumentElementPtr &ePtr, v) {
+    const MathDocumentElement *ptr = ePtr.get();
+    logtemp += ptr->getString();
+  }
+  LOG_TRACE << ">> renderVector(" << logtemp << ")";
+  logIncreaseIndent();
+
   for (MDEVector::const_iterator it = v.begin();
        it != v.end(); ++it) {
 
@@ -30,6 +41,9 @@ std::string MathRenderer::renderVector (const MDEVector &v)
     const MathDocumentElement *ptr = ePtr.get();
     temp += renderElement(ptr);
   }
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< renderVector: " << temp;
 
   return temp;
 }

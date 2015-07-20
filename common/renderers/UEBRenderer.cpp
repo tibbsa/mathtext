@@ -720,14 +720,20 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
   beginInternalRender();
   status.isNumericMode = false;
   renderedExponent = renderVector (e->getValue());
+
+  // Store and save numeric mode status in case we might need a letter 
+  // indicator later.
+  bool endedInNumericMode = status.isNumericMode;
   endInternalRender();
 
   // Insert grouping symbols only if the exponent contents is not an 'item'
   // (See isBrailleItem() for details)
   if (isBrailleItem(e->getValue())) {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP "%s") % renderedExponent));
+    status.isNumericMode = endedInNumericMode;
   } else {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
+    status.isNumericMode = false;
   }
   
   logDecreaseIndent();
@@ -746,7 +752,12 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   beginInternalRender();
   status.isNumericMode = false;
   renderedSubscript = renderVector (e->getValue());
+
+  // Store and save numeric mode status in case we might need a letter 
+  // indicator later.
+  bool endedInNumericMode = status.isNumericMode;
   endInternalRender();
+  status.isNumericMode = endedInNumericMode;
 
   // Insert grouping symbols only if the subscript contents is not an 'item'
   // (See isBrailleItem() for details)
