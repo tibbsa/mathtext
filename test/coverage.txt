@@ -20,10 +20,10 @@ Operator	   -	    Y	    -
 Comparator	   -	    Y	    -
 GreekLetter	   -	    Y	    -
 Symbol		   -	    Y	    -
-Modifier	   -	    -	    -
+Modifier	   -	    Y	    -
 
-Root		   -	    -	    -
-Fraction	   -	    -	    -
+Root		   -	    Y	    -
+Fraction	   -	    Y	    -
 
 Exponent	   -	    -	    -
 Subscript	   -	    -	    -

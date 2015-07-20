@@ -57,6 +57,7 @@
 #define UEB_PLUS_SIGN        BD_5 BD_235
 #define UEB_ROOT_BEGIN       BD_146
 #define UEB_ROOT_END         BD_346
+#define UEB_SIMPLE_FRAC_DIVIDER  BD_34
 #define UEB_SINCE            BD_4 BD_34
 #define UEB_THEREFORE        BD_6 BD_16
 #define UEB_TIMES_SIGN       BD_5 BD_236

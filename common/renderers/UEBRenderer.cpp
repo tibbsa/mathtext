@@ -685,10 +685,24 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   renderedDenominator = renderVector (e->getDenominator());
   endInternalRender();
 
+  // Distinguish between 'simple' fractions (numeric only) and more complex
+  // fractions to decide how to render. If the numerator and denominator 
+  // both appear to start with numbers, check whether they contain ONLY 
+  // numbers (after the number sign).
+  bool isSimpleFraction =
+    (renderedNumerator.substr(0, 1) == UEB_NUMBER_SIGN &&
+     renderedDenominator.substr(0, 1) == UEB_NUMBER_SIGN &&
+     containsOnly(renderedNumerator.substr(1), UEB_NUMERIC_MODE_SYMBOLS) &&
+     containsOnly(renderedDenominator.substr(1), UEB_NUMERIC_MODE_SYMBOLS));
+
   LOG_TRACE << "- rendered numerator:   " << renderedNumerator;
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;
+  LOG_TRACE << "- is simple fraction? " << isSimpleFraction;
 
-  output = renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
+  if (isSimpleFraction)
+    output = renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
+  else
+    output = renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
