@@ -287,6 +287,7 @@ class MDE_Modifier : public MathDocumentElement
   MDEVector getArgument (void) const;
 
   virtual std::string getString (void) const;
+  static const std::string &getModifierName (const Modifier m);
 
  protected:
   Modifier modifier;

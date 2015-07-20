@@ -27,6 +27,7 @@
 #include <boost/core/null_deleter.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/log/core/core.hpp>
 #include <boost/log/expressions/formatters/date_time.hpp>

@@ -27,13 +27,7 @@ MDEVector MDE_Modifier::getArgument (void) const
   return argument;
 }
 
-/**
- * Generate a string representation of this element (primarily for
- * debugging purposes)
- *
- * @return string representation of this element
- */
-std::string MDE_Modifier::getString (void) const
+const std::string &MDE_Modifier::getModifierName (const Modifier m)
 {
 #define MAP(m) (m, #m)
   static std::map<MDE_Modifier::Modifier,std::string> map = boost::assign::map_list_of
@@ -43,17 +37,28 @@ std::string MDE_Modifier::getString (void) const
     ;
 #undef MAP
 
-  assert (map.count(modifier) == 1);
-  
+  assert (map.count(m) == 1);
+  return map[m];
+
+}
+
+/**
+ * Generate a string representation of this element (primarily for
+ * debugging purposes)
+ *
+ * @return string representation of this element
+ */
+std::string MDE_Modifier::getString (void) const
+{
   std::string output;
 
-  output = "<" + map[modifier] + ">";
+  output = "<" + getModifierName(modifier) + ">";
   for (MDEVector::const_iterator it = argument.begin();
        it != argument.end(); ++it) {
     MathDocumentElementPtr e = *it;
     output += e->getString();
   }
-  output += "</" + map[modifier] + ">";
+  output += "</" + getModifierName(modifier) + ">";
 
   return output;
 }

@@ -9,8 +9,6 @@
 #ifndef __MTTEST_H__
 #define __MTTEST_H__
 
-#include <string>
-
 #include "catch.hpp"
 
 #define S(str) std::string(str)

@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include <boost/make_shared.hpp>
+#include "common-includes.h"
 
 #include "mttest.h"
 #include "MathDocumentElements.h"
