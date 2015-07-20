@@ -120,7 +120,6 @@ class UEBRenderer : public MathRenderer
   std::string translateToBraille (const std::string &s);
   std::string translateBrailleLetterIndicators (const std::string &s);
   std::string translateBraillePunctuation (const std::string &s);
-  bool isBrailleItem (const MDEVector &v) const;
 
   std::string renderMathContent (const std::string &s);
   std::string renderTextContent (const std::string &s);
@@ -128,6 +127,8 @@ class UEBRenderer : public MathRenderer
  public:
   UEBRenderer();
   ~UEBRenderer();
+
+  bool isBrailleItem (const MDEVector &v) const;
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

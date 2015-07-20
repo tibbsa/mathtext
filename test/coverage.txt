@@ -25,5 +25,5 @@ Modifier	   -	    Y	    -
 Root		   -	    Y	    -
 Fraction	   -	    Y	    -
 
-Exponent	   -	    -	    -
-Subscript	   -	    -	    -
+Exponent	   -	    Y	    -
+Subscript	   -	    Y	    -
