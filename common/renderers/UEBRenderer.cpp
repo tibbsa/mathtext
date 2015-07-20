@@ -757,14 +757,15 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   // indicator later.
   bool endedInNumericMode = status.isNumericMode;
   endInternalRender();
-  status.isNumericMode = endedInNumericMode;
 
   // Insert grouping symbols only if the subscript contents is not an 'item'
   // (See isBrailleItem() for details)
   if (isBrailleItem(e->getValue())) {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN "%s") % renderedSubscript));
+    status.isNumericMode = endedInNumericMode;
   } else {
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
+    status.isNumericMode = false;
   }
 
   logDecreaseIndent();
