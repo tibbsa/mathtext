@@ -97,6 +97,8 @@ std::string MathInterpreterMsg::getMessage (void) const
     (ROOT_INDEX_NOT_TERMINATED, "Root includes a complex index with opening bracket '[' but is never terminated with a closing bracket ']'")
     (ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MODIFIER_NOT_TERMINATED, "Text attached to a symbol begins with opening paren '(' but is never terminated with a closing paren ')'")
+    (MODIFIER_MISSING_ARGUMENT, "Symbol is missing attached text")
+    (MODIFIER_ROOT_REQUIRES_PARENS, "To include a root symbol within a modifier, enclose it in parantheses");
     ;
 
   assert (error_map.count(m_code) == 1);

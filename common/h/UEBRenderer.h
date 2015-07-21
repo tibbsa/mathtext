@@ -128,7 +128,8 @@ class UEBRenderer : public MathRenderer
   UEBRenderer();
   ~UEBRenderer();
 
-  bool isBrailleItem (const MDEVector &v) const;
+  static bool isBrailleItem (const MDEVector &v);
+  static bool isSimpleFraction (const MDE_Fraction &frac);
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

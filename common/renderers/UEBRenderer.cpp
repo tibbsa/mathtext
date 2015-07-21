@@ -142,7 +142,7 @@ std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
 // (An 'item' is: a number; a fraction; a radical; a narrow; a shape; 
 //  anything in paranthesees, square brackets, or braces; anything in
 //  braille grouping indicators; or the previous character)
-bool UEBRenderer::isBrailleItem (const MDEVector &v) const
+bool UEBRenderer::isBrailleItem (const MDEVector &v)
 {
   // any vector containing multiple items will be, by definition, not an 
   // item
@@ -161,7 +161,7 @@ bool UEBRenderer::isBrailleItem (const MDEVector &v) const
       return false;
   }
 
-  // Case 2: Fractions, roots, and operators are always items in and of
+  // Case 2: Fractions, roots and operators are always items in and of
   // themselves.  (See Technical Guidelines, section 7.6.)
   if (dynamic_cast<const MDE_Fraction *>(ptr) ||
       dynamic_cast<const MDE_Root *>(ptr) ||
@@ -179,6 +179,22 @@ bool UEBRenderer::isBrailleItem (const MDEVector &v) const
   }
 
   return false;
+}
+
+// Returns true if the provided fraction is a "simple" fraction -- that is,
+// both the numerator and the denominator contain only a simple number.
+bool UEBRenderer::isSimpleFraction (const MDE_Fraction &frac)
+{
+  if (frac.getNumerator().size() > 1 || frac.getDenominator().size() > 1)
+    return false;
+
+  if (!dynamic_cast<const MDE_Number *>(frac.getNumerator().front().get())) 
+    return false;
+
+  if (!dynamic_cast<const MDE_Number *>(frac.getDenominator().front().get())) 
+    return false;
+    
+  return true;
 }
 
 // called to output what is known to be 'math' material. takes care of 
@@ -673,6 +689,7 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;
   std::string output;
+  bool simpleFraction = isSimpleFraction(*e);
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
@@ -685,28 +702,11 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   renderedDenominator = renderVector (e->getDenominator());
   endInternalRender();
 
-  // Distinguish between 'simple' fractions (numeric only) and more complex
-  // fractions to decide how to render. If the numerator and denominator 
-  // both appear to start with numbers, check whether they contain ONLY 
-  // numbers (after the number sign).
-  bool isSimpleFraction =
-    (renderedNumerator.substr(0, 1) == UEB_NUMBER_SIGN &&
-     renderedDenominator.substr(0, 1) == UEB_NUMBER_SIGN &&
-     containsOnly(renderedNumerator.substr(1), UEB_NUMERIC_MODE_SYMBOLS) &&
-     containsOnly(renderedDenominator.substr(1), UEB_NUMERIC_MODE_SYMBOLS));
-
-  // If this is a 'simple' fraction, both the numerator and the denominator 
-  // should begin with a numeric sign. This assumption is important below.
-  assert (!isSimpleFraction || 
-	  (isSimpleFraction && renderedNumerator [0] == '#'));
-  assert (!isSimpleFraction || 
-	  (isSimpleFraction && renderedDenominator [0] == '#'));
-
   LOG_TRACE << "- rendered numerator:   " << renderedNumerator;
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;
-  LOG_TRACE << "- is simple fraction? " << isSimpleFraction;
+  LOG_TRACE << "- is simple fraction? " << simpleFraction;
 
-  if (isSimpleFraction) {
+  if (simpleFraction) {
     // The dividing slash does not cancel numeric mode, so remove the 
     // extra number sign that will appear in the denominator
     renderedDenominator.erase (renderedDenominator.begin(), renderedDenominator.begin() + 1);

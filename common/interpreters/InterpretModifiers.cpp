@@ -83,6 +83,9 @@ bool MathInterpreter::interpretModifier (MDEVector &target,
 	MSG_ERROR(MODIFIER_NOT_TERMINATED, boost::str(boost::format("partial fraction inside %s symbol so far: '%s'") % mi.modifierName % argument));
 	BOOST_THROW_EXCEPTION (MathInterpreterException());
       }
+    } else if (src.substr(i, 2) == "_/") {
+      MSG_ERROR(MODIFIER_ROOT_REQUIRES_PARENS, boost::str(boost::format("symbol type: %s") % mi.modifierName));
+      BOOST_THROW_EXCEPTION (MathInterpreterException());
     } else {
       extractItem(argument, src, i);
     }
