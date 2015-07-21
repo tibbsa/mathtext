@@ -6,8 +6,8 @@ OBJ_FILES := $(CORE_OBJ_FILES) $(TEST_OBJ_FILES)
 BOOST_PATH := ../../boost_1_58_0
 LIBLOUIS_PATH := ../../liblouis
 LD_FLAGS := -g -L$(BOOST_PATH)/stage/lib -L$(LIBLOUIS_PATH)/lib
-LD_LIBS := -pthread -Wl,-Bstatic -llouis -lboost_thread -lboost_program_options -lboost_filesystem -lboost_system -lboost_log -lboost_regex -Wl,-Bdynamic
-CC_FLAGS := -DMT_NO_CONSOLE_LOG -MMD -DTEST -Wall -g -Ih -I../common/h -I$(BOOST_PATH) -I$(LIBLOUIS_PATH)/include
+LD_LIBS := -pg -pthread -Wl,-Bstatic -llouis -lboost_thread -lboost_program_options -lboost_filesystem -lboost_system -lboost_log -lboost_regex -Wl,-Bdynamic
+CC_FLAGS := -pg -DMT_NO_CONSOLE_LOG -MMD -DTEST -Wall -g -Ih -I../common/h -I$(BOOST_PATH) -I$(LIBLOUIS_PATH)/include
 VPATH=.:../common:../common/elements:../common/renderers:../common/interpreters:rendering:rendering/ueb
 
 all: pch mttest

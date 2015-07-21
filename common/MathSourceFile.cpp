@@ -69,6 +69,25 @@ void MathSourceFile::loadFromFile (const std::string &filename)
 }
 
 /**
+ * Loads a source document from a pre-existing buffer.
+ *
+ * Does not perform any particular processing, except for assigning line 
+ * numbers to the contents of the source document.
+ *
+ * @param buffer Text to ingest into the document
+ * @param filename "Fake" filename (perhaps Untitled1 or what have you) 
+ * @throw MathDocumentParseException when parse or interpretation errors arise
+ */
+void MathSourceFile::loadFromBuffer (const std::string &buffer,
+				     const std::string &filename)
+{
+  assert (!filename.empty());
+  assert (!buffer.empty());
+  
+  ingest (filename, buffer);
+}
+
+/**
 * Appends text from a buffer (sourced from 'filename') to the document.
 *
 * @param filename Name of current file
@@ -84,18 +103,26 @@ void MathSourceFile::ingest (const std::string &filename,
   unsigned long continuedLineStartedNumber = 0;
   std::string curLine;
 
-  for (unsigned i = 0; i < buffer.length(); i++, lineNumber++) {
+  for (size_t i = 0; i < buffer.length(); i++, lineNumber++) {
+    std::string temp;
+
     // Grab a whole line of text
-    int eolPos = buffer.find("\n", i);
-    std::string temp = buffer.substr(i, eolPos - i);
+    size_t eolPos = buffer.find("\n", i);
+    if (eolPos == std::string::npos) { // no final end of line found?
+      temp = buffer.substr(i);
+      // Advance to the end of the buffer
+      i = buffer.length();
+    }
+    else {
+      temp = buffer.substr(i, eolPos - i);
+      // Advance to the end of the current line
+      i = eolPos;
+    }
 
     // Only trim from the right side, where trailing spaces should be
     // meaningless. Spaces on the left side might well be important 
     // in certain contexts (e.g. $PrintVerbatim sections)
     ba::trim_right(temp);
-
-    // Advance to the end of the current line
-    i = eolPos;
 
     // Handle "continuation lines".  If this line ended in a \ then 
     // combine it with the next line.

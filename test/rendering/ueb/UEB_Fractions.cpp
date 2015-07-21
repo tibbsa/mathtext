@@ -29,18 +29,18 @@ TEST_CASE("render/ueb/Fractions", "[render][UEB][Fractions]") {
   // These examples are drawn from Technical Guideline 6.5
   SECTION ("Simple numeric fractions") {
     SECTION ("Simple numbers") {
-      TF(MKNUM(POSITIVE, "3", ""), MKNUM(POSITIVE, "4", ""), "#C/#D");
-      TF(MKNUM(POSITIVE, "73", ""), MKNUM(POSITIVE, "4", ""), "#GC/#D");
+      TF(MKNUM(POSITIVE, "3", ""), MKNUM(POSITIVE, "4", ""), "#C/D");
+      TF(MKNUM(POSITIVE, "73", ""), MKNUM(POSITIVE, "4", ""), "#GC/D");
     }
     SECTION ("Numbers involving decimals") {
-      TF(MKNUM(POSITIVE, "3", ""), MKNUM(POSITIVE, "4", "2"), "#C/#D4B");
-      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4200", ""), "#E4C/#DBJJ");
+      TF(MKNUM(POSITIVE, "3", ""), MKNUM(POSITIVE, "4", "2"), "#C/D4B");
+      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4200", ""), "#E4C/DBJJ");
     }
     SECTION ("Numbers involving numeric commas") {
-      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4,200", ""), "#E4C/#D1BJJ");
+      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4,200", ""), "#E4C/D1BJJ");
     }
     SECTION ("Numbers involving numeric spaces") {
-      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4 200", ""), "#E4C/#D\"BJJ");
+      TF(MKNUM(POSITIVE, "5", "3"), MKNUM(POSITIVE, "4 200", ""), "#E4C/D\"BJJ");
     }
   }
 

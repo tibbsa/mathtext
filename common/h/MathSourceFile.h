@@ -27,6 +27,12 @@ class MathSourceFile
    */
   void loadFromFile (const std::string &filename);
 
+  /**
+   * Load from a buffer, optionally providing a 'fake' filename 
+   * (defaults to "(memory)")
+   */
+  void loadFromBuffer (const std::string &buffer, const std::string &filename = "(memory)");
+
   const std::vector<MathDocumentLine> &getDocument (void) const;
 
  protected:

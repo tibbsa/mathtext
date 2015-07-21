@@ -695,14 +695,26 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
      containsOnly(renderedNumerator.substr(1), UEB_NUMERIC_MODE_SYMBOLS) &&
      containsOnly(renderedDenominator.substr(1), UEB_NUMERIC_MODE_SYMBOLS));
 
+  // If this is a 'simple' fraction, both the numerator and the denominator 
+  // should begin with a numeric sign. This assumption is important below.
+  assert (!isSimpleFraction || 
+	  (isSimpleFraction && renderedNumerator [0] == '#'));
+  assert (!isSimpleFraction || 
+	  (isSimpleFraction && renderedDenominator [0] == '#'));
+
   LOG_TRACE << "- rendered numerator:   " << renderedNumerator;
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;
   LOG_TRACE << "- is simple fraction? " << isSimpleFraction;
 
-  if (isSimpleFraction)
+  if (isSimpleFraction) {
+    // The dividing slash does not cancel numeric mode, so remove the 
+    // extra number sign that will appear in the denominator
+    renderedDenominator.erase (renderedDenominator.begin(), renderedDenominator.begin() + 1);
+
     output = renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
-  else
+  } else {
     output = renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
+  }
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
