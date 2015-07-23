@@ -35,19 +35,19 @@ std::string MDE_Comparator::getString (void) const
   std::string output;
 
   if (comp == LESS_THAN)
-    output = "[ < ]";
+    output = "<is less than>";
   else if (comp == GREATER_THAN)
-    output = "[ > ]";
+    output = "<is greater than>";
   else if (comp == LESS_THAN_EQUALS)
-    output = "[<=]";
+    output = "<is less than or equal to>";
   else if (comp == GREATER_THAN_EQUALS)
-    output = "[ >= ]";
+    output = "<is greater than or equal to>";
   else if (comp == EQUALS)
-    output = "[ = ]";
+    output = "<equals>";
   else if (comp == APPROX_EQUALS)
-    output = "[ ~= ]";
+    output = "<approximately equals>";
   else if (comp == NOT_EQUALS)
-    output = "[ <> ]";
+    output = "<is not equal to>";
   else
     assert (false);
 

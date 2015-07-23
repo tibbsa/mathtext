@@ -40,6 +40,7 @@ bool MathInterpreter::interpretSymbol (MDEVector &target,
     ( SymbolMap("[", MDE_Symbol::LEFT_BRACKET) )
     ( SymbolMap("(", MDE_Symbol::LEFT_PAREN) )
     ( SymbolMap("!", MDE_Symbol::FACTORIAL) )
+    ( SymbolMap(".", MDE_Symbol::PERIOD) )
     ( SymbolMap("}", MDE_Symbol::RIGHT_BRACE) )
     ( SymbolMap("]", MDE_Symbol::RIGHT_BRACKET) )
     ( SymbolMap(")", MDE_Symbol::RIGHT_PAREN) )

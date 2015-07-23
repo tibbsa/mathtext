@@ -114,7 +114,7 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
     }
     
     // Case 3: 121.25 (with decmial portion)
-    if (pos < src.length() && src [pos] == '.') {
+    if (pos < (src.length()-1) && src [pos] == '.' && isdigit(src[pos+1])) {
       pos++;
       curDigitGroupCount = 0;
 

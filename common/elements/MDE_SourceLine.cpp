@@ -48,7 +48,7 @@ std::string MDE_SourceLine::getContents (void) const
 std::string MDE_SourceLine::getString (void) const
 {
   if (line1 == line2)
-    return boost::str(boost::format("<%s:%lu> '%s'") % filename % line1 % payload);
+    return boost::str(boost::format("<SOURCE %s:%lu>%s</SOURCE>") % filename % line1 % payload);
   else
-    return boost::str(boost::format("<%s:%lu-%lu> '%s'") % filename % line1 % line2 % payload);
+    return boost::str(boost::format("<SOURCE %s:%lu-%lu>%s</SOURCE>") % filename % line1 % line2 % payload);
 }

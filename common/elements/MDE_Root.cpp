@@ -35,11 +35,16 @@ std::string MDE_Root::getString (void) const
 {
   std::string output;
 
-  output = "<ROOT INDEX:";
-  for (MDEVector::const_iterator it = index.begin();
-       it != index.end(); ++it) {
-    MathDocumentElementPtr e = *it;
-    output += e->getString();
+  output = "<ROOT";
+
+  if (index.size()) {
+    output += " INDEX:";
+
+    for (MDEVector::const_iterator it = index.begin();
+	 it != index.end(); ++it) {
+      MathDocumentElementPtr e = *it;
+      output += e->getString();
+    }
   }
   output += ">";
 

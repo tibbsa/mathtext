@@ -33,21 +33,23 @@ void MDE_Symbol::setSymbol (const MDE_Symbol::Symbol s)
  */
 std::string MDE_Symbol::getString (void) const
 {
+#define MAP(m) (m, #m)
   static std::map<MDE_Symbol::Symbol,std::string> map = boost::assign::map_list_of
-    (COMMA, ",")
-    (FACTORIAL, "!")
-    (LEFT_BRACE, "{")
-    (LEFT_BRACKET, "[")
-    (LEFT_PAREN, "(")
-    (PERCENT, "%")
-    (RIGHT_BRACE, "}")
-    (RIGHT_BRACKET, "]")
-    (RIGHT_PAREN, ")")
-    (THEREFORE, "therefore")
+    MAP(COMMA)
+    MAP(FACTORIAL)
+    MAP(LEFT_BRACE)
+    MAP(LEFT_BRACKET)
+    MAP(LEFT_PAREN)
+    MAP(PERCENT)
+    MAP(PERIOD)
+    MAP(RIGHT_BRACE)
+    MAP(RIGHT_BRACKET)
+    MAP(RIGHT_PAREN)
+    MAP(THEREFORE)
     ;
+#undef MAP
 
   assert (map.count(symbol) == 1);
-
   return std::string("<" + map[symbol] + ">");
 }
 

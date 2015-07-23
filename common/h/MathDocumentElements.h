@@ -251,6 +251,7 @@ class MDE_Symbol : public MathDocumentElement
     LEFT_BRACKET, // [ 
     LEFT_PAREN, // ( 
     PERCENT, // %% (percent sign) 
+    PERIOD, // .
     RIGHT_BRACKET, // ]
     RIGHT_BRACE, // }
     RIGHT_PAREN, // )
