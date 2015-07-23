@@ -10,8 +10,13 @@
 #define __MTTEST_H__
 
 #include "catch.hpp"
+#include "MathDocument.h"
 
 #define S(str) std::string(str)
 #define CHARSTR(c) std::string(1, c)
+
+void interpretToDocument (const std::string &input,
+                          MathDocument &document,
+                          std::string &outputString);
 
 #endif 

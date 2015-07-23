@@ -74,15 +74,15 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
     while (pos < src.length()) {
       if (isdigit(src [pos])) {
 	curDigitGroupCount++;
-	lhs += src.substr(pos, 1);
+ 	lhs += src.substr(pos, 1);
 	pos++;
 	continue;
       }
-      else if (src[pos] == ',') {
+      else if (isOneOf (src[pos], ", ")) {
 	if (curDigitGroupCount <= 3 && (src.length() - pos) >= 3) {
-	  // If we see "," followed by 3 digits and then a non-digit, 
-	  // assume this is a comma within a number
-	  boost::regex re("^\\,\\d{3}");
+	  // If we see "," or " " followed by 3 digits and then a non-digit, 
+	  // assume this is a thousands separator within a number
+	  boost::regex re("^[, ]\\d{3}");
 	  boost::smatch matches;
 	  if (boost::regex_search(src.substr(pos, 4), matches, re)) {
 	    // If the next character is NOT a number, we assume this 
@@ -105,8 +105,9 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	else
 	  break;
       } else if (src.substr(pos, 2) == "\\ ") {
-	lhs += " ";
-	pos += 2;
+	// End number here
+	pos++;
+	break;
       }
       else
 	break;
@@ -115,14 +116,43 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
     // Case 3: 121.25 (with decmial portion)
     if (pos < src.length() && src [pos] == '.') {
       pos++;
+      curDigitGroupCount = 0;
 
       while (pos < src.length()) {
 	if (isdigit (src [pos])) {
+	  curDigitGroupCount++;
 	  rhs += src.substr(pos, 1);
 	  pos++;
+	} else if (src[pos] == ' ') {
+	  if (curDigitGroupCount <= 3 && (src.length() - pos) >= 3) {
+	    // If we see " " followed by 3 digits and then a non-digit, 
+	    // assume this is a thousands separator within a number
+	    boost::regex re("^ \\d{3}");
+	    boost::smatch matches;
+	    if (boost::regex_search(src.substr(pos, 4), matches, re)) {
+	      // If the next character is NOT a number, we assume this 
+	      // was a set of thousands and add it in.  If we see yet 
+	      // another number, then this was not a thousands separator
+	      // and we abort.
+	      // Example when we continue: 1,024,576
+	      // Example when we do not: 1,24837,23872 (treat as separate)
+	      if ((src.length() - pos == 3) || !isdigit(src [pos+4])) {
+		rhs += src.substr(pos, 4);
+		pos += 4;
+		curDigitGroupCount = 0;
+	      }
+	      else
+		break;
+	    }
+	    else
+	      break;
+	  }
+	  else
+	    break;
 	} else if (src.substr(pos, 2) == "\\ ") {
-	  rhs += " ";
-	  pos += 2;
+	  // End number here
+	  pos++;
+	  break;
 	}
 	else
 	  break;
