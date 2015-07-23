@@ -271,7 +271,21 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   // ('), so we have to trim those out before returning
   LOG_TRACE << "Louis returned " << outlen << " chars: {" << showString(braille_buffer.get(), outlen) << "}";
   braille_string = std::string(showString(braille_buffer.get(), outlen));
-  output += braille_string.substr(1, braille_string.length()-2);
+
+  //## There is a bug in liblouis that results in single letters 
+  //   getting letter indicators before them unnecessarily.  Fix this.
+  std::string fixed_braille_string;
+  fixed_braille_string = braille_string.substr(1, braille_string.length()-2);
+  for (char ch = 'a'; ch <= 'z'; ch++) {
+    const std::string searchStr = boost::str(boost::format(";%c ") % ch);
+    const std::string replaceStr = boost::str(boost::format("%c ") % ch);
+
+    LOG_TRACE << "@" << fixed_braille_string << " [s:" << searchStr << ", r:" << replaceStr << "]";
+    boost::ireplace_all(fixed_braille_string, searchStr, replaceStr);
+    LOG_TRACE << "$" << fixed_braille_string;
+  }
+
+  output += fixed_braille_string;
 
   status.isNumericMode = false;
   status.isStart = false;
