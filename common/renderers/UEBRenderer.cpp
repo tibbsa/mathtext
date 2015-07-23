@@ -280,9 +280,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
     const std::string searchStr = boost::str(boost::format(";%c ") % ch);
     const std::string replaceStr = boost::str(boost::format("%c ") % ch);
 
-    LOG_TRACE << "@" << fixed_braille_string << " [s:" << searchStr << ", r:" << replaceStr << "]";
     boost::ireplace_all(fixed_braille_string, searchStr, replaceStr);
-    LOG_TRACE << "$" << fixed_braille_string;
   }
 
   output += fixed_braille_string;
