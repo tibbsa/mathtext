@@ -91,7 +91,6 @@ int main (const int argc, const char **argv)
 	latexOutputFilename = remove_file_extension (inputFilename) + ".tex";
     }
     catch(std::exception &e) {
-      LOG_FATAL << "Command line error: " << e.what() << endl << endl;
       cerr << "Command line error: " << e.what() << endl << endl;
       cerr << "Usage: mathtext [options] <filename>" << endl;
       cerr << desc;

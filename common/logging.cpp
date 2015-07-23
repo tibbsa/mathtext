@@ -47,9 +47,11 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
   sink->locked_backend()->add_stream(boost::make_shared<std::ofstream>(LOGFILE));
 
   // add "console" output stream to our sink
+  /*
 #ifndef MT_NO_CONSOLE_LOG
   sink->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
 #endif
+  */
 
   // specify the format of the log message
   logging::formatter formatter = expr::stream << expr::smessage;
