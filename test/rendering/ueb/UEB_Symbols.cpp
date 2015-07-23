@@ -16,6 +16,8 @@
 TEST_CASE("render/ueb/Symbols", "[render][UEB][Symbol]") {
   UEBRenderer r;
 
+  //### ADD: Currency tests (tech guidelines 2.10)
+
   // UEB Rulebook 7, Technical Guidelines 5---------------------------------
   R(MDE_Symbol::COMMA, "1 ");
   R(MDE_Symbol::FACTORIAL, "6");

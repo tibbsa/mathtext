@@ -14,6 +14,12 @@
 
 namespace ba = boost::assign;
 
+//
+// ##TODO: Latex preamble and such
+// -- need eurosym package - http://www.theiling.de/eurosym.html
+// -- need textcomp package (for \\textcent, \\textyen)
+// !! verify \textcent works in math mode?
+
 LaTeXRenderer::LaTeXRenderer() : MathRenderer()
 {
   currentBlockType = MATH;
@@ -421,6 +427,12 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
 {
   static std::map<MDE_Symbol::Symbol,std::string> map = ba::map_list_of
     ( MDE_Symbol::COMMA, "," )
+    ( MDE_Symbol::CURRENCY_CENTS, "\\textcent " )
+    ( MDE_Symbol::CURRENCY_EURO, "\\euro " )
+    ( MDE_Symbol::CURRENCY_FRANC, "F" )
+    ( MDE_Symbol::CURRENCY_POUND, "\\pounds " )
+    ( MDE_Symbol::CURRENCY_DOLLAR, "\\$" )
+    ( MDE_Symbol::CURRENCY_YEN, "\\textyen " )
     ( MDE_Symbol::FACTORIAL, "!" )
     ( MDE_Symbol::LEFT_BRACE, "\\{" )
     ( MDE_Symbol::LEFT_BRACKET, "[" )
@@ -434,6 +446,7 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
     ;
 
   assert (map.count(e->getSymbol()) == 1);
+
   return renderMathContent(map[e->getSymbol()]);
 }
 

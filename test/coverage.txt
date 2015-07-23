@@ -19,7 +19,7 @@ Number		   -	    Y	    -
 Operator	   -	    Y	    -
 Comparator	   -	    Y	    -
 GreekLetter	   -	    Y	    -
-Symbol		   -	    Y	    -
+Symbol		   -	    *	    -
 Modifier	   -	    Y	    -
 
 Root		   -	    Y	    -

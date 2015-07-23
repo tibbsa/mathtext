@@ -10,6 +10,7 @@
 #include "logging.h"
 
 #include "MathInterpreter.h"
+#include "MathInterpreterMsg.h"
 
 /**
  * Attempts to interpret a variety of random symbols.
@@ -36,6 +37,12 @@ bool MathInterpreter::interpretSymbol (MDEVector &target,
     ( SymbolMap("%%", MDE_Symbol::PERCENT) )
     ( SymbolMap("/\\", MDE_Symbol::THEREFORE) )
     ( SymbolMap(",", MDE_Symbol::COMMA) )
+    ( SymbolMap("`C", MDE_Symbol::CURRENCY_CENTS) )
+    ( SymbolMap("`E", MDE_Symbol::CURRENCY_EURO) )
+    ( SymbolMap("`F", MDE_Symbol::CURRENCY_FRANC) )
+    ( SymbolMap("`P", MDE_Symbol::CURRENCY_POUND) )
+    ( SymbolMap("`$", MDE_Symbol::CURRENCY_DOLLAR) )
+    ( SymbolMap("`Y", MDE_Symbol::CURRENCY_YEN) )
     ( SymbolMap("{", MDE_Symbol::LEFT_BRACE) )
     ( SymbolMap("[", MDE_Symbol::LEFT_BRACKET) )
     ( SymbolMap("(", MDE_Symbol::LEFT_PAREN) )

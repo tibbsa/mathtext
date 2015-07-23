@@ -99,6 +99,14 @@
 #define UEB_GREEK_PSI        "Y"
 #define UEB_GREEK_OMEGA      "W"
 
+// Currency symbols
+#define UEB_CURRENCY_CENTS   BD_4 "C"
+#define UEB_CURRENCY_EURO    BD_4 "E"
+#define UEB_CURRENCY_FRANC   BD_4 "F"
+#define UEB_CURRENCY_POUND   BD_4 "L"
+#define UEB_CURRENCY_DOLLAR  BD_4 "S"
+#define UEB_CURRENCY_YEN     BD_4 "Y"
+#define UEB_CURRENCY_NAIRA   BD_4 "N"
 
 class UEBRenderer : public MathRenderer
 {

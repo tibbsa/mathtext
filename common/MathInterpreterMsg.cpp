@@ -91,6 +91,7 @@ std::string MathInterpreterMsg::getMessage (void) const
     (SUSPECT_TEXT_IN_MATH, "Suspected text material in a math passage")
     (SUSPECT_FRACTION, "Suspect missing open fraction symbol (@)")
     (UNKNOWN_GREEK, "Unknown Greek character symbol")
+    (UNKNOWN_BACKQUOTE_SYMBOL, "Unrecognized symbol")
     (FRACTION_NOT_TERMINATED, "Fraction terminator symbol (#) appears to be missing")
     (EXPONENT_NOT_TERMINATED, "Exponent begins with opening paren '(' but is never terminated with a closing paren ')'")
     (SUBSCRIPT_NOT_TERMINATED, "Subscript begins with opening paren '(' but is never terminated with a closing paren ')'")

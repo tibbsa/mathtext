@@ -207,6 +207,10 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
      * this point whenever there is a mode change.
      */
     if (c == '$') {
+      // Do not consider `$ to be a math mode change: this is a dollar sign
+      if (!m_inTextMode && i > 0 && buffer [i - 1] == '`') 
+	goto DefaultAction;
+
       if (m_inTextMode) {
 	LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;

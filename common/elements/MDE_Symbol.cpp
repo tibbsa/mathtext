@@ -36,6 +36,12 @@ std::string MDE_Symbol::getString (void) const
 #define MAP(m) (m, #m)
   static std::map<MDE_Symbol::Symbol,std::string> map = boost::assign::map_list_of
     MAP(COMMA)
+    MAP(CURRENCY_CENTS)
+    MAP(CURRENCY_EURO)
+    MAP(CURRENCY_FRANC)
+    MAP(CURRENCY_POUND)
+    MAP(CURRENCY_DOLLAR)
+    MAP(CURRENCY_YEN)
     MAP(FACTORIAL)
     MAP(LEFT_BRACE)
     MAP(LEFT_BRACKET)

@@ -246,6 +246,12 @@ class MDE_Symbol : public MathDocumentElement
  public:
   typedef enum { 
     COMMA, // , (outside of a number)
+    CURRENCY_CENTS, // ¢ (`C)
+    CURRENCY_EURO,  // € (`E)
+    CURRENCY_FRANC, // ₣ (`F)
+    CURRENCY_POUND, // £ (`P)
+    CURRENCY_DOLLAR, // $ (`$)
+    CURRENCY_YEN,   // ¥ (`Y)
     FACTORIAL, // !
     LEFT_BRACE, // {
     LEFT_BRACKET, // [ 

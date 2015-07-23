@@ -576,7 +576,13 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
   std::string output;
 
   static std::map<MDE_Symbol::Symbol,std::string> symmap = ba::map_list_of
-    ( MDE_Symbol::COMMA, UEB_COMMA " ")
+    ( MDE_Symbol::COMMA, UEB_COMMA)
+    ( MDE_Symbol::CURRENCY_CENTS, UEB_CURRENCY_CENTS )
+    ( MDE_Symbol::CURRENCY_EURO, UEB_CURRENCY_EURO )
+    ( MDE_Symbol::CURRENCY_FRANC, UEB_CURRENCY_FRANC )
+    ( MDE_Symbol::CURRENCY_POUND, UEB_CURRENCY_POUND )
+    ( MDE_Symbol::CURRENCY_DOLLAR, UEB_CURRENCY_DOLLAR )
+    ( MDE_Symbol::CURRENCY_YEN, UEB_CURRENCY_YEN )
     ( MDE_Symbol::FACTORIAL, UEB_FACTORIAL )
     ( MDE_Symbol::LEFT_BRACE, UEB_LEFT_BRACE )
     ( MDE_Symbol::LEFT_BRACKET, UEB_LEFT_BRACKET )
