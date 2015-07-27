@@ -707,6 +707,54 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
   return output;
 }
 
+std::string UEBRenderer::renderSummation (const MDE_Summation *e)
+{
+  std::string output;
+
+  LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
+  logIncreaseIndent();
+
+  output = UEB_CAPITAL_SIGN UEB_GREEK_SIGN UEB_GREEK_SIGMA;
+
+  if (!e->getLowerBound().empty()) {
+    std::string renderedBound;
+
+    beginInternalRender();
+    status.isNumericMode = false;
+    renderedBound = renderVector(e->getLowerBound());
+    endInternalRender();
+
+    LOG_TRACE << "- rendered lower bound: " << renderedBound;
+
+    if (isBrailleItem(e->getLowerBound())) {
+      output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_BELOW "%s") % renderedBound));
+    } else {
+      output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_BELOW UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedBound));
+    }
+  }
+
+  if (!e->getUpperBound().empty()) {
+    std::string renderedBound;
+
+    beginInternalRender();
+    status.isNumericMode = false;
+    renderedBound = renderVector(e->getUpperBound());
+    endInternalRender();
+
+    LOG_TRACE << "- rendered upper bound: " << renderedBound;
+
+    if (isBrailleItem(e->getUpperBound())) {
+      output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_ABOVE "%s") % renderedBound));
+    } else {
+      output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_ABOVE UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedBound));
+    }
+  }
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  return output;
+}
+
 std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;

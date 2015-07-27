@@ -61,6 +61,7 @@ class MathInterpreter
   bool interpretExponent (MDEVector &target, const std::string &src, size_t &i);
   bool interpretSubscript (MDEVector &target, const std::string &src, size_t &i);
   bool interpretRoot (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretSummation (MDEVector &target, const std::string &src, size_t &i);
 
   MathDocumentElementPtr makeGeneric (const std::string &buffer);
 
@@ -72,6 +73,10 @@ class MathInterpreter
 		     const std::string &groupOpen = "(", 
 		     const std::string &groupClose = ")",
 		     const bool retainGroupDelims = false);
+  bool extractToDelimiter (std::string &target,
+			   const std::string &buffer,
+			   size_t &i,
+			   const std::string &delim);
 
   /* Reporting functions */
   void addMessage (const MathInterpreterMsg::Category category, 

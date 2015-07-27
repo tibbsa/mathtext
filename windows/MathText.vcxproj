@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -159,6 +159,7 @@
     <ClCompile Include="..\common\elements\MDE_Operator.cpp" />
     <ClCompile Include="..\common\elements\MDE_Root.cpp" />
     <ClCompile Include="..\common\elements\MDE_SourceLine.cpp" />
+    <ClCompile Include="..\common\elements\MDE_Summation.cpp" />
     <ClCompile Include="..\common\elements\MDE_Subscript.cpp" />
     <ClCompile Include="..\common\elements\MDE_Symbol.cpp" />
     <ClCompile Include="..\common\elements\MDE_TextBlock.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="..\common\interpreters\InterpretOperators.cpp" />
     <ClCompile Include="..\common\interpreters\InterpretRoots.cpp" />
     <ClCompile Include="..\common\interpreters\InterpretSubscripts.cpp" />
+    <ClCompile Include="..\common\interpreters\InterpretSummations.cpp" />
     <ClCompile Include="..\common\interpreters\InterpretSymbols.cpp" />
     <ClCompile Include="..\common\logging.cpp" />
     <ClCompile Include="..\common\MathDocument.cpp" />

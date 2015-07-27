@@ -321,6 +321,21 @@ class MDE_Root : public MathDocumentElement
   virtual std::string getString (void) const;
 };
 
+class MDE_Summation : public MathDocumentElement
+{
+ protected:
+  MDEVector lowerBound;
+  MDEVector upperBound;
+  
+ public:
+  MDE_Summation(const MDEVector lower, const MDEVector upper);
+
+  MDEVector getLowerBound (void) const;
+  MDEVector getUpperBound (void) const;
+
+  virtual std::string getString (void) const;
+};
+
 
 /* ============== Fractions ======================================= */
 class MDE_Fraction : public MathDocumentElement

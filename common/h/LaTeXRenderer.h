@@ -63,6 +63,7 @@ class LaTeXRenderer : public MathRenderer
   DECL_RENDER_FUNC(Modifier);
 
   DECL_RENDER_FUNC(Root);
+  DECL_RENDER_FUNC(Summation);
   DECL_RENDER_FUNC(Fraction);
 
   DECL_RENDER_FUNC(Exponent);

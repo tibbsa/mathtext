@@ -495,6 +495,27 @@ std::string LaTeXRenderer::renderRoot (const MDE_Root *e)
   }
 }
 
+std::string LaTeXRenderer::renderSummation (const MDE_Summation *e)
+{
+  std::string renderedLowerBound, renderedUpperBound;
+  std::string output;
+
+  beginInternalRender();
+  renderedLowerBound = renderVector (e->getLowerBound());
+  renderedUpperBound = renderVector (e->getUpperBound());
+  endInternalRender();
+
+  output = "\\sum";
+  if (!renderedLowerBound.empty())
+    output += boost::str(boost::format("_{%s}") % renderedLowerBound);
+  
+  if (!renderedUpperBound.empty())
+    output += boost::str(boost::format("^{%s}") % renderedUpperBound);
+
+  output += " ";
+  return renderMathContent(output);
+}
+
 std::string LaTeXRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;

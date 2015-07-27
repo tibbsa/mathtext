@@ -258,6 +258,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     ATTEMPT(Modifier);
     ATTEMPT(Fraction);
     ATTEMPT(Root); // do this before a subscript to avoid confusion
+    ATTEMPT(Summation);
     ATTEMPT(Exponent);
     ATTEMPT(Subscript);
 
@@ -409,7 +410,12 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
  *
  * Returns TRUE on success, FALSE on error (typically, an unclosed group).
  */
-bool MathInterpreter::extractGroup (std::string &target, const std::string &buffer, size_t &i, const std::string &groupOpen, const std::string &groupClose, bool retainGroupDelims)
+bool MathInterpreter::extractGroup (std::string &target, 
+				    const std::string &buffer, 
+				    size_t &i, 
+				    const std::string &groupOpen, 
+				    const std::string &groupClose, 
+				    bool retainGroupDelims)
 {
   int groupNestingLevel = 0;
   bool foundTerminator = false;
@@ -456,6 +462,52 @@ bool MathInterpreter::extractGroup (std::string &target, const std::string &buff
   }
   else
     return false;
+}
+
+/**
+ * Extracts up to the next 'delim'.  But if we start with an open paren, 
+ * take that whole group regardless of whether it contains a comma.
+ *
+ * Returns TRUE on success, FALSE on error (typically, an unclosed group).
+ */
+bool MathInterpreter::extractToDelimiter (std::string &target, 
+					  const std::string &buffer, 
+					  size_t &i, 
+					  const std::string &delim)
+{
+  bool foundTerminator = false;
+  size_t pos = i;
+
+  // Skip over any white space that might come before this group
+  while (pos < buffer.length() && isspace(buffer[pos]))
+    pos++;
+
+  if (buffer[pos] == '(') {
+    if (!extractGroup(target, buffer, pos, "(", ")", false))
+      return false;
+
+    // Expect a delimeter just after that
+    if (buffer.substr(pos, delim.length()) != delim)
+      return false;
+
+    i = pos;
+    return true;
+  } 
+
+  foundTerminator = false;
+  for (; pos < buffer.length(); pos++) {
+    if (buffer.substr(pos, delim.length()) == delim) {
+      pos += delim.length();
+      foundTerminator = true;
+      break;
+    }
+      
+    // Add this character to the contents of the exponent 
+    target += buffer[pos];
+  }
+
+  i = pos;
+  return (foundTerminator == true);
 }
 
 

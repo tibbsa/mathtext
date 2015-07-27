@@ -71,6 +71,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(Modifier);
 
   RX(Root);
+  RX(Summation);
   RX(Fraction);
 
   RX(Exponent);
@@ -110,6 +111,7 @@ PLACEHOLDER(Symbol);
 PLACEHOLDER(Modifier);
 
 PLACEHOLDER(Root);
+PLACEHOLDER(Summation);
 PLACEHOLDER(Fraction);
 
 PLACEHOLDER(Exponent);

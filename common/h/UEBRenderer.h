@@ -17,11 +17,15 @@
 
 // Technical braille symbols
 #define UEB_CAPITAL_SIGN     BD_6
+#define UEB_DIRECTLY_ABOVE   BD_46 BD_35
+#define UEB_DIRECTLY_BELOW   BD_46 BD_26
 #define UEB_G1               BD_56
 #define UEB_G1_WORD          UEB_G1 UEB_G1
 #define UEB_G1_PASSAGE       UEB_G1 UEB_G1 UEB_G1
 #define UEB_GROUP_BEGIN      BD_126
 #define UEB_GROUP_END        BD_345
+#define UEB_LEVEL_DOWN       BD_26
+#define UEB_LEVEL_UP         BD_35
 #define UEB_NUMBER_SIGN      BD_3456 
 #define UEB_NUMERIC_SPACE    BD_5
 #define UEB_NUMERIC_MODE_SYMBOLS "ABCDEFGHIJ" UEB_COMMA UEB_PERIOD UEB_NUMERIC_SPACE
@@ -48,11 +52,8 @@
 #define UEB_FRAC_END         BD_23456
 #define UEB_GREATER_THAN     " " BD_4 BD_345 " "
 #define UEB_GREATER_THAN_EQ  " " BD_456 BD_4 BD_345 " "
-#define UEB_GREEK_SIGN       BD_46
 #define UEB_LESS_THAN        " " BD_4 BD_126 " "
 #define UEB_LESS_THAN_EQ     " " BD_456 BD_4 BD_126 " "
-#define UEB_LEVEL_DOWN       BD_26
-#define UEB_LEVEL_UP         BD_35
 #define UEB_MINUS_SIGN       BD_5 BD_36
 #define UEB_PLUS_SIGN        BD_5 BD_235
 #define UEB_ROOT_BEGIN       BD_146
@@ -74,6 +75,7 @@
 #define UEB_UNDER_HAT        BD_6 BD_5 BD_156
 
 // Greek alphabet
+#define UEB_GREEK_SIGN       BD_46
 #define UEB_GREEK_ALPHA      "A"
 #define UEB_GREEK_BETA       "B"
 #define UEB_GREEK_GAMMA      "G"
@@ -158,6 +160,7 @@ class UEBRenderer : public MathRenderer
   DECL_RENDER_FUNC(Modifier);
 
   DECL_RENDER_FUNC(Root);
+  DECL_RENDER_FUNC(Summation);
   DECL_RENDER_FUNC(Fraction);
 
   DECL_RENDER_FUNC(Exponent);
