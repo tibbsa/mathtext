@@ -22,14 +22,14 @@
 /**
  * Macros to help with message adding
  */
-#define MSG_INFO(code,msg) addMessage(MathInterpreterMsg::INFO, MathInterpreterMsg::code, msg)
-#define MSG_INFOX(code) addMessage(MathInterpreterMsg::INFO, MathInterpreterMsg::code)
-#define MSG_NOTICE(code,msg) addMessage(MathInterpreterMsg::NOTICE, MathInterpreterMsg::code, msg)
-#define MSG_NOTICEX(code) addMessage(MathInterpreterMsg::NOTICE, MathInterpreterMsg::code)
-#define MSG_WARNING(code,msg) addMessage(MathInterpreterMsg::WARNING, MathInterpreterMsg::code, msg)
-#define MSG_WARNINGX(code) addMessage(MathInterpreterMsg::WARNING, MathInterpreterMsg::code)
-#define MSG_ERROR(code,msg) addMessage(MathInterpreterMsg::ERROR, MathInterpreterMsg::code, msg)
-#define MSG_ERRORX(code) addMessage(MathInterpreterMsg::ERROR, MathInterpreterMsg::code)
+#define MSG_INFO(code,msg) addMessage(MathInterpreterMsg::MI_INFO, MathInterpreterMsg::code, msg)
+#define MSG_INFOX(code) addMessage(MathInterpreterMsg::MI_INFO, MathInterpreterMsg::code)
+#define MSG_NOTICE(code,msg) addMessage(MathInterpreterMsg::MI_NOTICE, MathInterpreterMsg::code, msg)
+#define MSG_NOTICEX(code) addMessage(MathInterpreterMsg::MI_NOTICE, MathInterpreterMsg::code)
+#define MSG_WARNING(code,msg) addMessage(MathInterpreterMsg::MI_WARNING, MathInterpreterMsg::code, msg)
+#define MSG_WARNINGX(code) addMessage(MathInterpreterMsg::MI_WARNING, MathInterpreterMsg::code)
+#define MSG_ERROR(code,msg) addMessage(MathInterpreterMsg::MI_ERROR, MathInterpreterMsg::code, msg)
+#define MSG_ERRORX(code) addMessage(MathInterpreterMsg::MI_ERROR, MathInterpreterMsg::code)
 
 class MathInterpreter
 {

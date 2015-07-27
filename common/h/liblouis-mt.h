@@ -62,11 +62,19 @@
 // we cannot exceed that here.  
 #define LIBLOUIS_MAXSTRING 512
 
+#ifdef _WIN32
+#define IMPORTDLL __declspec(dllimport)
+#define STDCALL __stdcall
+#else
+#define IMPORTDLL
+#define STDCALL
+#endif
+
 extern "C" {
 
-  int extParseChars (const char *inString, ll_widechar * outString);
-  char *showString (ll_widechar const *chars, int length);
-  int lou_translateString (const char *tableList, 
+  IMPORTDLL int STDCALL extParseChars (const char *inString, ll_widechar * outString);
+  IMPORTDLL char * STDCALL showString (ll_widechar const *chars, int length);
+  IMPORTDLL int STDCALL lou_translateString (const char *tableList, 
 			 const ll_widechar * inbuf, 
 			 int *inlen, 
 			 ll_widechar * outbuf, 
@@ -74,7 +82,7 @@ extern "C" {
 			 ll_formtype *typeform, 
 			 char *spacing, 
 			 int mode);
-  void lou_free (void);
+  IMPORTDLL void STDCALL lou_free (void);
 }
 
 #endif
