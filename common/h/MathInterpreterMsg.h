@@ -19,7 +19,7 @@
 class MathInterpreterMsg
 {
  public:
-  typedef enum { INFO, NOTICE, WARNING, ERROR } Category;
+  typedef enum { MI_INFO, MI_NOTICE, MI_WARNING, MI_ERROR } Category;
   typedef enum { UNKNOWN_COMMAND,
 		 NESTED_TEXT_MODE, NESTED_MATH_MODE, 
 		 SUSPECT_MATH_IN_TEXT, SUSPECT_TEXT_IN_MATH,
