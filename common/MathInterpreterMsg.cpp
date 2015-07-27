@@ -117,19 +117,19 @@ std::ostream &operator<<(std::ostream &os, const MathInterpreterMsg &mdm)
   std::string categoryStr;
 
   switch (mdm.getCategory()) {
-  case MathInterpreterMsg::INFO: 
+  case MathInterpreterMsg::MI_INFO: 
     categoryStr = "FYI"; 
     break;
     
-  case MathInterpreterMsg::NOTICE:
+  case MathInterpreterMsg::MI_NOTICE:
     categoryStr = "NOTE"; 
     break;
 
-  case MathInterpreterMsg::WARNING:
+  case MathInterpreterMsg::MI_WARNING:
     categoryStr = "WARNING";
     break;
 
-  case MathInterpreterMsg::ERROR:
+  case MathInterpreterMsg::MI_ERROR:
     categoryStr = "ERROR";
     break;
   }
