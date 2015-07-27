@@ -47,3 +47,10 @@ linux/mathtext
 # Doxygen files
 doc/doxygen/html
 doc/doxygen/latex
+
+windows/[Dd]ebug/
+*.sdf
+*.suo
+*.vcxproj.user
+*.aps
+*.ipch
