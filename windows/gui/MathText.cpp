@@ -15,6 +15,7 @@
 #include "MathDocument.h"
 #include "MathInterpreter.h"
 #include "LaTeXRenderer.h"
+#include "UEBRenderer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -233,7 +234,7 @@ void CMathTextApp::SaveCustomState()
 void CMathTextApp::OnTestTranslation()
 {
 	MathSourceFile src;
-	src.loadFromBuffer("x^2 + 2x = @1~2#");
+	src.loadFromBuffer("x^2 + 2x = @1~2# &is a great lot of fun!");
 
 	MathDocument doc;
 	MathInterpreter interp(src, doc);
@@ -242,5 +243,9 @@ void CMathTextApp::OnTestTranslation()
 	LaTeXRenderer r;
 	std::string output = r.renderDocument(doc);
 	MessageBoxA(NULL, output.c_str(), "Test Translation", MB_OK | MB_ICONINFORMATION);
+
+	UEBRenderer brl;
+	std::string braille = brl.renderDocument(doc);
+	MessageBoxA(NULL, braille.c_str(), "Test Translation", MB_OK | MB_ICONINFORMATION);
 
 }

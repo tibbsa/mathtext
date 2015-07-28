@@ -14,96 +14,10 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Common MathText Files">
-      <UniqueIdentifier>{a12f8028-29e3-44d3-b2ce-9b6c1d6b4c1a}</UniqueIdentifier>
+      <UniqueIdentifier>{a0fa407a-f27e-4e3d-bd52-5425863c8deb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="gui\ChildFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\MainFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\MathText.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\MathTextDoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\MathTextView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\common-includes.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\LaTeXRenderer.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\liblouis-mt.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\logging.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathDocument.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathDocumentElements.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathDocumentLine.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathExceptions.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathInterpreter.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathInterpreterMsg.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathRenderer.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\MathSourceFile.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\mathtext.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\UEBRenderer.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\h\utility.h">
-      <Filter>Common MathText Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="gui\ChildFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\MainFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\MathText.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\MathTextDoc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\MathTextView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="common-includes.cpp">
       <Filter>Common MathText Files</Filter>
     </ClCompile>
@@ -236,33 +150,103 @@
     <ClCompile Include="..\common\utility.cpp">
       <Filter>Common MathText Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\test\mttest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\interpreting\Int_Numbers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Comparators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_examples.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Exponents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Fractions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_GreekLetters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_item_detection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_ItemNumbers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Modifiers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Numbers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Operators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Roots.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Subscripts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\rendering\ueb\UEB_Symbols.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MathText.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="gui\MathText.reg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\MathTextDoc.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\MathText.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Toolbar256.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="gui\UserImages.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="gui\MathText.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <ClInclude Include="..\common\h\common-includes.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\LaTeXRenderer.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\liblouis-mt.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\logging.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocument.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocumentElements.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocumentLine.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathExceptions.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathInterpreter.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathInterpreterMsg.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathRenderer.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathSourceFile.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\mathtext.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\UEBRenderer.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\utility.h">
+      <Filter>Common MathText Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\h\mttest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\h\catch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -71,6 +71,30 @@
 #endif
 
 extern "C" {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4146)
+#endif
+
+  typedef enum
+  {
+    LOU_LOG_ALL = -2147483648,
+    LOU_LOG_DEBUG = 10000,
+    LOU_LOG_INFO = 20000,
+    LOU_LOG_WARN = 30000,
+    LOU_LOG_ERROR = 40000,
+    LOU_LOG_FATAL = 50000,
+    LOU_LOG_OFF = 2147483647
+  } louLogLevels;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+  IMPORTDLL void STDCALL lou_logFile(const char *filename);
+  IMPORTDLL void STDCALL lou_logEnd(void);
+  IMPORTDLL void STDCALL lou_setLogLevel(louLogLevels level);
+  IMPORTDLL char * STDCALL lou_setDataPath(char *path);
+  IMPORTDLL char * STDCALL lou_getDataPath(void);
 
   IMPORTDLL int STDCALL extParseChars (const char *inString, ll_widechar * outString);
   IMPORTDLL char * STDCALL showString (ll_widechar const *chars, int length);

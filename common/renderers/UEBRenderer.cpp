@@ -24,6 +24,8 @@ UEBRenderer::UEBRenderer() : MathRenderer()
   status.isNumericMode = false;
   status.isStart = true;
   status.isUsingSpacedOperators = false;
+
+  lou_setDataPath("braille_tables");
 }
 
 UEBRenderer::~UEBRenderer()
@@ -265,6 +267,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 			   0 /* no modes set */)) {
     LOG_ERROR << "! Braille translation error on '" << s << "'!";
     std::ostringstream os;
+    lou_logEnd();
     os << "Error occurred while trying to render braille for text: '" << s << "'";
     BOOST_THROW_EXCEPTION (MathRenderException() <<
 			   mdx_error_info(os.str()));
