@@ -119,7 +119,11 @@ int main (const int argc, const char **argv)
       LaTeXRenderer ltr;
       std::string output;
       output = ltr.renderDocument(doc);
+
+      LOG_INFO << endl << "^^^^^^^^^^^^^^^^^^^^^^^^^^ LATEX ^^^^^^^^^^^^^^^^^^^^^^" << endl;
+
       LOG_INFO << output;
+      LOG_INFO << endl << "vvvvvvvvvvvvvvvvvvvvvvvvvv LATEX vvvvvvvvvvvvvvvvvvvvvv" << endl;
 
       ofstream ofs;
       ofs.open(latexOutputFilename.c_str());
@@ -139,12 +143,18 @@ int main (const int argc, const char **argv)
     }
   
     if (generateBraille) {
-      UEBRenderer ueb;
       LOG_INFO << endl << "====================== UEB Render ===================" << endl;
 
       std::string output;
+      UEBRenderer ueb;
+      ueb.enableLineWrapping (30);
       output = ueb.renderDocument(doc);
+
+
+      LOG_INFO << endl << "^^^^^^^^^^^^^^^^^^^^^^^^^^  UEB  ^^^^^^^^^^^^^^^^^^^^^^" << endl;
+
       LOG_INFO << output;
+      LOG_INFO << endl << "vvvvvvvvvvvvvvvvvvvvvvvvvv  UEB  vvvvvvvvvvvvvvvvvvvvvv" << endl;
 
       ofstream ofs;
       ofs.open(brfOutputFilename.c_str());

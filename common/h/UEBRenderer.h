@@ -15,6 +15,16 @@
 
 #include "MathRenderer.h"
 
+// Default settings
+#define UEB_DEFAULT_LINE_LEN 0 /* no wrapping */
+
+// UEB wrapping markers
+#define UEB_WORDWRAP_INDLEN  7
+#define UEB_WORDWRAP_PRI1    "<|@1@|>"
+#define UEB_WORDWRAP_PRI2    "<|@2@|>"
+#define UEB_WORDWRAP_PRI3    "<|@3@|>"
+#define UEB_CONTINUATION     BD_5
+
 // Technical braille symbols
 #define UEB_CAPITAL_SIGN     BD_6
 #define UEB_DIRECTLY_ABOVE   BD_46 BD_35
@@ -43,17 +53,17 @@
 #define UEB_RIGHT_PAREN      BD_5 BD_345
 
 // Math symbols
-#define UEB_APPROX_EQUAL     " " BD_456 BD_35 " "
+#define UEB_APPROX_EQUAL     BD_456 BD_35
 #define UEB_DIV_SIGN         BD_5 BD_34
-#define UEB_EQUAL_SIGN       " " BD_5 BD_2356 " "
+#define UEB_EQUAL_SIGN       BD_5 BD_2356
 #define UEB_FACTORIAL        BD_235
 #define UEB_FRAC_BEGIN       BD_12356
 #define UEB_FRAC_DIVIDER     BD_46 BD_34
 #define UEB_FRAC_END         BD_23456
-#define UEB_GREATER_THAN     " " BD_4 BD_345 " "
-#define UEB_GREATER_THAN_EQ  " " BD_456 BD_4 BD_345 " "
-#define UEB_LESS_THAN        " " BD_4 BD_126 " "
-#define UEB_LESS_THAN_EQ     " " BD_456 BD_4 BD_126 " "
+#define UEB_GREATER_THAN     BD_4 BD_345
+#define UEB_GREATER_THAN_EQ  BD_456 BD_4 BD_345
+#define UEB_LESS_THAN        BD_4 BD_126
+#define UEB_LESS_THAN_EQ     BD_456 BD_4 BD_126
 #define UEB_MINUS_SIGN       BD_5 BD_36
 #define UEB_PLUS_SIGN        BD_5 BD_235
 #define UEB_ROOT_BEGIN       BD_146
@@ -62,7 +72,7 @@
 #define UEB_SINCE            BD_4 BD_34
 #define UEB_THEREFORE        BD_6 BD_16
 #define UEB_TIMES_SIGN       BD_5 BD_236
-#define UEB_UNEQUAL_SIGN     " " BD_5 BD_2356 BD_4 BD_156 " "
+#define UEB_UNEQUAL_SIGN     BD_5 BD_2356 BD_4 BD_156
 
 // Over/under symbols
 #define UEB_OVER_ARROW_RIGHT BD_45 BD_156
@@ -122,6 +132,10 @@ class UEBRenderer : public MathRenderer
   UEBRenderStatus status;
   std::stack<UEBRenderStatus> statusStack;
 
+  unsigned maxLineLength;
+
+  std::string stripWrappingIndicators (const std::string &input) const;
+  
   unsigned internalRenderCount;
   void beginInternalRender (void);
   bool doingInternalRender (void) const;
@@ -140,6 +154,10 @@ class UEBRenderer : public MathRenderer
 
   static bool isBrailleItem (const MDEVector &v);
   static bool isSimpleFraction (const MDE_Fraction &frac);
+  std::string renderDocument (const MathDocument &document);
+
+  void disableLineWrapping (void);
+  void enableLineWrapping (const unsigned length);
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

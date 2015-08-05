@@ -25,12 +25,200 @@ UEBRenderer::UEBRenderer() : MathRenderer()
   status.isStart = true;
   status.isUsingSpacedOperators = false;
 
+  maxLineLength = UEB_DEFAULT_LINE_LEN;
+
   lou_setDataPath("braille_tables");
 }
 
 UEBRenderer::~UEBRenderer()
 {
   lou_free();
+}
+
+std::string UEBRenderer::renderDocument (const MathDocument &document)
+{
+  std::string output;
+
+  // We hard code the lengths here for efficiency, but make sure 
+  // the word wrapping indicators haven't been changed.
+  assert (std::string(UEB_WORDWRAP_PRI1).length() == UEB_WORDWRAP_INDLEN);
+  assert (std::string(UEB_WORDWRAP_PRI2).length() == UEB_WORDWRAP_INDLEN);
+  assert (std::string(UEB_WORDWRAP_PRI3).length() == UEB_WORDWRAP_INDLEN);
+  
+  LOG_TRACE << ">> UEBRenderer::renderDocument begin";
+  logIncreaseIndent();
+
+  std::string renderedBraille = MathRenderer::renderDocument (document);
+
+  if (maxLineLength) {
+    size_t pos = 0;
+    while (pos < renderedBraille.length()) {
+      std::string curLine;
+      std::string curOutputLine;
+
+      size_t eolPos = renderedBraille.find("\n", pos);
+      if (eolPos == std::string::npos) { // no final end of line found?
+	curLine = renderedBraille.substr(pos);
+	// Advance to the end of the buffer
+	pos = renderedBraille.length();
+      }
+      else {
+	curLine = renderedBraille.substr(pos, eolPos - pos);
+	// Advance to the end of the current line
+	pos = eolPos+1;
+      }
+
+#ifdef UEB_WRAPPING_DEBUG
+      LOG_TRACE << "pos " << pos << "/" << renderedBraille.length() << ", wordwrapping " << curLine.length() << ":'" << stripWrappingIndicators(curLine) << "'";
+      logIncreaseIndent();
+      LOG_TRACE << curLine;
+#endif
+
+      size_t last_break_position [3] = {0, 0, 0};
+      size_t curOutputLinePos = 0;
+      size_t curOutputLineLength = 0;
+      size_t i = 0;
+      while (i < curLine.length()) {
+#ifdef UEB_WRAPPING_DEBUG
+	LOG_TRACE << "  wrap lookahead @: " << curLine.substr(i, 10);
+#endif
+
+	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI1) {
+	  last_break_position [0] = curOutputLinePos;
+	  i += UEB_WORDWRAP_INDLEN;
+	  continue;
+	}
+	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI2) {
+	  last_break_position [1] = curOutputLinePos;
+	  i += UEB_WORDWRAP_INDLEN;
+	  continue;
+	}
+	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI3) {
+	  last_break_position [2] = curOutputLinePos;
+	  i += UEB_WORDWRAP_INDLEN;
+	  continue;
+	}
+
+	curOutputLine += curLine[i];
+	curOutputLinePos++;
+	curOutputLineLength++;
+	i++;
+
+	/**
+	 * We first try to find a "priority 1" break point within the last 20%
+	 * of the line. If there is none, then look for priority 2, then
+	 * priority 3. If none of those are available, we increase the lookback
+	 * up until 50% of the line, at which point we just say to heck with it
+	 * and break right where we are.
+	 */
+	if (curOutputLineLength == maxLineLength) {
+#ifdef UEB_WRAPPING_DEBUG
+	  LOG_TRACE << "reached maxLength " << curOutputLineLength << "@" << curOutputLinePos;
+	  LOG_TRACE << "recorded breakpoints: ";
+	  for (int xxxx = 0; xxxx <= 2; xxxx++) 
+	    LOG_TRACE << " - priority " << (xxxx+1) << ": " << last_break_position[xxxx];
+#endif
+
+	  unsigned breakpoint = 0;
+	  for (size_t lookback_window_size = (size_t)(maxLineLength/5);
+	       !breakpoint && lookback_window_size < (size_t)(maxLineLength/2);
+	       lookback_window_size++) {
+	    size_t lookback_start_offset = curOutputLine.length() - lookback_window_size;
+
+#ifdef UEB_WRAPPING_DEBUG
+	    LOG_TRACE << "lookback window size: " << lookback_window_size << ", starting offset: " << lookback_start_offset;
+#endif
+
+	    for (int curPriority = 1; curPriority <= 3 && !breakpoint; curPriority++) {
+	      if (last_break_position [curPriority-1] != 0 && 
+		  last_break_position [curPriority-1] >= lookback_start_offset) {
+#ifdef UEB_WRAPPING_DEBUG
+		LOG_TRACE << " - breaking at priority " << curPriority << " position " << last_break_position [curPriority-1];
+#endif
+
+		breakpoint = last_break_position [curPriority-1];
+	      } else { 
+#ifdef UEB_WRAPPING_DEBUG
+		LOG_TRACE << " - no priotity " << curPriority << " break available";
+#endif
+	      }
+	    }
+	  }
+
+	  if (!breakpoint) {
+#ifdef UEB_WRAPPING_DEBUG
+	    LOG_TRACE << "no suitable breakpoint found: breaking at EOL";
+#endif
+	    breakpoint = curOutputLinePos;
+	  }
+
+	  size_t post_break_length;
+	  post_break_length = curOutputLine.length() - breakpoint;
+#ifdef UEB_WRAPPING_DEBUG
+	  LOG_TRACE << "inserting break at " << breakpoint << ", post-break length: " << post_break_length;
+	  LOG_TRACE << "  before: " << curOutputLineLength << ":[" << curOutputLine << "]";
+#endif
+
+	  // Delete any whitespace which appears before this point
+	  while (isspace(curOutputLine[breakpoint - 1])) {
+#ifdef UEB_WRAPPING_DEBUG
+	    LOG_TRACE << "  * deleted trailing space before break";
+#endif
+	    curOutputLine.erase(breakpoint-1, 1);
+	    breakpoint--;
+	    curOutputLinePos--;
+	  }
+	  
+	  std::string continuationString = "\n  ";
+	  curOutputLine.insert(breakpoint, continuationString);
+	  curOutputLinePos = curOutputLine.length();
+	  curOutputLineLength = post_break_length + 2 /* (indent) */;
+#ifdef UEB_WRAPPING_DEBUG
+	  LOG_TRACE << "  after: " << curOutputLineLength << ":[" << curOutputLine << "]";
+#endif
+
+	  // reset breakpoints for new line
+	  for (int curPriority = 1; curPriority <= 3; curPriority++)
+	    last_break_position[curPriority-1] = 0;
+	}
+      }
+
+#ifdef UEB_WRAPPING_DEBUG
+      LOG_TRACE << "wordwrapped to: " << curOutputLine.length() << ":[" << curOutputLine << "]";
+      logDecreaseIndent();
+#endif
+
+      output += curOutputLine + "\n";
+    }
+  }
+  else
+    output = renderedBraille;
+
+  LOG_TRACE << "<< UEBRenderer::renderDocument end: " << output;
+  logDecreaseIndent();
+
+  return output;
+}
+
+void UEBRenderer::disableLineWrapping (void)
+{
+  maxLineLength = 0;
+}
+
+void UEBRenderer::enableLineWrapping (const unsigned length)
+{
+  assert (length != 0);
+  maxLineLength = length;
+}
+
+
+std::string UEBRenderer::stripWrappingIndicators (const std::string &input) const
+{
+  std::string temp = input;
+  boost::algorithm::replace_all (temp, UEB_WORDWRAP_PRI1, "");
+  boost::algorithm::replace_all (temp, UEB_WORDWRAP_PRI2, "");
+  boost::algorithm::replace_all (temp, UEB_WORDWRAP_PRI3, "");
+  return temp;
 }
 
 void UEBRenderer::beginInternalRender (void)
@@ -70,7 +258,7 @@ std::string UEBRenderer::translateToBraille (const std::string &s)
   output = translateBrailleLetterIndicators (output);
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -107,7 +295,7 @@ std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
   }
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -137,7 +325,7 @@ std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
 
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -224,7 +412,7 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
   status.isStart = false;
   
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -278,6 +466,17 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   LOG_TRACE << "Louis returned " << outlen << " chars: {" << showString(braille_buffer.get(), outlen) << "}";
   braille_string = std::string(showString(braille_buffer.get(), outlen));
 
+  // Insert wrapping indicators.
+  if (maxLineLength) {
+    boost::replace_all(braille_string, "4 ", "4 " UEB_WORDWRAP_PRI1);
+    boost::replace_all(braille_string, "6 ", "6 " UEB_WORDWRAP_PRI1);
+    boost::replace_all(braille_string, "8 ", "8 " UEB_WORDWRAP_PRI1);
+    boost::replace_all(braille_string, " ", " " UEB_WORDWRAP_PRI2);
+    boost::replace_all(braille_string, UEB_LEFT_PAREN, UEB_WORDWRAP_PRI1 UEB_LEFT_PAREN);
+    boost::replace_all(braille_string, UEB_LEFT_BRACKET, UEB_WORDWRAP_PRI1 UEB_LEFT_BRACKET);
+    boost::replace_all(braille_string, UEB_LEFT_BRACE, UEB_WORDWRAP_PRI1 UEB_LEFT_BRACE);
+  }
+
   //## There is a bug in liblouis that results in single letters 
   //   getting letter indicators before them unnecessarily.  Fix this.
   std::string fixed_braille_string;
@@ -295,7 +494,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   status.isStart = false;
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -348,7 +547,7 @@ std::string UEBRenderer::renderLineBreak (const MDE_LineBreak *e)
   status.isStart = true;
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -367,7 +566,7 @@ std::string UEBRenderer::renderTextBlock (const MDE_TextBlock *e)
   status.isStart = false;
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -383,7 +582,7 @@ std::string UEBRenderer::renderMathBlock (const MDE_MathBlock *e)
   output = renderMathContent(brl);
   
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -397,7 +596,7 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
   output = renderTextContent(e->getText() + " ");
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -416,6 +615,9 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
     brailleNumber = "-";
     pos++;
   }
+
+  if (maxLineLength)
+    brailleNumber = UEB_WORDWRAP_PRI3;
 
   brailleNumber += UEB_NUMBER_SIGN;
   
@@ -452,7 +654,7 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
   status.isNumericMode = true;
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -478,13 +680,19 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
 			   mdx_error_info(os.str()));
   }
 
-  if (status.isUsingSpacedOperators) 
-    output = " " + opmap[e->getOperator()] + " ";
-  else
-    output = opmap [e->getOperator()];
+  if (status.isUsingSpacedOperators)
+    output = " ";
+
+  if (maxLineLength) 
+    output += UEB_WORDWRAP_PRI2;
+
+  output += opmap[e->getOperator()];
+
+  if (status.isUsingSpacedOperators)
+    output += " ";
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -513,10 +721,13 @@ std::string UEBRenderer::renderComparator (const MDE_Comparator *e)
 			   mdx_error_info(os.str()));
   }
 
-  output = compmap [e->getComparator()];
+  if (maxLineLength)
+    output = " " UEB_WORDWRAP_PRI1 + compmap [e->getComparator()] + " ";
+  else
+    output = " " + compmap [e->getComparator()] + " ";
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -570,9 +781,12 @@ std::string UEBRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 			   mdx_error_info(os.str()));
   }
 
-  output = renderMathContent(charmap [e->getValue()]);
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI3;
+
+  output += renderMathContent(charmap [e->getValue()]);
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }
@@ -615,7 +829,7 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
   output = renderMathContent(symmap [e->getSymbol()]);
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 
 }
@@ -635,10 +849,13 @@ std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
 
   // Include grouping indicators only if the symbol to be modified is
   // something more than an 'item'.  See isBrailleItem() for details.
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI3;
+
   if (!isBrailleItem(e->getArgument()))
-    output = UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END;
+    output += UEB_GROUP_BEGIN + renderedArgument + UEB_GROUP_END;
   else
-    output = renderedArgument;
+    output += renderedArgument;
 
   switch (e->getModifier()) {
   case MDE_Modifier::OVER_ARROW_RIGHT:
@@ -660,7 +877,7 @@ std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
   output = renderMathContent(output);
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -670,6 +887,9 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
+
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI3;
 
   if (e->getIndex().empty()) { /* simple square root */ 
     std::string renderedRootArgument;
@@ -681,7 +901,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
 
     LOG_TRACE << "- rendered root: " << renderedRootArgument;
 
-    output = renderMathContent(UEB_ROOT_BEGIN + renderedRootArgument + UEB_ROOT_END);
+    output += renderMathContent(UEB_ROOT_BEGIN + renderedRootArgument + UEB_ROOT_END);
   } else {
 
     // Insert the index as an exponent at the start of the root argment, e.g.
@@ -702,11 +922,11 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
     LOG_TRACE << "- rendered index: " << renderedRootIndex;
     LOG_TRACE << "- rendered root: " << renderedRootArgument;
     
-    output = renderMathContent(UEB_ROOT_BEGIN + renderedRootIndex + renderedRootArgument + UEB_ROOT_END);
+    output += renderMathContent(UEB_ROOT_BEGIN + renderedRootIndex + renderedRootArgument + UEB_ROOT_END);
   }
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -717,7 +937,10 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  output = UEB_CAPITAL_SIGN UEB_GREEK_SIGN UEB_GREEK_SIGMA;
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI3;
+
+  output += UEB_CAPITAL_SIGN UEB_GREEK_SIGN UEB_GREEK_SIGMA;
 
   if (!e->getLowerBound().empty()) {
     std::string renderedBound;
@@ -754,7 +977,7 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
   }
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -779,18 +1002,30 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;
   LOG_TRACE << "- is simple fraction? " << simpleFraction;
 
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI2;
+
   if (simpleFraction) {
+    // Do not permit word wrapping within simple fractions
+    if (maxLineLength) {
+      renderedNumerator = stripWrappingIndicators(renderedNumerator);
+      renderedDenominator = stripWrappingIndicators(renderedDenominator);
+    }
+
     // The dividing slash does not cancel numeric mode, so remove the 
     // extra number sign that will appear in the denominator
-    renderedDenominator.erase (renderedDenominator.begin(), renderedDenominator.begin() + 1);
+    renderedDenominator.erase (0, 1);
 
-    output = renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
+    output += renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
   } else {
-    output = renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
+    if (maxLineLength) 
+      output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER UEB_WORDWRAP_PRI3 "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
+    else
+      output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
   }
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -817,12 +1052,15 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP "%s") % renderedExponent));
     status.isNumericMode = endedInNumericMode;
   } else {
-    output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
+    if (maxLineLength)
+      output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_WORDWRAP_PRI3 UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
+    else
+      output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
     status.isNumericMode = false;
   }
   
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
@@ -849,12 +1087,16 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN "%s") % renderedSubscript));
     status.isNumericMode = endedInNumericMode;
   } else {
-    output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
+    if (maxLineLength)
+      output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_WORDWRAP_PRI3 UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
+    else
+      output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
+
     status.isNumericMode = false;
   }
 
   logDecreaseIndent();
-  LOG_TRACE << "<< " << __func__ << ": (" << output << ")";
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
 }
 
