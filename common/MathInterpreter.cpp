@@ -254,8 +254,8 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     ATTEMPT(Number);
     ATTEMPT(Comparator);
     ATTEMPT(GreekLetter);
+    ATTEMPT(Modifier); // Do this before symbols so `CJ gets matched
     ATTEMPT(Symbol);
-    ATTEMPT(Modifier);
     ATTEMPT(Fraction);
     ATTEMPT(Root); // do this before a subscript to avoid confusion
     ATTEMPT(Summation);
@@ -306,7 +306,7 @@ MathDocumentElementPtr MathInterpreter::makeGeneric (const std::string &buffer)
     sniffTextForMath (buffer);
     e = boost::make_shared<MDE_TextBlock>(buffer);
   } else {
-    e = boost::make_shared<MDE_MathBlock>(boost::trim_copy(buffer));
+    e = boost::make_shared<MDE_MathBlock>(boost::trim_right_copy(buffer));
   }
 
   return e;
