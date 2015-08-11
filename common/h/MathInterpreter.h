@@ -51,6 +51,7 @@ class MathInterpreter
   MDEVector interpretBuffer (const std::string &buffer);
   bool interpretCommand (MDEVector &target, const std::string &src, size_t &i);
   bool interpretNumber (MDEVector &target, const std::string &src, size_t &i);
+  bool interpretGroup (MDEVector &target, const std::string &src, size_t &i);
   bool interpretItemNumber (MDEVector &target, const std::string &src, size_t &i);
   bool interpretOperator (MDEVector &target, const std::string &src, size_t &i);
   bool interpretComparator (MDEVector &target, const std::string &src, size_t &i);

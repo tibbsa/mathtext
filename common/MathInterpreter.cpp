@@ -250,6 +250,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     if (m_inTextMode)
       goto HandleTextBlocks;
 
+    ATTEMPT(Group);
     ATTEMPT(Operator);
     ATTEMPT(Number);
     ATTEMPT(Comparator);

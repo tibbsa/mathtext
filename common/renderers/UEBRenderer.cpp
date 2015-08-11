@@ -1,6 +1,6 @@
 /**
- * @file LaTeXRenderer.cpp
- * LaTeX rendering engine
+ * @file UEBRenderer.cpp
+ * Unified English Braille rendering engine
  * 
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
@@ -594,6 +594,53 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
   logIncreaseIndent();
 
   output = renderTextContent(e->getText() + " ");
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
+  return output;
+}
+
+std::string UEBRenderer::renderGroup (const MDE_Group *e)
+{
+  std::string renderedContents;
+  std::string openChar, closeChar;
+  std::string output;
+
+  LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
+  logIncreaseIndent();
+
+  switch (e->getType()) {
+  case MDE_Group::PARENTHESES:
+    openChar = UEB_LEFT_PAREN;
+    closeChar = UEB_RIGHT_PAREN;
+    break;
+
+  case MDE_Group::BRACKETS:
+    openChar = UEB_LEFT_BRACKET;
+    closeChar = UEB_RIGHT_BRACKET;
+    break;
+
+  case MDE_Group::BRACES:
+    openChar = UEB_LEFT_BRACE;
+    closeChar = UEB_RIGHT_BRACE;
+    break;
+
+  default:
+    assert(0);
+  }
+
+
+  beginInternalRender();
+  status.isNumericMode = false;
+  renderedContents = renderVector (e->getContents());
+  endInternalRender();
+
+  if (maxLineLength)
+    output = UEB_WORDWRAP_PRI2;
+
+  output += openChar;
+  output += boost::trim_copy(renderedContents);
+  output += closeChar;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";

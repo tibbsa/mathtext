@@ -63,6 +63,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(TextBlock);
   RX(MathBlock);
   RX(Number);
+  RX(Group);
 
   RX(Operator);
   RX(Comparator);
@@ -101,6 +102,7 @@ PLACEHOLDER(LineBreak);
 
 PLACEHOLDER(TextBlock);
 PLACEHOLDER(MathBlock);
+PLACEHOLDER(Group);
 PLACEHOLDER(ItemNumber);
 PLACEHOLDER(Number);
 

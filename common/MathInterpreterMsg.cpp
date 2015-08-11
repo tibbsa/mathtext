@@ -99,8 +99,10 @@ std::string MathInterpreterMsg::getMessage (void) const
     (ROOT_NOT_TERMINATED, "Root begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MODIFIER_NOT_TERMINATED, "Text attached to a symbol begins with opening paren '(' but is never terminated with a closing paren ')'")
     (MODIFIER_MISSING_ARGUMENT, "Symbol is missing attached text")
-    (MODIFIER_ROOT_REQUIRES_PARENS, "To include a root symbol within a modifier, enclose it in parantheses");
+    (MODIFIER_ROOT_REQUIRES_PARENS, "To include a root symbol within a modifier, enclose it in parantheses")
+    (GROUP_NOT_TERMINATED, "A group was begun but not correctly termianted")
     ;
+
 
   assert (error_map.count(m_code) == 1);
 

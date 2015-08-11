@@ -162,6 +162,29 @@ class MDE_Number : public MathDocumentElement
 };
 
 /**
+ * A logical subgroup within an equation (bounded by parens, brackets, or 
+ * braces, as the case may be).  
+ */
+class MDE_Group : public MathDocumentElement
+{
+ public:
+  typedef enum { PARENTHESES, BRACKETS, BRACES } EnclosureType;
+
+ protected:
+  EnclosureType enclosure;
+  MDEVector contents;
+
+ public:
+  MDE_Group(const EnclosureType encl, const MDEVector &content);
+
+  MDEVector getContents (void) const;
+  EnclosureType getType (void) const;
+
+  virtual std::string getString (void) const;
+};
+
+
+/**
  * A question or item number (that appears at the start of a line)
  */
 class MDE_ItemNumber : public MDE_TextBlock

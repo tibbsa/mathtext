@@ -53,9 +53,10 @@ class LaTeXRenderer : public MathRenderer
 
   DECL_RENDER_FUNC(TextBlock);
   DECL_RENDER_FUNC(MathBlock);
-  DECL_RENDER_FUNC(ItemNumber);
   DECL_RENDER_FUNC(Number);
+  DECL_RENDER_FUNC(Group);
 
+  DECL_RENDER_FUNC(ItemNumber);
   DECL_RENDER_FUNC(Operator);
   DECL_RENDER_FUNC(Comparator);
   DECL_RENDER_FUNC(GreekLetter);

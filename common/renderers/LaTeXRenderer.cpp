@@ -321,6 +321,38 @@ std::string LaTeXRenderer::renderMathBlock (const MDE_MathBlock *e)
   return renderMathContent(e->getText());
 }
 
+std::string LaTeXRenderer::renderGroup (const MDE_Group *e)
+{
+  std::string renderedContents;
+  std::string openChar, closeChar;
+
+  beginInternalRender();
+  renderedContents = renderVector (e->getContents());
+  endInternalRender();
+
+  switch (e->getType()) {
+  case MDE_Group::PARENTHESES:
+    openChar = "(";
+    closeChar = ")";
+    break;
+
+  case MDE_Group::BRACKETS:
+    openChar = "[";
+    closeChar = "]";
+    break;
+
+  case MDE_Group::BRACES:
+    openChar = "\\{";
+    closeChar = "\\}";
+    break;
+
+  default:
+    assert(0);
+  }
+
+  return renderMathContent("\\left" + openChar + renderedContents + "\\right" + closeChar);
+}
+
 std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
 {
   std::string qnumber, output;

@@ -33,7 +33,8 @@ class MathInterpreterMsg
 		 ROOT_NOT_TERMINATED,
 		 MODIFIER_MISSING_ARGUMENT,
 		 MODIFIER_NOT_TERMINATED,
-		 MODIFIER_ROOT_REQUIRES_PARENS} Code;
+		 MODIFIER_ROOT_REQUIRES_PARENS,
+                 GROUP_NOT_TERMINATED} Code;
 		 
  protected:
   Category m_category;
