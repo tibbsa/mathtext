@@ -500,6 +500,9 @@ bool MathInterpreter::extractToDelimiter (std::string &target,
     if (buffer.substr(pos, delim.length()) != delim)
       return false;
 
+    // skip delimeter
+    pos += delim.length();
+
     i = pos;
     return true;
   } 
