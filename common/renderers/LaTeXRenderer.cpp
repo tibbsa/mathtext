@@ -29,7 +29,14 @@ LaTeXRenderer::LaTeXRenderer() : MathRenderer()
   writerCurrentMode = UNKNOWN;
 
   isStartOfLine = true;
+  isBracketSizingEnabled = true;
+
   internalRenderCount = 0;
+}
+
+void LaTeXRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
+{
+  cmdlist.push_back("NoBracketSizing");
 }
 
 std::string LaTeXRenderer::status (void) const
@@ -220,6 +227,24 @@ std::string LaTeXRenderer::renderCommand (const MDE_Command *e)
   output = "%% COMMAND: " + e->getString() + "\n";
   LOG_TRACE << output;
 
+  // automatic sizing of group enclosures (brackets) works well at producing 
+  // nicely formatted output, but fails if a single line of math breaks 
+  // across multiple print lines.  This allows that to be disabled.
+  if (boost::iequals(e->getName(), "NoBracketSizing")) {
+    if (boost::iequals(e->getParameters(), "true")) {
+      isBracketSizingEnabled = false;
+    } else if (boost::iequals(e->getParameters(), "false")) {
+      isBracketSizingEnabled = true;
+    } else {
+      LOG_ERROR << "! Bracket sizing toggle received invalid argument: " << e->getParameters();
+      std::ostringstream os;
+      os << "The 'NoBracketSizing' command expects to either be enabled or disabled -- invalid parameter provided: '" << e->getParameters() << "'";
+      BOOST_THROW_EXCEPTION (MathRenderException() <<
+			     mdx_error_info(os.str()));
+
+    }
+  }
+
   return output;
 }
 
@@ -350,7 +375,11 @@ std::string LaTeXRenderer::renderGroup (const MDE_Group *e)
     assert(0);
   }
 
-  return renderMathContent("\\left" + openChar + renderedContents + "\\right" + closeChar);
+  if (isBracketSizingEnabled) 
+    return renderMathContent("\\left" + openChar + renderedContents + "\\right" + closeChar);
+  else
+    return renderMathContent(openChar + renderedContents + closeChar);
+   
 }
 
 std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)

@@ -152,6 +152,8 @@ class UEBRenderer : public MathRenderer
   UEBRenderer();
   ~UEBRenderer();
 
+  static void getInterpreterCommandList (std::vector<std::string> &cmdlist);
+
   static bool isBrailleItem (const MDEVector &v);
   static bool isSimpleFraction (const MDE_Fraction &frac);
   std::string renderDocument (const MathDocument &document);

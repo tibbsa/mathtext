@@ -32,8 +32,9 @@ class LaTeXRenderer : public MathRenderer
   Mode currentSegmentType;
 
   bool isStartOfLine;
-  unsigned internalRenderCount;
+  bool isBracketSizingEnabled;
 
+  unsigned internalRenderCount;
   void beginInternalRender (void);
   bool doingInternalRender (void) const;
   void endInternalRender (void);
@@ -43,6 +44,8 @@ class LaTeXRenderer : public MathRenderer
 
  public:
   LaTeXRenderer();
+
+  static void getInterpreterCommandList (std::vector<std::string> &cmdlist);
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

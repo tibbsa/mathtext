@@ -88,6 +88,7 @@ class MathInterpreter
   MathInterpreter(const MathSourceFile &srcFile, MathDocument &targetDoc);
   void interpret (void);
   void registerCommand (const std::string &cmd);
+  void registerCommands (const std::vector<std::string> &commands);
   bool isCommand (const std::string &cmd) const;
   bool haveMessages (void) const;
   const std::vector<MathInterpreterMsg> &getMessages (void) const;

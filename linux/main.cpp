@@ -101,6 +101,12 @@ int main (const int argc, const char **argv)
     MathDocument doc;
     MathInterpreter interp(srcfile, doc);
     srcfile.loadFromFile(inputFilename);
+
+    std::vector<std::string> renderCommands;
+    LaTeXRenderer::getInterpreterCommandList (renderCommands);
+    UEBRenderer::getInterpreterCommandList (renderCommands);
+    interp.registerCommands (renderCommands);
+
     interp.interpret();
     if (interp.haveMessages()) {
       const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();

@@ -35,6 +35,11 @@ UEBRenderer::~UEBRenderer()
   lou_free();
 }
 
+void UEBRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
+{
+  /* no commands to add yet */
+}
+
 std::string UEBRenderer::renderDocument (const MathDocument &document)
 {
   std::string output;

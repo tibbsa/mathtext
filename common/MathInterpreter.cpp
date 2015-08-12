@@ -78,7 +78,16 @@ void MathInterpreter::registerCommand (const std::string &cmd)
 {
   assert (!isCommand(cmd));
   m_knownCommands.push_back(cmd);
+  LOG_TRACE << "MathInterpreter::registerCommand(" << cmd << ")";
 }
+
+void MathInterpreter::registerCommands (const std::vector<std::string> &commands)
+{
+  BOOST_FOREACH (const std::string &cmd, commands) {
+    registerCommand(cmd);
+  }
+}
+
 
 /**
  * Returns TRUE if the specified 'command' is known to the interpreter.
