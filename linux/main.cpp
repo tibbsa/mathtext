@@ -107,7 +107,26 @@ int main (const int argc, const char **argv)
     UEBRenderer::getInterpreterCommandList (renderCommands);
     interp.registerCommands (renderCommands);
 
-    interp.interpret();
+    try { 
+      interp.interpret();
+    } catch (MathInterpreterException &e) {
+      cout << "An error occurred and translation of your document was stopped." << endl;
+      if (!interp.haveMessages()) {
+	cout << "Cause of execption unknown: no messages produced!" << endl;
+      } else { 
+	const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();
+	cout << msgs.size() << " message(s):" << endl;
+
+	for (std::vector<MathInterpreterMsg>::const_iterator it = msgs.begin();
+	     it != msgs.end();
+	     ++it) {
+	  cout << "- " << *it << endl;
+	}
+      }
+
+      return 1;
+    }
+
     if (interp.haveMessages()) {
       const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();
       cout << msgs.size() << " message(s):" << endl;
@@ -208,8 +227,7 @@ int main (const int argc, const char **argv)
     cerr << "terminating on unhandled exception: " << boost::diagnostic_information(e) << endl;
     return 2;
   }
-  
-     
+   
 
   return 0;
 }
