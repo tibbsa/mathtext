@@ -27,8 +27,6 @@ MathInterpreter::MathInterpreter (const MathSourceFile &srcFile,
 				  MathDocument &targetDoc) 
   : m_src(srcFile), m_doc(targetDoc)
 {
-  registerCommand("ExtraOperatorSpacing");
-  registerCommand("ExtraComparatorSpacing");
 }
   
   

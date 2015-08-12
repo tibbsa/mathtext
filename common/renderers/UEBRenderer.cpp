@@ -37,7 +37,7 @@ UEBRenderer::~UEBRenderer()
 
 void UEBRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
 {
-  /* no commands to add yet */
+  cmdlist.push_back("SpaceUEBOperators");
 }
 
 std::string UEBRenderer::renderDocument (const MathDocument &document)
@@ -518,7 +518,7 @@ std::string UEBRenderer::renderCommand (const MDE_Command *e)
   std::string output;
 
   LOG_TRACE << "%% COMMAND: " << e->getString();
-  if (boost::iequals(e->getName(), "ExtraOperatorSpacing")) {
+  if (boost::iequals(e->getName(), "SpaceUEBOperators")) {
     status.isUsingSpacedOperators = (e->getParameters() == "true");
     LOG_TRACE << "- extra operator spacing: " << status.isUsingSpacedOperators;
   }
