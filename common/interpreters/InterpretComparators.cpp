@@ -51,6 +51,11 @@ bool MathInterpreter::interpretComparator (MDEVector &target,
 	LOG_TRACE << "* added comparator sign (" << mi.search << ")";
 	target.push_back (boost::make_shared<MDE_Comparator>(mi.symbol));
 	i += mi.search.length();
+
+	// Skip whitespace after a sign of comparison
+	while (i < src.length() && isspace(src[i]))
+	  i++;
+
 	return true;
       }
     }

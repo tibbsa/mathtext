@@ -73,5 +73,9 @@ bool MathInterpreter::interpretOperator (MDEVector &target,
   else
     assert (false); // Tests above should prevent us from getting here
 
+  // skip whitespace following an operator
+  while (i < src.length() && isspace(src[i]))
+    i++;
+
   return true;
 }

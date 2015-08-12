@@ -24,6 +24,7 @@ UEBRenderer::UEBRenderer() : MathRenderer()
   status.isNumericMode = false;
   status.isStart = true;
   status.isUsingSpacedOperators = false;
+  status.skipFollowingWhitespace = false;
 
   maxLineLength = UEB_DEFAULT_LINE_LEN;
 
@@ -413,7 +414,13 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
     }
   }
 
-  output += s;
+  if (status.skipFollowingWhitespace) {
+    output += boost::trim_left_copy(s);
+    status.skipFollowingWhitespace = false;
+  }
+  else
+    output += s;
+
   status.isStart = false;
   
   logDecreaseIndent();
@@ -742,6 +749,8 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
 
   if (status.isUsingSpacedOperators)
     output += " ";
+
+  status.skipFollowingWhitespace = true;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";

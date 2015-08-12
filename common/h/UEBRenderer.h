@@ -127,6 +127,7 @@ class UEBRenderer : public MathRenderer
     bool isNumericMode; 
     bool isStart;
     bool isUsingSpacedOperators;
+    bool skipFollowingWhitespace;
   } UEBRenderStatus;
 
   UEBRenderStatus status;

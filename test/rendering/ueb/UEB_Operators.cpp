@@ -17,7 +17,7 @@ TEST_CASE("render/ueb/Operators/unspaced", "[render][UEB][Operator]") {
   UEBRenderer r;
 
   // Disable 'extra operator spacing' 
-  MDE_Command setupCmd("ExtraOperatorSpacing", "false");
+  MDE_Command setupCmd("SpaceUEBOperators", "false");
   r.renderCommand(&setupCmd);
   
   // UEB Rulebook 11.2 ---------------------------------------------
@@ -31,7 +31,7 @@ TEST_CASE("render/ueb/Operators/spaced", "[render][UEB][Operator]") {
   UEBRenderer r;
 
   // Enable 'extra operator spacing' 
-  MDE_Command setupCmd("ExtraOperatorSpacing", "true");
+  MDE_Command setupCmd("SpaceUEBOperators", "true");
   r.renderCommand(&setupCmd);
 
   // UEB Rulebook 11.2.2 -------------------------------------------
