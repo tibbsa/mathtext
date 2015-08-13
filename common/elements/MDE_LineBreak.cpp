@@ -1,7 +1,7 @@
 /**
  * @file LineBreak.cpp
  * Used to indcate the end of a line or statement
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

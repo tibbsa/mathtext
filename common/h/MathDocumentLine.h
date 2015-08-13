@@ -1,7 +1,7 @@
 /**
  * @file MathDocumentLine.h
  * Header file for the class that holds one line from a source document
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -25,7 +25,7 @@ class MathDocumentLine
   std::string m_content;
 
  public:
-  MathDocumentLine (const std::string &source_filename, 
+  MathDocumentLine (const std::string &source_filename,
 		    const unsigned long source_linenumber1,
 		    const unsigned long source_linenumber2,
 		    const std::string &text);

@@ -1,6 +1,6 @@
 /**
  * @file InterpretExponents.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,7 +18,7 @@
  * An "item" is everything up to the next space, sign of operation,
  * sign of comparison, etc.
  *
- * If ^ is followed by parenthesees then the entire paranthesees is 
+ * If ^ is followed by parenthesees then the entire paranthesees is
  * taken as the exponent.
  *
  * Returns true on success, false on error, and puts resulting elements
@@ -27,15 +27,15 @@
  * ##TODO: warn about empty exponents: x^() for example
  */
 bool MathInterpreter::interpretExponent (MDEVector &target,
-				      const std::string &src, 
+				      const std::string &src,
 				      size_t &i)
 {
-  if (src [i] != '^') 
+  if (src [i] != '^')
     return false;
 
   std::string exponent_contents;
 
-  // If this is followed by an open paren '(', read until the closing 
+  // If this is followed by an open paren '(', read until the closing
   // paren
   i++;
   if (src [i] == '(') {

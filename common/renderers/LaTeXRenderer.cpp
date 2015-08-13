@@ -1,7 +1,7 @@
 /**
  * @file LaTeXRenderer.cpp
  * LaTeX rendering engine
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -96,8 +96,8 @@ void LaTeXRenderer::endInternalRender (void)
   internalRenderCount--;
 }
 
-// called to output what is known to be 'math' material. takes care of 
-// any necessary LaTeX mode switches, etc., 
+// called to output what is known to be 'math' material. takes care of
+// any necessary LaTeX mode switches, etc.,
 std::string LaTeXRenderer::renderMathContent (const std::string &s)
 {
   std::string output;
@@ -107,14 +107,14 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
   logIncreaseIndent();
 
   /*
-  ** Enter or switch to math mode as required.  (If we're doing an internal 
+  ** Enter or switch to math mode as required.  (If we're doing an internal
   ** render, e.g. the numerator of a fraction or some such, don't do this.)
   */
   if (!doingInternalRender()) {
     if (writerCurrentMode != MATH) {
       LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == TEXT ? "text" : "unknown") << " mode";
       if (writerCurrentMode == UNKNOWN) {
-	// We should only get here if we're at the start of a line and 
+	// We should only get here if we're at the start of a line and
 	// we haven't yet made up our mind as to the line mode.
 	assert (writerLineMode == UNKNOWN);
 	assert (isStartOfLine == true);
@@ -122,17 +122,17 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
 	LOG_TRACE << "* LaTeX line will be in math mode";
 	writerLineMode = MATH;
 	writerCurrentMode = MATH;
-     
+
 	output += "\\[ ";
-      } else { /* writerCurrentMode == TEXT */ 
+      } else { /* writerCurrentMode == TEXT */
 	assert (writerLineMode != UNKNOWN);
 
-	// If this is a math line, end the \text{...} segment. If it is a text 
+	// If this is a math line, end the \text{...} segment. If it is a text
 	// line, begin an inline math segment ($...$).
 	if (writerLineMode == MATH) {
 	  LOG_TRACE << "* LaTeX math line, ending text segment";
 	  output += "} ";
-	} else { /* writerLineMode == TEXT */ 
+	} else { /* writerLineMode == TEXT */
 	  LOG_TRACE << "* LaTeX text line, beginning math segment";
 	  output += " $";
 	}
@@ -164,14 +164,14 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
   logIncreaseIndent();
 
   /*
-  ** Enter or switch to text mode as required.  (If we're doing an internal 
+  ** Enter or switch to text mode as required.  (If we're doing an internal
   ** render, e.g. the numerator of a fraction or some such, don't do this.)
   */
   if (!doingInternalRender()) {
     if (writerCurrentMode != TEXT) {
       LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == MATH ? "math" : "unknown") << " mode";
       if (writerCurrentMode == UNKNOWN) {
-	// We should only get here if we're at the start of a line and 
+	// We should only get here if we're at the start of a line and
 	// we haven't yet made up our mind as to the line mode.
 	assert (writerLineMode == UNKNOWN);
 	assert (isStartOfLine == true);
@@ -179,17 +179,17 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
 	LOG_TRACE << "* LaTeX line will be in text mode";
 	writerLineMode = TEXT;
 	writerCurrentMode = TEXT;
-     
+
 	output += "\\par ";
-      } else { /* writerCurrentMode == MATH */ 
+      } else { /* writerCurrentMode == MATH */
 	assert (writerLineMode != UNKNOWN);
 
-	// If this is a math line, begin the \text{...} segment. If it is a text 
+	// If this is a math line, begin the \text{...} segment. If it is a text
 	// line, end  an inline math segment ($...$).
 	if (writerLineMode == MATH) {
 	  LOG_TRACE << "* LaTeX math line, beginning text segment";
 	  output += "\\text{ ";
-	} else { /* writerLineMode == TEXT */ 
+	} else { /* writerLineMode == TEXT */
 	  LOG_TRACE << "* LaTeX text line, ending math segment";
 	  output += "$ ";
 	}
@@ -227,8 +227,8 @@ std::string LaTeXRenderer::renderCommand (const MDE_Command *e)
   output = "%% COMMAND: " + e->getString() + "\n";
   LOG_TRACE << output;
 
-  // automatic sizing of group enclosures (brackets) works well at producing 
-  // nicely formatted output, but fails if a single line of math breaks 
+  // automatic sizing of group enclosures (brackets) works well at producing
+  // nicely formatted output, but fails if a single line of math breaks
   // across multiple print lines.  This allows that to be disabled.
   if (boost::iequals(e->getName(), "NoBracketSizing")) {
     if (boost::iequals(e->getParameters(), "true")) {
@@ -280,7 +280,7 @@ std::string LaTeXRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
     currentBlockType = TEXT;
 
   currentSegmentType = TEXT;
-  
+
   logDecreaseIndent();
   LOG_TRACE << "exit LaTeXRenderer::renderTextModeMarker: no output";
   LOG_TRACE << "  >> " << status();
@@ -324,7 +324,7 @@ std::string LaTeXRenderer::renderLineBreak (const MDE_LineBreak *e)
 
   output += "\n";
   isStartOfLine = true;
-  
+
   logDecreaseIndent();
   LOG_TRACE << "exit LaTeXRenderer::renderLineBreak: " << output;
   LOG_TRACE << "  >> " << status();
@@ -375,11 +375,11 @@ std::string LaTeXRenderer::renderGroup (const MDE_Group *e)
     assert(0);
   }
 
-  if (isBracketSizingEnabled) 
+  if (isBracketSizingEnabled)
     return renderMathContent("\\left" + openChar + renderedContents + "\\right" + closeChar);
   else
     return renderMathContent(openChar + renderedContents + closeChar);
-   
+
 }
 
 std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
@@ -407,7 +407,7 @@ std::string LaTeXRenderer::renderOperator (const MDE_Operator *e)
   case MDE_Operator::DIVISION:
     return renderMathContent(" \\div ");
 
-  case MDE_Operator::MULTIPLICATION: 
+  case MDE_Operator::MULTIPLICATION:
     return renderMathContent(" \\times ");
 
   default:
@@ -448,7 +448,7 @@ std::string LaTeXRenderer::renderComparator (const MDE_Comparator *e)
 
 std::string LaTeXRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 {
-#define MAP(a) (MDE_GreekLetter::a, "\\" #a) 
+#define MAP(a) (MDE_GreekLetter::a, "\\" #a)
 #define MAPTO(a, b) (MDE_GreekLetter::a, b)
 
   static std::map<MDE_GreekLetter::Character,std::string> charmap = ba::map_list_of
@@ -499,7 +499,7 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
     ( MDE_Symbol::LEFT_BRACKET, "[" )
     ( MDE_Symbol::LEFT_PAREN, "(" )
     ( MDE_Symbol::PERCENT, "\\%" )
-    ( MDE_Symbol::PERIOD, ".") 
+    ( MDE_Symbol::PERIOD, ".")
     ( MDE_Symbol::RIGHT_BRACE, "\\}" )
     ( MDE_Symbol::RIGHT_BRACKET, "]" )
     ( MDE_Symbol::RIGHT_PAREN, ")" )
@@ -569,7 +569,7 @@ std::string LaTeXRenderer::renderSummation (const MDE_Summation *e)
   output = "\\sum";
   if (!renderedLowerBound.empty())
     output += boost::str(boost::format("_{%s}") % renderedLowerBound);
-  
+
   if (!renderedUpperBound.empty())
     output += boost::str(boost::format("^{%s}") % renderedUpperBound);
 

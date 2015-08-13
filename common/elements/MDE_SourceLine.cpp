@@ -1,7 +1,7 @@
 /**
  * @file MDE_SourceLine.cpp
  * Contains a complete copy of the original MathText source lines
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -16,12 +16,12 @@ MDE_SourceLine::MDE_SourceLine(const std::string &fname,
 			       const std::string &contents)
   : filename(fname), line1(line_start), line2(line_end), payload(contents)
 {
- 
+
 }
 
 std::string MDE_SourceLine::getFilename (void) const
 {
-  return filename; 
+  return filename;
 }
 
 unsigned long MDE_SourceLine::getStartLine (void) const

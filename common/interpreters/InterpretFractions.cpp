@@ -1,6 +1,6 @@
 /**
  * @file InterpretFractions.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -21,7 +21,7 @@
  * ##TODO: warn about empty numerator/denominator
  */
 bool MathInterpreter::interpretFraction (MDEVector &target,
-				      const std::string &src, 
+				      const std::string &src,
 				      size_t &i)
 {
   if (src [i] == '#' || src [i] == '~') {
@@ -29,11 +29,11 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
     return false;
   }
 
-  if (src [i] != '@') 
+  if (src [i] != '@')
     return false;
 
-  // Count forward to find the "end fraction" indicator (#). Allow 
-  // nested fractions but do not evaluate them as we go for now -- 
+  // Count forward to find the "end fraction" indicator (#). Allow
+  // nested fractions but do not evaluate them as we go for now --
   // just try to get the outermost fraction that we see.
   int num_nested_fractions = 0;
   bool foundTerminator = false;
@@ -44,7 +44,7 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
   for (pos = i+1; pos < src.length(); pos++) {
     // Skip escaped characters or "approximately equal to" modifiers
     // that appear within a fraction.
-    if (src.substr (pos, 2) == "\\#" || src.substr(pos, 2) == "\\@" 
+    if (src.substr (pos, 2) == "\\#" || src.substr(pos, 2) == "\\@"
 	|| src.substr (pos, 2) == "\\~" || src.substr(pos, 2) == "~=")
       pos += 2;
 
@@ -65,7 +65,7 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
       foundDividingLine = true;
       continue;
     }
-  
+
     // Add this character  to the numerator or denominator as requierd
     if (!foundDividingLine)
       numerator += src [pos];
@@ -89,7 +89,7 @@ bool MathInterpreter::interpretFraction (MDEVector &target,
 
   numvec = interpretBuffer (numerator);
   denvec = interpretBuffer (denominator);
-  
+
   target.push_back (boost::make_shared<MDE_Fraction>(numvec, denvec));
   return true;
 }

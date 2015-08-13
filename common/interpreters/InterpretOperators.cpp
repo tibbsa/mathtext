@@ -1,6 +1,6 @@
 /**
  * @file InterpretOperators.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -19,7 +19,7 @@
  * into the 'target' buffer.
  */
 bool MathInterpreter::interpretOperator (MDEVector &target,
-					 const std::string &src, 
+					 const std::string &src,
 					 size_t &i)
 {
   const std::string temp = src.substr(i, 3);
@@ -40,18 +40,18 @@ bool MathInterpreter::interpretOperator (MDEVector &target,
     target.push_back (boost::make_shared<MDE_Operator>(MDE_Operator::MULTIPLICATION));
     i++;
   } else if (temp[0] == '-') {
-    // We might have to make a decision here as to whether what follows is a 
-    // "negative number" or whether what we are seeing is a minus sign.  
+    // We might have to make a decision here as to whether what follows is a
+    // "negative number" or whether what we are seeing is a minus sign.
     //
     // ##TODO: Consider how to handle this.  It might matter in braille.
     //         but the logic below doesn't work. x^-1 = x9"-#A (with a true
     //         minus sign on it), not just a negative number.
 
     /*
-    // 
-    // If we see a number immediately after the minus sign, interpret that 
+    //
+    // If we see a number immediately after the minus sign, interpret that
     // as a negative number instead.
-    // 
+    //
     if (temp.length() > 1 && isdigit(temp[1])) {
       LOG_TRACE << "- subtraction sign might be a negative number instead";
       if (interpretNumber(target, src, i)) {

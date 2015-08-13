@@ -1,7 +1,7 @@
 /**
  * @file MDE.cpp
  * Implementation of the MathDocumentElement abstract class.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -27,7 +27,7 @@ MathDocumentElement::~MathDocumentElement()
 
 
 /**
- * Generate a string representation of this element (primarily for 
+ * Generate a string representation of this element (primarily for
  * debugging purposes)
  *
  * @return string representation of this element

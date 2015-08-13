@@ -1,7 +1,7 @@
 /**
  * @file logging.cpp
  * Support functions for debug logging
- * 
+ *
  * Inspired by https://github.com/gklingler/simpleLogger
  *
  * @copyright Copyright 2015 Anthony Tibbs

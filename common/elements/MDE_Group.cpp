@@ -2,7 +2,7 @@
  * @file MDE_Group.cpp
  * A logical grouping of elements (encompassed with paranthesees, brackets, or
  * braces as the case may be) within a mathematical expression.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -11,13 +11,13 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Group::MDE_Group(const MDE_Group::EnclosureType encl, 
+MDE_Group::MDE_Group(const MDE_Group::EnclosureType encl,
 		     const MDEVector &content) :
-  enclosure(encl), contents(content) 
+  enclosure(encl), contents(content)
 {
 }
 
-MDEVector MDE_Group::getContents (void) const 
+MDEVector MDE_Group::getContents (void) const
 {
   return contents;
 }
@@ -38,7 +38,7 @@ std::string MDE_Group::getString (void) const
   std::string output;
   char groupOpen, groupClose;
   if (enclosure == MDE_Group::PARENTHESES) {
-    groupOpen = '('; 
+    groupOpen = '(';
     groupClose = ')';
   } else if (enclosure == MDE_Group::BRACKETS) {
     groupOpen = '[';

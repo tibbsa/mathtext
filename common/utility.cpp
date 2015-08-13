@@ -1,7 +1,7 @@
 /**
  * @file utility.cpp
  * Various miscellaneous utility functions that do not fit elsewhere.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

@@ -1,7 +1,7 @@
 /**
  * @file MathDocumentElements.h
  * Header file for the class that holds a single element in a document.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -49,7 +49,7 @@ class MDE_SourceLine : public MathDocumentElement
 
  public:
   MDE_SourceLine(const std::string &fname,
-		 const unsigned long line_start, 
+		 const unsigned long line_start,
 		 const unsigned long line_end,
 		 const std::string &contents);
 
@@ -59,7 +59,7 @@ class MDE_SourceLine : public MathDocumentElement
   std::string getContents (void) const;
 
   virtual std::string getString (void) const;
-  
+
 };
 
 
@@ -81,25 +81,25 @@ class MDE_Command : public MathDocumentElement
 };
 
 /**
- * An internal marker used to indicate that the following material is 
+ * An internal marker used to indicate that the following material is
  * primarily mathematical or primary textual in nature.
  */
 class MDE_MathModeMarker : public MathDocumentElement
-{ 
- public:   
+{
+ public:
   typedef enum { BLOCK_MARKER, SEGMENT_MARKER } MarkerType;
 
   MDE_MathModeMarker (const MarkerType mt = SEGMENT_MARKER);
   MarkerType getType (void) const;
-  virtual std::string getString (void) const; 
+  virtual std::string getString (void) const;
 
  protected:
   MarkerType type;
 };
 
 class MDE_TextModeMarker : public MathDocumentElement
-{ 
- public:   
+{
+ public:
   typedef enum { BLOCK_MARKER, SEGMENT_MARKER } MarkerType;
 
   MDE_TextModeMarker (const MarkerType mt = SEGMENT_MARKER);
@@ -108,28 +108,28 @@ class MDE_TextModeMarker : public MathDocumentElement
 
  protected:
   MarkerType type;
-  
+
 };
 
 class MDE_LineBreak : public MathDocumentElement
-{ 
- public:   
-  virtual std::string getString (void) const; 
+{
+ public:
+  virtual std::string getString (void) const;
 };
 
 
 /**
- * A character (or set of characters) that should be treated as 
+ * A character (or set of characters) that should be treated as
  * plain text in a math or text context as-is.
  */
 class MDE_GenericText : public MathDocumentElement
 {
  protected:
   std::string payload;
-  
+
  public:
   MDE_GenericText(const std::string &contents);
-  
+
   void setText(const std::string &contents);
   const std::string &getText(void) const;
 
@@ -137,7 +137,7 @@ class MDE_GenericText : public MathDocumentElement
 };
 
 /**
- * A character (or set of characters) that should be treated as 
+ * A character (or set of characters) that should be treated as
  * plain text in a math or text context as-is.
  */
 class MDE_TextBlock : public MDE_GenericText
@@ -149,7 +149,7 @@ class MDE_TextBlock : public MDE_GenericText
 };
 
 /**
- * A character (or set of characters) that should be treated as 
+ * A character (or set of characters) that should be treated as
  * plain text in a math or text context as-is.
  */
 class MDE_MathBlock : public MDE_GenericText
@@ -161,8 +161,8 @@ class MDE_MathBlock : public MDE_GenericText
 };
 
 /**
- * A number or set of digits.  Left-hand-side (whole numbers) and 
- * right-hand-side (decimal portion) are separately stored in case a 
+ * A number or set of digits.  Left-hand-side (whole numbers) and
+ * right-hand-side (decimal portion) are separately stored in case a
  * special representation is needed in the output (e.g. EBAE braille).
  */
 class MDE_Number : public MathDocumentElement
@@ -181,13 +181,13 @@ class MDE_Number : public MathDocumentElement
 
  protected:
   NumberType numType;
-  std::string lhs, rhs; 
+  std::string lhs, rhs;
 
 };
 
 /**
- * A logical subgroup within an equation (bounded by parens, brackets, or 
- * braces, as the case may be).  
+ * A logical subgroup within an equation (bounded by parens, brackets, or
+ * braces, as the case may be).
  */
 class MDE_Group : public MathDocumentElement
 {
@@ -235,7 +235,7 @@ class MDE_Operator : public MathDocumentElement
   virtual std::string getString (void) const;
 
  protected:
-  
+
   MDE_Operator::Operator op;
 };
 
@@ -255,7 +255,7 @@ class MDE_Comparator : public MathDocumentElement
   virtual std::string getString (void) const;
 
  protected:
-  
+
   MDE_Comparator::Comparator comp;
 };
 
@@ -266,10 +266,10 @@ class MDE_GreekLetter : public MathDocumentElement
 {
  public:
   typedef enum { alpha, Alpha, beta, Beta, gamma, Gamma, delta, Delta,
-		 epsilon, Epsilon, zeta, Zeta, eta, Eta, theta, Theta, 
+		 epsilon, Epsilon, zeta, Zeta, eta, Eta, theta, Theta,
 		 iota, Iota, kappa, Kappa, lambda, Lambda, mu, Mu, nu, Nu,
 		 xi, Xi, omicron, Omicron, pi, Pi, rho, Rho,
-		 sigma, Sigma, tau, Tau, upsilon, Upsilon, 
+		 sigma, Sigma, tau, Tau, upsilon, Upsilon,
 		 phi, Phi, chi, Chi, psi, Psi, omega, Omega } Character;
 
   MDE_GreekLetter (const Character c);
@@ -278,20 +278,20 @@ class MDE_GreekLetter : public MathDocumentElement
   std::string getName (void) const;
 
   virtual std::string getString (void) const;
-  
+
  protected:
-  
+
   MDE_GreekLetter::Character letter;
 };
 
 /**
- * Various miscellaneous symbols that do not require particularly 
+ * Various miscellaneous symbols that do not require particularly
  * special handling (do not have arguments or other values attached, etc.)
  */
 class MDE_Symbol : public MathDocumentElement
 {
  public:
-  typedef enum { 
+  typedef enum {
     COMMA, // , (outside of a number)
     CURRENCY_CENTS, // ¢ (`C)
     CURRENCY_EURO,  // € (`E)
@@ -301,14 +301,14 @@ class MDE_Symbol : public MathDocumentElement
     CURRENCY_YEN,   // ¥ (`Y)
     FACTORIAL, // !
     LEFT_BRACE, // {
-    LEFT_BRACKET, // [ 
-    LEFT_PAREN, // ( 
-    PERCENT, // %% (percent sign) 
+    LEFT_BRACKET, // [
+    LEFT_PAREN, // (
+    PERCENT, // %% (percent sign)
     PERIOD, // .
     RIGHT_BRACKET, // ]
     RIGHT_BRACE, // }
     RIGHT_PAREN, // )
-    THEREFORE, // /\ (3 dot triangle) 
+    THEREFORE, // /\ (3 dot triangle)
   } Symbol;
 
   MDE_Symbol (const Symbol s);
@@ -318,19 +318,19 @@ class MDE_Symbol : public MathDocumentElement
   virtual std::string getString (void) const;
 
  protected:
-  
+
   MDE_Symbol::Symbol symbol;
 };
 
 /**
- * A special symbol that has at least one argument attached to it, 
- * typically for showing 'modified' symbols (e.g. with an arrow above, 
- * or a hat over top, or a line below, or what have you).  
+ * A special symbol that has at least one argument attached to it,
+ * typically for showing 'modified' symbols (e.g. with an arrow above,
+ * or a hat over top, or a line below, or what have you).
  */
 class MDE_Modifier : public MathDocumentElement
 {
  public:
-  typedef enum { 
+  typedef enum {
     OVER_ARROW_RIGHT, // (right-facing arrow above argment - vectors)
     OVER_BAR, // (horizontal bar above argument - conjugates, etc.)
     OVER_HAT, // (hat ^ above argment - unit vectors)
@@ -373,7 +373,7 @@ class MDE_Summation : public MathDocumentElement
  protected:
   MDEVector lowerBound;
   MDEVector upperBound;
-  
+
  public:
   MDE_Summation(const MDEVector lower, const MDEVector upper);
 
@@ -390,7 +390,7 @@ class MDE_Fraction : public MathDocumentElement
  protected:
   MDEVector numerator;
   MDEVector denominator;
-  
+
  public:
   MDE_Fraction(const MDEVector num, const MDEVector den);
 
@@ -405,7 +405,7 @@ class MDE_Exponent : public MathDocumentElement
 {
  protected:
   MDEVector contents;
-  
+
  public:
   MDE_Exponent(const MDEVector exponent);
 
@@ -418,7 +418,7 @@ class MDE_Subscript : public MathDocumentElement
 {
  protected:
   MDEVector contents;
-  
+
  public:
   MDE_Subscript(const MDEVector subscript);
 

@@ -1,6 +1,6 @@
 /**
  * @file InterpretSubscripts.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,7 +18,7 @@
  * An "item" is everything up to the next space, sign of operation,
  * sign of comparison, etc.
  *
- * If _ is followed by parenthesees then the entire paranthesees is 
+ * If _ is followed by parenthesees then the entire paranthesees is
  * taken as the subscript.
  *
  * Returns true on success, false on error, and puts resulting elements
@@ -27,16 +27,16 @@
  * ##TODO: warn about empty subscriptions: x_() for example
  */
 bool MathInterpreter::interpretSubscript (MDEVector &target,
-				      const std::string &src, 
+				      const std::string &src,
 				      size_t &i)
 {
-  if (src [i] != '_') 
+  if (src [i] != '_')
     return false;
 
   std::string subscript_contents;
 
 
-  // If this is followed by an open paren '(', read until the closing 
+  // If this is followed by an open paren '(', read until the closing
   // paren
   i++;
   if (src [i] == '(') {

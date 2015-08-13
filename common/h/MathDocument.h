@@ -1,7 +1,7 @@
 /**
  * @file MathDocument.h
  * Header file for the class that holds interpreted math documents
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

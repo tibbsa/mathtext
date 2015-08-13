@@ -1,7 +1,7 @@
 /**
  * @file UEBRenderer.cpp
  * Unified English Braille rendering engine
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -20,7 +20,7 @@ namespace ba = boost::assign;
 UEBRenderer::UEBRenderer() : MathRenderer()
 {
   internalRenderCount = 0;
-  
+
   status.isInTextBlock = false;
   status.isNumericMode = false;
   status.isStart = true;
@@ -47,12 +47,12 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
   std::string output;
   bool isInTextBlock = false;
 
-  // We hard code the lengths here for efficiency, but make sure 
+  // We hard code the lengths here for efficiency, but make sure
   // the word wrapping indicators haven't been changed.
   assert (std::string(UEB_WORDWRAP_PRI1).length() == UEB_WORDWRAP_INDLEN);
   assert (std::string(UEB_WORDWRAP_PRI2).length() == UEB_WORDWRAP_INDLEN);
   assert (std::string(UEB_WORDWRAP_PRI3).length() == UEB_WORDWRAP_INDLEN);
-  
+
   LOG_TRACE << ">> UEBRenderer::renderDocument begin";
   logIncreaseIndent();
 
@@ -81,7 +81,7 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
       logIncreaseIndent();
       LOG_TRACE << curLine;
 #endif
-	
+
       size_t last_break_position [3] = {0, 0, 0};
       size_t curOutputLinePos = 0;
       size_t curOutputLineLength = 0;
@@ -140,7 +140,7 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 #ifdef UEB_WRAPPING_DEBUG
 	  LOG_TRACE << "reached maxLength " << curOutputLineLength << "@" << curOutputLinePos;
 	  LOG_TRACE << "recorded breakpoints: ";
-	  for (int xxxx = 0; xxxx <= 2; xxxx++) 
+	  for (int xxxx = 0; xxxx <= 2; xxxx++)
 	    LOG_TRACE << " - priority " << (xxxx+1) << ": " << last_break_position[xxxx];
 #endif
 
@@ -155,14 +155,14 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 #endif
 
 	    for (int curPriority = 1; curPriority <= 3 && !breakpoint; curPriority++) {
-	      if (last_break_position [curPriority-1] != 0 && 
+	      if (last_break_position [curPriority-1] != 0 &&
 		  last_break_position [curPriority-1] >= lookback_start_offset) {
 #ifdef UEB_WRAPPING_DEBUG
 		LOG_TRACE << " - breaking at priority " << curPriority << " position " << last_break_position [curPriority-1];
 #endif
 
 		breakpoint = last_break_position [curPriority-1];
-	      } else { 
+	      } else {
 #ifdef UEB_WRAPPING_DEBUG
 		LOG_TRACE << " - no priotity " << curPriority << " break available";
 #endif
@@ -195,17 +195,17 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 	  }
 
 	  // Delete spaces following the break
-	  while (breakpoint < curOutputLine.length() && 
+	  while (breakpoint < curOutputLine.length() &&
 		 isspace(curOutputLine[breakpoint])) {
 #ifdef UEB_WRAPPING_DEBUG
 	    LOG_TRACE << "  * deleting space after break";
 #endif
 	    curOutputLinePos--;
 	    curOutputLine.erase(breakpoint, 1);
-	  }	  
+	  }
 
 	  std::string continuationString;
-  
+
 	  if (isInTextBlock)
 	    continuationString = "\n"; // no indentation
 	  else
@@ -322,7 +322,7 @@ std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
       continue;
     }
 
-    // End numeric mode if we find anything other than "A-F", "4" (period), 
+    // End numeric mode if we find anything other than "A-F", "4" (period),
     // "2" (comma)
     if (inNumericMode) {
       if (!isOneOf(c, UEB_NUMERIC_MODE_SYMBOLS)) {
@@ -373,16 +373,16 @@ std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
 
 // Returns true if the provided vector consists of a single 'item', as that
 // is defined by the Technical Guidelines, s. 7.1 or 12.1
-// (An 'item' is: a number; a fraction; a radical; a narrow; a shape; 
+// (An 'item' is: a number; a fraction; a radical; a narrow; a shape;
 //  anything in paranthesees, square brackets, or braces; anything in
 //  braille grouping indicators; or the previous character)
 bool UEBRenderer::isBrailleItem (const MDEVector &v)
 {
-  // any vector containing multiple items will be, by definition, not an 
+  // any vector containing multiple items will be, by definition, not an
   // item
   if (v.empty() || v.size() > 1)
     return false;
-  
+
   const MathDocumentElementPtr element = v.front();
   const MathDocumentElement *ptr = element.get();
 
@@ -422,17 +422,17 @@ bool UEBRenderer::isSimpleFraction (const MDE_Fraction &frac)
   if (frac.getNumerator().size() > 1 || frac.getDenominator().size() > 1)
     return false;
 
-  if (!dynamic_cast<const MDE_Number *>(frac.getNumerator().front().get())) 
+  if (!dynamic_cast<const MDE_Number *>(frac.getNumerator().front().get()))
     return false;
 
-  if (!dynamic_cast<const MDE_Number *>(frac.getDenominator().front().get())) 
+  if (!dynamic_cast<const MDE_Number *>(frac.getDenominator().front().get()))
     return false;
-    
+
   return true;
 }
 
-// called to output what is known to be 'math' material. takes care of 
-// any necessary mode switches, etc., 
+// called to output what is known to be 'math' material. takes care of
+// any necessary mode switches, etc.,
 std::string UEBRenderer::renderMathContent (const std::string &s)
 {
   std::string output;
@@ -457,7 +457,7 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
     output += s;
 
   status.isStart = false;
-  
+
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
@@ -472,10 +472,10 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   LOG_TRACE << ">> " << __func__ << ": (" << s << ")";
   logIncreaseIndent();
 
-  // Assume that the braille could grow to be a bit larger than our max 
+  // Assume that the braille could grow to be a bit larger than our max
   // LibLouis buffer size.  If this will likely be a problem, abort.
-  //## TODO: Split long strings into ~500-byte chunks (using a "period space" 
-  // or just a space as a likely split point) and feed to LibLouis in smaller 
+  //## TODO: Split long strings into ~500-byte chunks (using a "period space"
+  // or just a space as a likely split point) and feed to LibLouis in smaller
   // sections to get around this limitation.
   if (s.length() >= (0.90 * LIBLOUIS_MAXSTRING)) {
     LOG_ERROR << "! Braille translation max buffer size error on '" << s << "'!";
@@ -493,7 +493,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 
   LOG_TRACE << "Sending " << inlen << " chars to louis using table '" << LIBLOUIS_UEB_G1_TABLE << "': {" << showString(input_buffer.get(), inlen) << "}, max output size=" << outlen;
   if (!lou_translateString(LIBLOUIS_UEB_G1_TABLE,
-			   input_buffer.get(), 
+			   input_buffer.get(),
 			   &inlen,
 			   braille_buffer.get(),
 			   &outlen,
@@ -508,7 +508,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 			   mdx_error_info(os.str()));
   }
 
-  // showString returns the braille encapsulated in single quotation marks 
+  // showString returns the braille encapsulated in single quotation marks
   // ('), so we have to trim those out before returning
   LOG_TRACE << "Louis returned " << outlen << " chars: {" << showString(braille_buffer.get(), outlen) << "}";
   braille_string = std::string(showString(braille_buffer.get(), outlen));
@@ -524,7 +524,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
     boost::replace_all(braille_string, UEB_LEFT_BRACE, UEB_WORDWRAP_PRI1 UEB_LEFT_BRACE);
   }
 
-  //## There is a bug in liblouis that results in single letters 
+  //## There is a bug in liblouis that results in single letters
   //   getting letter indicators before them unnecessarily.  Fix this.
   std::string fixed_braille_string;
   fixed_braille_string = braille_string.substr(1, braille_string.length()-2);
@@ -571,10 +571,10 @@ std::string UEBRenderer::renderCommand (const MDE_Command *e)
 std::string UEBRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 {
   std::string output;
-  
+
   if (e->getType() == MDE_MathModeMarker::BLOCK_MARKER) {
-    // We should only see the start of a math "block" if we are also at the 
-    // start of a line.  We can't commence a math block mid-line, as the 
+    // We should only see the start of a math "block" if we are also at the
+    // start of a line.  We can't commence a math block mid-line, as the
     // indenting and word wrapping requirements will be different.
     assert (status.isStart == true);
     status.isInTextBlock = false;
@@ -591,10 +591,10 @@ std::string UEBRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
-  
+
   if (e->getType() == MDE_TextModeMarker::BLOCK_MARKER) {
-    // We should only see the start of a text "block" if we are also at the 
-    // start of a line.  We can't commence a text block mid-line, as the 
+    // We should only see the start of a text "block" if we are also at the
+    // start of a line.  We can't commence a text block mid-line, as the
     // indenting and word wrapping requirements will be different.
     assert (status.isStart == true);
     status.isInTextBlock = true;
@@ -653,7 +653,7 @@ std::string UEBRenderer::renderMathBlock (const MDE_MathBlock *e)
 
   brl = translateToBraille(e->getText());
   output = renderMathContent(brl);
-  
+
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
@@ -740,7 +740,7 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
     brailleNumber = UEB_WORDWRAP_PRI3;
 
   brailleNumber += UEB_NUMBER_SIGN;
-  
+
   // If we are already in numeric mode, and the next character is not
   // a number but could be confused as such, add a grade 1 terminator.
   while (pos < printNumber.length()) {
@@ -750,12 +750,12 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
     assert (isdigit(c) || (c == '.') || (c == ',') || (c == ' '));
 
     if (isdigit(c)) {
-      // In braille, numbers 1-9(0) are represented by letters A-J.  On the 
+      // In braille, numbers 1-9(0) are represented by letters A-J.  On the
       // ASCII tables, numbers 1-9 are code 49-57, and number 0 is code 48.
       // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
       // In other words, adding 16 to the digit will get the uppercase letter.
-      brailleNumber += (c == '0') 
-	? "J" 
+      brailleNumber += (c == '0')
+	? "J"
 	: boost::str(boost::format("%c") % (char)(16 + (int)c));
     } else if (c == '.') {
       brailleNumber += UEB_PERIOD;
@@ -803,7 +803,7 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
   if (status.isUsingSpacedOperators)
     output = " ";
 
-  if (maxLineLength) 
+  if (maxLineLength)
     output += UEB_WORDWRAP_PRI2;
 
   output += opmap[e->getOperator()];
@@ -1013,7 +1013,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
   if (maxLineLength)
     output = UEB_WORDWRAP_PRI3;
 
-  if (e->getIndex().empty()) { /* simple square root */ 
+  if (e->getIndex().empty()) { /* simple square root */
     std::string renderedRootArgument;
 
     beginInternalRender();
@@ -1043,7 +1043,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
 
     LOG_TRACE << "- rendered index: " << renderedRootIndex;
     LOG_TRACE << "- rendered root: " << renderedRootArgument;
-    
+
     output += renderMathContent(UEB_ROOT_BEGIN + renderedRootIndex + renderedRootArgument + UEB_ROOT_END);
   }
 
@@ -1079,8 +1079,8 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
     if (isBrailleItem(e->getLowerBound())) {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_BELOW "%s") % renderedBound));
 
-      // Restore numeric mode status for "item" bounds, in case we need to 
-      // follow this with a letter indicator (e.g. a sigma with only a lower 
+      // Restore numeric mode status for "item" bounds, in case we need to
+      // follow this with a letter indicator (e.g. a sigma with only a lower
       // bound that is a number, and is then followed by an 'a')
       status.isNumericMode = savedNumericMode;
     } else {
@@ -1103,8 +1103,8 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
     if (isBrailleItem(e->getUpperBound())) {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_ABOVE "%s") % renderedBound));
 
-      // Restore numeric mode status for "item" bounds, in case we need to 
-      // follow this with a letter indicator (e.g. a sigma with an upper 
+      // Restore numeric mode status for "item" bounds, in case we need to
+      // follow this with a letter indicator (e.g. a sigma with an upper
       // bound that is a number, and is then followed by an 'a')
       status.isNumericMode = savedNumericMode;
     } else {
@@ -1148,13 +1148,13 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
       renderedDenominator = stripWrappingIndicators(renderedDenominator);
     }
 
-    // The dividing slash does not cancel numeric mode, so remove the 
+    // The dividing slash does not cancel numeric mode, so remove the
     // extra number sign that will appear in the denominator
     renderedDenominator.erase (0, 1);
 
     output += renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
   } else {
-    if (maxLineLength) 
+    if (maxLineLength)
       output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER UEB_WORDWRAP_PRI3 "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
     else
       output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
@@ -1177,7 +1177,7 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
   status.isNumericMode = false;
   renderedExponent = renderVector (e->getValue());
 
-  // Store and save numeric mode status in case we might need a letter 
+  // Store and save numeric mode status in case we might need a letter
   // indicator later.
   bool endedInNumericMode = status.isNumericMode;
   endInternalRender();
@@ -1194,7 +1194,7 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
       output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
     status.isNumericMode = false;
   }
-  
+
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;
@@ -1212,7 +1212,7 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
   status.isNumericMode = false;
   renderedSubscript = renderVector (e->getValue());
 
-  // Store and save numeric mode status in case we might need a letter 
+  // Store and save numeric mode status in case we might need a letter
   // indicator later.
   bool endedInNumericMode = status.isNumericMode;
   endInternalRender();

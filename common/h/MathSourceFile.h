@@ -1,7 +1,7 @@
 /**
  * @file MathSourceFile.h
  * Header file for the class that holds source documents
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -28,7 +28,7 @@ class MathSourceFile
   void loadFromFile (const std::string &filename);
 
   /**
-   * Load from a buffer, optionally providing a 'fake' filename 
+   * Load from a buffer, optionally providing a 'fake' filename
    * (defaults to "(memory)")
    */
   void loadFromBuffer (const std::string &buffer, const std::string &filename = "(memory)");

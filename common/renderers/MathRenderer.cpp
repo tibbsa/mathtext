@@ -1,6 +1,6 @@
 /**
  * @file MathRenderer.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -58,7 +58,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   RX(MathModeMarker);
   RX(TextModeMarker);
   RX(LineBreak);
-  
+
   RX(ItemNumber); // have to do this before TextBlock as it is a subclass
   RX(TextBlock);
   RX(MathBlock);
@@ -82,7 +82,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
   os << "Unsupported element type in MathRenderer::renderElement(): " << typeid(*e).name();
   BOOST_THROW_EXCEPTION (MathRenderException() <<
 			 mdx_error_info(os.str()));
-  
+
 }
 
 #define PLACEHOLDER(class) \
@@ -91,7 +91,7 @@ std::string MathRenderer::renderElement (const MathDocumentElement *e)
     os << "Render callback not implemented in class " << typeid(*this).name() << " for " << typeid(*e).name(); \
     BOOST_THROW_EXCEPTION (MathRenderException() << \
                            mdx_error_info(os.str())); \
-  } 
+  }
 
 PLACEHOLDER(SourceLine);
 PLACEHOLDER(Command);

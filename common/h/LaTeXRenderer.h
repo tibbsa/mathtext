@@ -1,7 +1,7 @@
 /**
  * @file LaTeXRenderer.h
  * Header file for the LaTeX renderer.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

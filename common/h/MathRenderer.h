@@ -1,8 +1,8 @@
 /**
  * @file MathRenderer.h
- * Header file for the generic class that forms the basis of the rendering 
+ * Header file for the generic class that forms the basis of the rendering
  * engines.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

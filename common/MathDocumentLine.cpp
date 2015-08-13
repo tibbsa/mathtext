@@ -1,7 +1,7 @@
 /**
  * @file MathDocument.cpp
  * Implementation of the container holding one line of the raw source document
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,8 +18,8 @@
  * @param text Contents of the line
  */
 MathDocumentLine::MathDocumentLine (const std::string &source_filename,
-				    const unsigned long source_linenumber1, 
-				    const unsigned long source_linenumber2, 
+				    const unsigned long source_linenumber1,
+				    const unsigned long source_linenumber2,
 				    const std::string &text) : m_filename(source_filename), m_line1(source_linenumber1), m_line2(source_linenumber2), m_content(text)
 {
 }
@@ -71,7 +71,7 @@ std::ostream &operator<<(std::ostream &os, const MathDocumentLine &mdl)
 {
   unsigned long l1, l2;
   std::ostringstream lineNum;
-  
+
   l1 = mdl.getStartLineNumber();
   l2 = mdl.getEndLineNumber();
   if (l1 == l2)

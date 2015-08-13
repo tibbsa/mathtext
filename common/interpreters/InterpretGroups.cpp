@@ -1,6 +1,6 @@
 /**
  * @file InterpretGroups.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -13,13 +13,13 @@
 #include "MathExceptions.h"
 
 /**
- * Attempts to interpret a 'group' -- something enclosed in ([{ }]) 
+ * Attempts to interpret a 'group' -- something enclosed in ([{ }])
  *
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
  */
 bool MathInterpreter::interpretGroup (MDEVector &target,
-				      const std::string &src, 
+				      const std::string &src,
 				      size_t &i)
 {
   std::string contents;
@@ -61,7 +61,7 @@ bool MathInterpreter::interpretGroup (MDEVector &target,
 
   MDEVector contents_vec;
   contents_vec = interpretBuffer (contents);
-  
+
   target.push_back (boost::make_shared<MDE_Group>(groupType, contents_vec));
   return true;
 }

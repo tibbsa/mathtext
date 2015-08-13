@@ -1,6 +1,6 @@
 /**
  * @file InterpretComparators.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,8 +18,8 @@
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
  */
-namespace { 
-  struct ComparatorSymbolMap { 
+namespace {
+  struct ComparatorSymbolMap {
     ComparatorSymbolMap (const std::string &s, const MDE_Comparator::Comparator c) : search(s), symbol(c) {}
     std::string search;
     MDE_Comparator::Comparator symbol;
@@ -27,10 +27,10 @@ namespace {
 }
 
 bool MathInterpreter::interpretComparator (MDEVector &target,
-					const std::string &src, 
+					const std::string &src,
 					size_t &i)
 {
-  static const std::vector<ComparatorSymbolMap> map = boost::assign::list_of 
+  static const std::vector<ComparatorSymbolMap> map = boost::assign::list_of
     ( ComparatorSymbolMap("<=", MDE_Comparator::LESS_THAN_EQUALS) )
     ( ComparatorSymbolMap(">=", MDE_Comparator::GREATER_THAN_EQUALS) )
     ( ComparatorSymbolMap("!=", MDE_Comparator::NOT_EQUALS) )

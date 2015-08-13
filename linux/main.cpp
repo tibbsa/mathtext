@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * Command-line interface for MathText on Linux.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -25,12 +25,12 @@ using namespace std;
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-/** 
+/**
  * Parses the command line and launches the necessary conversions.
  *
  * @param argc Number of argments on command line
  * @param argv Array of c-strings containing command line arguments
- * @return An integer: 0 on success, 1 for translations errors, 2 for 
+ * @return An integer: 0 on success, 1 for translations errors, 2 for
  *         other errors
  */
 int main (const int argc, const char **argv)
@@ -40,7 +40,7 @@ int main (const int argc, const char **argv)
   string latexOutputFilename;
   bool generateBraille = false;
   string brfOutputFilename;
-     
+
   LOG_INFO << endl;
   LOG_INFO << "=====================================================";
 
@@ -51,16 +51,16 @@ int main (const int argc, const char **argv)
 
     desc.add_options()
       ("help,h", "Display command line help")
-      ("braille,b", 
+      ("braille,b",
        po::value(&brfOutputFilename)->implicit_value (string()),
        "Generate a braille file (default: input name + .BRF)")
 
-      ("latex,l", 
+      ("latex,l",
        po::value(&latexOutputFilename)->implicit_value (string()),
        "Generate a LaTeX/print file (default: input name + .TEX)")
-       
-      ("file,f", 
-       po::value(&inputFilename)->required(), 
+
+      ("file,f",
+       po::value(&inputFilename)->required(),
        "Name of your input file/document")
       ;
 
@@ -69,7 +69,7 @@ int main (const int argc, const char **argv)
       po::store(po::command_line_parser(argc, argv).
 		options(desc).positional(pod).run(), vm);
       po::notify(vm);
-    
+
       if (vm.count("help")) {
 	cout << "Usage: mathtext [options] <filename>" << endl;
 	cout << desc;
@@ -80,12 +80,12 @@ int main (const int argc, const char **argv)
       if (!vm.count("braille") && !vm.count("latex"))
 	throw logic_error("No work to do -- must specify either or both of --braille and --latex");
 
-      // If user did not provide filenames for braille/print output but 
+      // If user did not provide filenames for braille/print output but
       // requested braille/print output, generate default filenames
       generateBraille = (vm.count("braille"));
       if (generateBraille && brfOutputFilename.empty())
 	brfOutputFilename = remove_file_extension (inputFilename) + ".brf";
-    
+
       generateLaTeX = (vm.count("latex"));
       if (generateLaTeX && latexOutputFilename.empty())
 	latexOutputFilename = remove_file_extension (inputFilename) + ".tex";
@@ -96,7 +96,7 @@ int main (const int argc, const char **argv)
       cerr << desc;
       return 2;
     }
-    
+
     MathSourceFile srcfile;
     MathDocument doc;
     MathInterpreter interp(srcfile, doc);
@@ -107,13 +107,13 @@ int main (const int argc, const char **argv)
     UEBRenderer::getInterpreterCommandList (renderCommands);
     interp.registerCommands (renderCommands);
 
-    try { 
+    try {
       interp.interpret();
     } catch (MathInterpreterException &e) {
       cout << "An error occurred and translation of your document was stopped." << endl;
       if (!interp.haveMessages()) {
 	cout << "Cause of execption unknown: no messages produced!" << endl;
-      } else { 
+      } else {
 	const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();
 	cout << msgs.size() << " message(s):" << endl;
 
@@ -140,7 +140,7 @@ int main (const int argc, const char **argv)
 
     if (generateLaTeX) {
       LOG_INFO << endl << "====================== LaTeX Render ===================" << endl;
-      
+
       LaTeXRenderer ltr;
       std::string output;
       output = ltr.renderDocument(doc);
@@ -156,7 +156,7 @@ int main (const int argc, const char **argv)
 	cerr << "error: unable to open '" << latexOutputFilename << "' for writing!" << endl;
 	return 2;
       }
-      
+
       ofs << output;
       if (!ofs.good()) {
 	cerr << "error occurred while writing to '" << latexOutputFilename << "'!" << endl;
@@ -166,7 +166,7 @@ int main (const int argc, const char **argv)
 
       ofs.close();
     }
-  
+
     if (generateBraille) {
       LOG_INFO << endl << "====================== UEB Render ===================" << endl;
 
@@ -187,7 +187,7 @@ int main (const int argc, const char **argv)
 	cerr << "error: unable to open '" << brfOutputFilename << "' for writing!" << endl;
 	return 2;
       }
-      
+
       ofs << output;
       if (!ofs.good()) {
 	cerr << "error occurred while writing to '" << brfOutputFilename << "'!" << endl;
@@ -227,7 +227,7 @@ int main (const int argc, const char **argv)
     cerr << "terminating on unhandled exception: " << boost::diagnostic_information(e) << endl;
     return 2;
   }
-   
+
 
   return 0;
 }

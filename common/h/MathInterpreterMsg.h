@@ -1,7 +1,7 @@
 /**
  * @file MathInterpreterMsg.h
  * Header file for the class that holds interpretation messages
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -21,9 +21,9 @@ class MathInterpreterMsg
  public:
   typedef enum { MI_INFO, MI_NOTICE, MI_WARNING, MI_ERROR } Category;
   typedef enum { UNKNOWN_COMMAND,
-		 NESTED_TEXT_MODE, NESTED_MATH_MODE, 
+		 NESTED_TEXT_MODE, NESTED_MATH_MODE,
 		 SUSPECT_MATH_IN_TEXT, SUSPECT_TEXT_IN_MATH,
-		 SUSPECT_FRACTION, 
+		 SUSPECT_FRACTION,
 		 UNKNOWN_GREEK,
 		 UNKNOWN_BACKQUOTE_SYMBOL,
 		 FRACTION_NOT_TERMINATED,
@@ -35,7 +35,7 @@ class MathInterpreterMsg
 		 MODIFIER_NOT_TERMINATED,
 		 MODIFIER_ROOT_REQUIRES_PARENS,
                  GROUP_NOT_TERMINATED} Code;
-		 
+
  protected:
   Category m_category;
   Code m_code;
@@ -46,8 +46,8 @@ class MathInterpreterMsg
 
  public:
   MathInterpreterMsg (const MathInterpreterMsg::Category category,
-		      const MathInterpreterMsg::Code msgCode, 
-		      const std::string &source_filename, 
+		      const MathInterpreterMsg::Code msgCode,
+		      const std::string &source_filename,
 		      const unsigned long source_linenumber1,
 		      const unsigned long source_linenumber2,
 		      const std::string &msg);

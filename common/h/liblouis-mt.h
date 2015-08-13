@@ -1,8 +1,8 @@
 /**
  * @file liblouis-mt.h
- * Minimal header providing declarations for the LibLouis library, since the 
+ * Minimal header providing declarations for the LibLouis library, since the
  * full LibLouis headers conflict badly with boost headers.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs.
  * This project is released under the GNU General Public License.
 */
@@ -58,8 +58,8 @@
 // Tables to use
 #define LIBLOUIS_UEB_G1_TABLE "en-ueb-g1.ctb"
 
-// LibLouiS uses the MAXSTRING value internally for certain buffers and so 
-// we cannot exceed that here.  
+// LibLouiS uses the MAXSTRING value internally for certain buffers and so
+// we cannot exceed that here.
 #define LIBLOUIS_MAXSTRING 512
 
 #ifdef _WIN32
@@ -98,13 +98,13 @@ extern "C" {
 
   IMPORTDLL int STDCALL extParseChars (const char *inString, ll_widechar * outString);
   IMPORTDLL char * STDCALL showString (ll_widechar const *chars, int length);
-  IMPORTDLL int STDCALL lou_translateString (const char *tableList, 
-			 const ll_widechar * inbuf, 
-			 int *inlen, 
-			 ll_widechar * outbuf, 
-			 int *outlen, 
-			 ll_formtype *typeform, 
-			 char *spacing, 
+  IMPORTDLL int STDCALL lou_translateString (const char *tableList,
+			 const ll_widechar * inbuf,
+			 int *inlen,
+			 ll_widechar * outbuf,
+			 int *outlen,
+			 ll_formtype *typeform,
+			 char *spacing,
 			 int mode);
   IMPORTDLL void STDCALL lou_free (void);
 }

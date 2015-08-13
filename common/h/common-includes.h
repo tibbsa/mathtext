@@ -1,8 +1,8 @@
 /**
  * @file common-includes.h
- * Header file (precompiled for speed) containing generally used 
+ * Header file (precompiled for speed) containing generally used
  * standard includes and Boost includes from across the project.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

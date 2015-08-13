@@ -1,6 +1,6 @@
 /**
  * @file UEB_Roots.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -15,7 +15,7 @@ TEST_CASE("render/ueb/Roots", "[render][UEB][Roots]") {
   UEBRenderer r;
 
   // UEB Technical Guideline 8.1 --------------------------------------------
-  // The simplest square root case: _/4 
+  // The simplest square root case: _/4
   // (but any argument, no matter how complex, will be the same)
   SECTION ("Standard square roots") {
     MDEVector root_index;
@@ -28,8 +28,8 @@ TEST_CASE("render/ueb/Roots", "[render][UEB][Roots]") {
 
   // UEB Technical Guideline 8.2 ---------------------------------------------
   // Roots with 'indexes' are presented by putting an exponent-like expression
-  // at the start of the root argument.  For simple 'items' (see the 
-  // item_detection tests for more information), these do not need grouping 
+  // at the start of the root argument.  For simple 'items' (see the
+  // item_detection tests for more information), these do not need grouping
   // indicators.
 
   SECTION ("Root with a simple numeric index") {

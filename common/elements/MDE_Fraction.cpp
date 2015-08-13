@@ -1,7 +1,7 @@
 /**
  * @file MDE_MathBlock.cpp
  * "Generic" math content block (unprocessed)
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -10,17 +10,17 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Fraction::MDE_Fraction(const MDEVector num, const MDEVector den) : 
+MDE_Fraction::MDE_Fraction(const MDEVector num, const MDEVector den) :
   numerator(num), denominator(den)
 {
 }
 
-MDEVector MDE_Fraction::getNumerator (void) const 
+MDEVector MDE_Fraction::getNumerator (void) const
 {
   return numerator;
 }
 
-MDEVector MDE_Fraction::getDenominator (void) const 
+MDEVector MDE_Fraction::getDenominator (void) const
 {
   return denominator;
 }

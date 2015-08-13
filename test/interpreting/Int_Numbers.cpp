@@ -1,6 +1,6 @@
 /**
  * @file Int_Numbers.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

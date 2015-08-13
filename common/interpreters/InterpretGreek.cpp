@@ -1,6 +1,6 @@
 /**
  * @file InterpretGreek.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,7 +18,7 @@
  * into the 'target' buffer.
  */
 namespace {
-  struct GreekLetterMap { 
+  struct GreekLetterMap {
     GreekLetterMap (const char s, const MDE_GreekLetter::Character c) : symbol(s), character(c) {}
     char symbol;
     MDE_GreekLetter::Character character;
@@ -26,12 +26,12 @@ namespace {
 }
 
 bool MathInterpreter::interpretGreekLetter (MDEVector &target,
-					 const std::string &src, 
+					 const std::string &src,
 					 size_t &i)
 {
 
 #define CHARMAP(symbol1,char1,symbol2,char2) ( GreekLetterMap(symbol1, MDE_GreekLetter::char1) ) ( GreekLetterMap(symbol2, MDE_GreekLetter::char2) )
-  static const std::vector<GreekLetterMap> map = boost::assign::list_of 
+  static const std::vector<GreekLetterMap> map = boost::assign::list_of
     CHARMAP('a', alpha, 'A', Alpha)
     CHARMAP('b', beta, 'B', Beta)
     CHARMAP('g', gamma, 'G', Gamma)
@@ -57,7 +57,7 @@ bool MathInterpreter::interpretGreekLetter (MDEVector &target,
     CHARMAP('f', psi, 'F', Psi)
     CHARMAP('w', omega, 'W', Omega)
     ;
-  
+
   if (src [i] != '%' || (i+1) >= src.length())
     return false;
 

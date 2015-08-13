@@ -1,7 +1,7 @@
 /**
  * @file MDE_GreekLetter.cpp
  * Greek letters
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -14,7 +14,7 @@ MDE_GreekLetter::MDE_GreekLetter(const MDE_GreekLetter::Character c) : letter(c)
 {
 }
 
-MDE_GreekLetter::Character MDE_GreekLetter::getValue (void) const 
+MDE_GreekLetter::Character MDE_GreekLetter::getValue (void) const
 {
   return letter;
 }

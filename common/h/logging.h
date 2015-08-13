@@ -1,9 +1,9 @@
 /**
- * @file logging.h 
+ * @file logging.h
  * Support header for logging functions
  *
  * Inspired by https://github.com/gklingler/simpleLogger
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs.
  * This project is released under the GNU General Public License.
 */
@@ -31,7 +31,7 @@
 // register a global logger
 BOOST_LOG_GLOBAL_LOGGER(logger, boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level>)
 
-// to allow for easier-to-read logs, we automatically insert 2 spaces for 
+// to allow for easier-to-read logs, we automatically insert 2 spaces for
 // every level of indentation that the application has indicated.  These
 // functions are used to increase/decrease the indentation level.
 void logIncreaseIndent (void);

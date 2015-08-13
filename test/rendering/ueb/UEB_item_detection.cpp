@@ -1,6 +1,6 @@
 /**
  * @file item_detection.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -11,7 +11,7 @@
 #include "MathDocumentElements.h"
 #include "UEBRenderer.h"
 
-// Modifiers, exponents, and subscripts can appear in braille between 
+// Modifiers, exponents, and subscripts can appear in braille between
 // grouping indicators or without them, depending on whether the argument
 // or expression involved is an "item" or not.
 //
@@ -34,7 +34,7 @@ TEST_CASE("render/ueb/item_detection/numbers", "[render][UEB]") {
       v.push_back(boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, "2", ""));
       CHECK(r.isBrailleItem(v) == true);
     }
-      
+
     // Example: 24 (as in x^24)
     SECTION("with multiple digits") {
       MDEVector v;
@@ -101,7 +101,7 @@ TEST_CASE("render/ueb/item_detection/roots", "[render][UEB]") {
   // Example: _/4
   MDEVector rootArgument, rootIndex;
   rootArgument.push_back (boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, "4", ""));
-  
+
   MDEVector v;
   v.push_back(boost::make_shared<MDE_Root>(rootIndex, rootArgument));
   CHECK(r.isBrailleItem(v) == true);
@@ -111,7 +111,7 @@ TEST_CASE("render/ueb/item_detection/roots", "[render][UEB]") {
 
 //## TODO: greek letters
 //## TODO: operators
-//## TODO: other symbols?  
+//## TODO: other symbols?
 
 //
 // Items below here should NOT be treated as items

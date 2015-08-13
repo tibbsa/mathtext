@@ -1,7 +1,7 @@
 /**
  * @file mttest.cpp
  * Unit testing driver (to run on Linux)
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -43,7 +43,7 @@ void checkInterpretation (const std::string &inputStr,
 {
   MathDocument doc;
   std::string outputString;
-  
+
   interpretToDocument (inputStr, doc);
   documentToString (doc, outputString);
   CHECK (outputString == (expectedOutputStr + "<eol>"));

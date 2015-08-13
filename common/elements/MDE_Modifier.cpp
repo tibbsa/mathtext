@@ -1,9 +1,9 @@
 /**
  * @file MDE_Modifier.cpp
- * Various symbols and presentation items that are attached to an argument, 
+ * Various symbols and presentation items that are attached to an argument,
  * such as vector symbols (right arrow over item), conjugates, etc., but which
  * do not otherwise require very special handling (such as roots, etc.).
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -12,12 +12,12 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Modifier::MDE_Modifier(const MDE_Modifier::Modifier m, 
+MDE_Modifier::MDE_Modifier(const MDE_Modifier::Modifier m,
 			   const MDEVector arg) : modifier(m), argument(arg)
 {
 }
 
-MDE_Modifier::Modifier MDE_Modifier::getModifier (void) const 
+MDE_Modifier::Modifier MDE_Modifier::getModifier (void) const
 {
   return modifier;
 }

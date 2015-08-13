@@ -1,7 +1,7 @@
 /**
  * @file utility.h
  * Interface for miscellaneous utility functions.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs.
  * This project is released under the GNU General Public License.
 */
@@ -37,7 +37,7 @@ bool strBeginsWith (const std::string subject, const std::string search);
 /**
  * Returns true if 'subject' is one of the characters in 'candidates'
  */
-bool isOneOf (const char subject, const std::string &candidates);  
+bool isOneOf (const char subject, const std::string &candidates);
 
 /**
  * Returns true if 'subject' contains only some combination of the characters

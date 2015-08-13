@@ -1,7 +1,7 @@
 /**
  * @file MDE_Operator.cpp
  * Signs of operation (+ - * /)
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -15,7 +15,7 @@ MDE_Operator::MDE_Operator(const MDE_Operator::Operator o) : op(o)
 {
 }
 
-MDE_Operator::Operator MDE_Operator::getOperator (void) const 
+MDE_Operator::Operator MDE_Operator::getOperator (void) const
 {
   return op;
 }

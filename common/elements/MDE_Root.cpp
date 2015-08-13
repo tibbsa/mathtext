@@ -1,7 +1,7 @@
 /**
  * @file MDE_Root.cpp
  * Root (square or otherwise) symbol
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -10,17 +10,17 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Root::MDE_Root(const MDEVector idx, const MDEVector contents) : 
+MDE_Root::MDE_Root(const MDEVector idx, const MDEVector contents) :
   index(idx), argument(contents)
 {
 }
 
-MDEVector MDE_Root::getIndex (void) const 
+MDEVector MDE_Root::getIndex (void) const
 {
   return index;
 }
 
-MDEVector MDE_Root::getArgument (void) const 
+MDEVector MDE_Root::getArgument (void) const
 {
   return argument;
 }

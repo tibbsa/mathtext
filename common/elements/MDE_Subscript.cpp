@@ -1,7 +1,7 @@
 /**
  * @file MDE_Subscript.cpp
  * A subscript
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -14,7 +14,7 @@ MDE_Subscript::MDE_Subscript(const MDEVector subscript) : contents(subscript)
 {
 }
 
-MDEVector MDE_Subscript::getValue (void) const 
+MDEVector MDE_Subscript::getValue (void) const
 {
   return contents;
 }

@@ -1,7 +1,7 @@
 /**
  * @file MathSourceFile.cpp
  * Implementation of the container holding the raw source document
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -23,7 +23,7 @@ const std::vector<MathDocumentLine> &MathSourceFile::getDocument (void) const
 /**
  * Loads a source document from the specified file.
  *
- * Does not perform any particular processing, except for assigning line 
+ * Does not perform any particular processing, except for assigning line
  * numbers to the contents of the source document.
  *
  * @param filename Path and filename to input file to be processed.
@@ -33,7 +33,7 @@ const std::vector<MathDocumentLine> &MathSourceFile::getDocument (void) const
 void MathSourceFile::loadFromFile (const std::string &filename)
 {
   assert (!filename.empty());
-  
+
   std::ifstream ifs;
   ifs.open(filename.c_str(), std::ios::in);
   if (!ifs) {
@@ -45,8 +45,8 @@ void MathSourceFile::loadFromFile (const std::string &filename)
 			   mdx_liberrfunction_info("ifstream::open"));
   }
 
-  std::ostringstream buf; 
-  buf << ifs.rdbuf(); 
+  std::ostringstream buf;
+  buf << ifs.rdbuf();
 
   // In case there was some sort of read error in the process, fail
   if (!ifs.good()) {
@@ -71,11 +71,11 @@ void MathSourceFile::loadFromFile (const std::string &filename)
 /**
  * Loads a source document from a pre-existing buffer.
  *
- * Does not perform any particular processing, except for assigning line 
+ * Does not perform any particular processing, except for assigning line
  * numbers to the contents of the source document.
  *
  * @param buffer Text to ingest into the document
- * @param filename "Fake" filename (perhaps Untitled1 or what have you) 
+ * @param filename "Fake" filename (perhaps Untitled1 or what have you)
  * @throw MathDocumentParseException when parse or interpretation errors arise
  */
 void MathSourceFile::loadFromBuffer (const std::string &buffer,
@@ -83,7 +83,7 @@ void MathSourceFile::loadFromBuffer (const std::string &buffer,
 {
   assert (!filename.empty());
   assert (!buffer.empty());
-  
+
   ingest (filename, buffer);
 }
 
@@ -120,16 +120,16 @@ void MathSourceFile::ingest (const std::string &filename,
     }
 
     // Only trim from the right side, where trailing spaces should be
-    // meaningless. Spaces on the left side might well be important 
+    // meaningless. Spaces on the left side might well be important
     // in certain contexts (e.g. $PrintVerbatim sections)
     ba::trim_right(temp);
 
-    // Handle "continuation lines".  If this line ended in a \ then 
+    // Handle "continuation lines".  If this line ended in a \ then
     // combine it with the next line.
     if (temp.length() > 1 && temp.at (temp.length() - 1) == '\\') {
       if (!continuedLineStartedNumber)
 	continuedLineStartedNumber = lineNumber;
-      
+
       // Remove the continuation character from the line
       temp.erase(temp.end() - 1, temp.end());
 
@@ -138,7 +138,7 @@ void MathSourceFile::ingest (const std::string &filename,
     }
 
 
-    // Handle "include" statements. These appear at the left margin and 
+    // Handle "include" statements. These appear at the left margin and
     // follow the format:
     //
     // #include <filename>\n
@@ -158,16 +158,16 @@ void MathSourceFile::ingest (const std::string &filename,
       ba::trim(include_filename);
 
       // Try to load the include filename
-      try { 
+      try {
 	loadFromFile(include_filename);
-      } 
+      }
       catch (MathDocumentException &e) {
-	// If an error of any sort occurred while loading the 'include' 
+	// If an error of any sort occurred while loading the 'include'
 	// file, add info on how that file got included in the first place
 	// to point the user to the source of the problem.
 	std::string const *file = boost::get_error_info<mdx_filename_info>(e);
 
-	// If an exception occured while loading or parsing, we should 
+	// If an exception occured while loading or parsing, we should
 	// already have a filename reported. (Sanity check.)
 	assert (file != NULL);
 
@@ -188,9 +188,9 @@ void MathSourceFile::ingest (const std::string &filename,
     if (!continuedLineStartedNumber)
       continuedLineStartedNumber = lineNumber;
 
-    m_document.push_back (MathDocumentLine (filename, 
+    m_document.push_back (MathDocumentLine (filename,
 					    continuedLineStartedNumber,
-					    lineNumber, 
+					    lineNumber,
 					    curLine));
     curLine.clear();
     continuedLineStartedNumber = 0;

@@ -1,7 +1,7 @@
 /**
  * @file MDE_Operator.cpp
  * Signs of comparison (< <= > >= != ~=)
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -14,7 +14,7 @@ MDE_Comparator::MDE_Comparator(const MDE_Comparator::Comparator c) : comp(c)
 {
 }
 
-MDE_Comparator::Comparator MDE_Comparator::getComparator (void) const 
+MDE_Comparator::Comparator MDE_Comparator::getComparator (void) const
 {
   return comp;
 }

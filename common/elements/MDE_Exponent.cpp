@@ -1,7 +1,7 @@
 /**
  * @file MDE_Exponent.cpp
  * An exponent
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -14,7 +14,7 @@ MDE_Exponent::MDE_Exponent(const MDEVector exponent) : contents(exponent)
 {
 }
 
-MDEVector MDE_Exponent::getValue (void) const 
+MDEVector MDE_Exponent::getValue (void) const
 {
   return contents;
 }

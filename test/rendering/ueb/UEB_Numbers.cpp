@@ -1,7 +1,7 @@
 /**
  * @file ueb.cpp
  * Unit testing for the UEB rendering engine
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -55,7 +55,7 @@ TEST_CASE("render/ueb/Number/followedByLetters", "[Number]") {
 
   // UEB Rulebook 6.5 ----------------------------------------------
   // Scenario 1: Letter follows number
-  // 
+  //
   SECTION ("where a number ends in a digit") {
     MDEVector v;
     v.push_back (boost::make_shared<MDE_Number>(MDE_Number::POSITIVE, S("10"), S("")));
@@ -87,7 +87,7 @@ TEST_CASE("render/ueb/Number/followedByLetters", "[Number]") {
       }
     }
   }
-    
+
   // Scenario 2: Letter follows a period at the end of a number
   //
   SECTION ("where a number ends in a period") {
@@ -103,7 +103,7 @@ TEST_CASE("render/ueb/Number/followedByLetters", "[Number]") {
 	v.pop_back();
       }
     }
-    
+
     // Example: 10.k
     SECTION ("and k-z follow, no letter indicator required") {
       for (char c = 'k'; c <= 'z'; c++) {
@@ -138,7 +138,7 @@ TEST_CASE("render/ueb/Number/followedByLetters", "[Number]") {
 	v.pop_back();
       }
     }
-    
+
     // Example: 10.k
     SECTION ("and k-z follow, no letter indicator required") {
       for (char c = 'k'; c <= 'z'; c++) {

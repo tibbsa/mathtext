@@ -2,7 +2,7 @@
  * @file MDE_Summation.cpp
  * Summation (sigma) sign (with a lower bound, upper bound), typically followed
  * by a summation formula of some descriptino.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -11,17 +11,17 @@
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
-MDE_Summation::MDE_Summation(const MDEVector lower, const MDEVector upper) : 
+MDE_Summation::MDE_Summation(const MDEVector lower, const MDEVector upper) :
   lowerBound(lower), upperBound(upper)
 {
 }
 
-MDEVector MDE_Summation::getLowerBound (void) const 
+MDEVector MDE_Summation::getLowerBound (void) const
 {
   return lowerBound;
 }
 
-MDEVector MDE_Summation::getUpperBound (void) const 
+MDEVector MDE_Summation::getUpperBound (void) const
 {
   return upperBound;
 }

@@ -1,6 +1,6 @@
 /**
  * @file UEB_Symbols.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -23,11 +23,11 @@ TEST_CASE("render/ueb/Symbols", "[render][UEB][Symbol]") {
   R(MDE_Symbol::FACTORIAL, "6");
   R(MDE_Symbol::LEFT_BRACE, "_<");
   R(MDE_Symbol::LEFT_BRACKET, ".<");
-  R(MDE_Symbol::LEFT_PAREN, "\"<"); 
+  R(MDE_Symbol::LEFT_PAREN, "\"<");
   R(MDE_Symbol::RIGHT_BRACE, "_>");
   R(MDE_Symbol::RIGHT_BRACKET, ".>");
   R(MDE_Symbol::RIGHT_PAREN, "\">");
-  
+
   // UEB Rulebook 3.21, Technical Guidelines 2.10 ---------------------------
   R(MDE_Symbol::PERCENT, ".0");
 

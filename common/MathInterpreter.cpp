@@ -1,7 +1,7 @@
 /**
  * @file MathInterpreter.cpp
  * Implementation of the math interpreter
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -23,13 +23,13 @@ namespace ba = boost::algorithm;
  * @param src A ready-to-go math source file for interpretation
  * @param doc A MathDocument where the interpretation should be stored
  */
-MathInterpreter::MathInterpreter (const MathSourceFile &srcFile, 
-				  MathDocument &targetDoc) 
+MathInterpreter::MathInterpreter (const MathSourceFile &srcFile,
+				  MathDocument &targetDoc)
   : m_src(srcFile), m_doc(targetDoc)
 {
 }
-  
-  
+
+
 /**
  * Interprets a source document
  *
@@ -46,22 +46,22 @@ void MathInterpreter::interpret (void)
   m_blockBeganLineNum = 1;
 
   const std::vector<MathDocumentLine> &srcDoc = m_src.getDocument();
-  for (std::vector<MathDocumentLine>::const_iterator it = srcDoc.begin(); 
+  for (std::vector<MathDocumentLine>::const_iterator it = srcDoc.begin();
        it != srcDoc.end(); ++it) {
 
     m_doc.addElementPtr (boost::make_shared<MDE_SourceLine>(it->getFilename(),
-							    it->getStartLineNumber(), 
-							    it->getEndLineNumber(), 
+							    it->getStartLineNumber(),
+							    it->getEndLineNumber(),
 							    it->getContent()));
     interpretLine(*it);
   }
-  
+
   logDecreaseIndent();
   LOG_TRACE << "exit MathInterpreter::interpret";
 
   LOG_TRACE << "=============================================================";
 
-  for (MDEVector::const_iterator it = m_doc.getDocument().begin(); 
+  for (MDEVector::const_iterator it = m_doc.getDocument().begin();
        it != m_doc.getDocument().end(); ++it) {
     MathDocumentElementPtr e = *it;
     LOG_TRACE << *e;
@@ -166,7 +166,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
   elements.push_back (boost::make_shared<MDE_LineBreak>());
 
   LOG_TRACE << "---- Decoded line ---------";
-  for (MDEVector::const_iterator it = elements.begin(); 
+  for (MDEVector::const_iterator it = elements.begin();
        it != elements.end(); ++it) {
     MathDocumentElementPtr e = *it;
     LOG_TRACE << *e;
@@ -181,7 +181,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
 }
 
 /**
- * Interprets the selected text and returns an array of 
+ * Interprets the selected text and returns an array of
  * document elements.
  */
 #define PUSH_CATCH_BUFFER { if (!boost::trim_copy(catch_buffer).empty()) { elements.push_back (makeGeneric(catch_buffer)); } catch_buffer.erase(); }
@@ -208,14 +208,14 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     if (m_isStartOfLine) {
       ATTEMPT(Command);
     }
- 
+
     /**
-     * Mode changes: text to math or math to text. Dump what we have up to 
+     * Mode changes: text to math or math to text. Dump what we have up to
      * this point whenever there is a mode change.
      */
     if (c == '$') {
       // Do not consider `$ to be a math mode change: this is a dollar sign
-      if (!m_inTextMode && i > 0 && buffer [i - 1] == '`') 
+      if (!m_inTextMode && i > 0 && buffer [i - 1] == '`')
 	goto DefaultAction;
 
       if (m_inTextMode) {
@@ -247,7 +247,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 
 
     // If this is the first thing we're seeing on the line, check to see
-    // if the first blob appears to be an 'item number' (as might appear 
+    // if the first blob appears to be an 'item number' (as might appear
     // in homework).
     if (m_isStartOfLine && !m_inTextMode) {
       ATTEMPT(ItemNumber);
@@ -277,23 +277,23 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 
   DefaultAction:
     ;
-    
+
     /**
-     * Default action: Save the unknown character to be added later as a 
+     * Default action: Save the unknown character to be added later as a
      * generic text/math block.
      */
     catch_buffer.push_back (c);
-    
+
   AdvanceNextChar:
     i++;
-    
+
   NextChar:
     logDecreaseIndent();
     continue;
   }
 
   PUSH_CATCH_BUFFER;
- 
+
   interpreter_recursion_level--;
 
   logDecreaseIndent();
@@ -321,7 +321,7 @@ MathDocumentElementPtr MathInterpreter::makeGeneric (const std::string &buffer)
 }
 
 /**
- * Evaluates a block of text to determine whether it appears as though it 
+ * Evaluates a block of text to determine whether it appears as though it
  * might contain mathematical material.  If it does, a warning is added to
  * the processing log.
  */
@@ -330,7 +330,7 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
 {
   std::vector<std::string> suspicious_items;
 
-  if (CONTAINS('@') && CONTAINS('~') && CONTAINS('#')) 
+  if (CONTAINS('@') && CONTAINS('~') && CONTAINS('#'))
     suspicious_items.push_back ("Fractions");
 
   if (CONTAINS('<') || CONTAINS('>') || CONTAINS('='))
@@ -359,8 +359,8 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
  * Extracts the next "item" from the input buffer, which could be:
  * - an entire fraction
  * - a number or other construct, up to the next terminator
- * 
- * A semi-colon will termiante the extraction as well (and not be copied into 
+ *
+ * A semi-colon will termiante the extraction as well (and not be copied into
  * the target buffer).
  *
  * Returns TRUE on success, or FALSE on error.
@@ -377,29 +377,29 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
   while (pos < src.length() && isspace(src[pos]))
     pos++;
 
-  // Copy characters until we encounter any of the above-mentioned 
-  // terminators.  
+  // Copy characters until we encounter any of the above-mentioned
+  // terminators.
   //
-  // The semi-colon is specifically designated as a terminator, 
+  // The semi-colon is specifically designated as a terminator,
   // and should be skipped if it arises.
   //
   // Special cases:
-  // - negative numbers (items can begin with a minus sign '-' but 
+  // - negative numbers (items can begin with a minus sign '-' but
   //   only in the first character)
   for (; pos < src.length(); pos++) {
     if (src [pos] == ';') {
       pos++;
       break;
     }
-    
-    // On other terminators, do not "lose them" -- they should wind 
+
+    // On other terminators, do not "lose them" -- they should wind
     // up in the final output.
     if (isOneOf (src [pos], current_terminators))
       break;
-    
-    if (pos == i) 
+
+    if (pos == i)
       current_terminators += '-';
-    
+
     target += src [pos];
   }
 
@@ -410,19 +410,19 @@ void MathInterpreter::sniffTextForMath (const std::string &buffer)
 }
 
 /**
- * Extracts the next group of symbols, bounded by groupOpen/groupClose.  
+ * Extracts the next group of symbols, bounded by groupOpen/groupClose.
  *
  * Used to grab argments to exponents, etc. e.g. 2x^(1 + @1~y#)
- * If 'retainGroupDelims' is TRUE (default false), the group delimeters 
+ * If 'retainGroupDelims' is TRUE (default false), the group delimeters
  * 'groupOpen' and 'groupClose' are included in 'target'.
  *
  * Returns TRUE on success, FALSE on error (typically, an unclosed group).
  */
-bool MathInterpreter::extractGroup (std::string &target, 
-				    const std::string &buffer, 
-				    size_t &i, 
-				    const std::string &groupOpen, 
-				    const std::string &groupClose, 
+bool MathInterpreter::extractGroup (std::string &target,
+				    const std::string &buffer,
+				    size_t &i,
+				    const std::string &groupOpen,
+				    const std::string &groupClose,
 				    bool retainGroupDelims)
 {
   int groupNestingLevel = 0;
@@ -456,8 +456,8 @@ bool MathInterpreter::extractGroup (std::string &target,
 
       groupNestingLevel--;
     }
-  
-    // Add this character to the contents of the exponent 
+
+    // Add this character to the contents of the exponent
     target += buffer[pos];
   }
 
@@ -473,14 +473,14 @@ bool MathInterpreter::extractGroup (std::string &target,
 }
 
 /**
- * Extracts up to the next 'delim'.  But if we start with an open paren, 
+ * Extracts up to the next 'delim'.  But if we start with an open paren,
  * take that whole group regardless of whether it contains a comma.
  *
  * Returns TRUE on success, FALSE on error (typically, an unclosed group).
  */
-bool MathInterpreter::extractToDelimiter (std::string &target, 
-					  const std::string &buffer, 
-					  size_t &i, 
+bool MathInterpreter::extractToDelimiter (std::string &target,
+					  const std::string &buffer,
+					  size_t &i,
 					  const std::string &delim)
 {
   bool foundTerminator = false;
@@ -503,7 +503,7 @@ bool MathInterpreter::extractToDelimiter (std::string &target,
 
     i = pos;
     return true;
-  } 
+  }
 
   foundTerminator = false;
   for (; pos < buffer.length(); pos++) {
@@ -512,8 +512,8 @@ bool MathInterpreter::extractToDelimiter (std::string &target,
       foundTerminator = true;
       break;
     }
-      
-    // Add this character to the contents of the exponent 
+
+    // Add this character to the contents of the exponent
     target += buffer[pos];
   }
 
@@ -531,7 +531,7 @@ void MathInterpreter::addMessage (const MathInterpreterMsg::Category category,
 {
   assert (m_pCurLine != NULL);
 
-  MathInterpreterMsg message(category, 
+  MathInterpreterMsg message(category,
 			     msgCode,
 			     m_pCurLine->getFilename(),
 			     m_pCurLine->getStartLineNumber(),

@@ -1,6 +1,6 @@
 /**
  * @file MDE_GenericText.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -25,7 +25,7 @@ const std::string &MDE_GenericText::getText (void) const
 
 
 /**
- * Generate a string representation of this element (primarily for 
+ * Generate a string representation of this element (primarily for
  * debugging purposes)
  *
  * @return string representation of this element

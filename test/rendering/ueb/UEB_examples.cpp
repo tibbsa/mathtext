@@ -1,6 +1,6 @@
 /**
  * @file UEB_examples.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -19,7 +19,7 @@
 // technical guildelines.
 //
 // Many of these examples, while focused on a particular area (e.g. numbers),
-// will also test other aspects of the translation engine, because they 
+// will also test other aspects of the translation engine, because they
 // include significant other symbols, or they include text. This is why these
 // examples are separate and apart from the more targetted indiivdual tests
 // for each element type.
@@ -59,15 +59,15 @@ TEST_CASE("render/ueb/examples/numbers", "[render][UEB][examples][Numbers]") {
     executeTest(".7", "#4G");
     executeTest(".8 &is a decimal fraction.", "#4H is a decimal fraction4");
   }
- 
+
 }
 
 
 //
 // =========================================================================
-// The UEB guidelines give tons of examples for exponents but very few for 
-// subscripts. Since the code is not entirely shared, we duplicate the 
-// exponent examples for subscripts notwithstanding that you wouldn't, in 
+// The UEB guidelines give tons of examples for exponents but very few for
+// subscripts. Since the code is not entirely shared, we duplicate the
+// exponent examples for subscripts notwithstanding that you wouldn't, in
 // typical real-world scenarios, see these in subscript form.
 TEST_CASE("render/ueb/examples/superscripts", "[render][UEB][examples][Exponents]") {
   SECTION("UEB Technical Guidelines, Section 7.3 (Algebra)") {
@@ -82,9 +82,9 @@ TEST_CASE("render/ueb/examples/superscripts", "[render][UEB][examples][Exponents
     executeTest("x^(@1~2#y)", "x9<#A/By>");
     executeTest("x^@1~2#y", "x9#A/By");
     executeTest("x^@a~b#y=x", "x9(a./b)y \"7 x");
-    executeTest("&If $@x^2+2x~1+x^2# = 1\n" 
+    executeTest("&If $@x^2+2x~1+x^2# = 1\n"
                 "x^2 + 2x = 1 + x^2\n"
-                "x = @1~2#", 
+                "x = @1~2#",
 		   ",if (x9#B\"6#Bx./#A\"6x9#B) \"7 #A\n"
                    "x9#B\"6#Bx \"7 #A\"6x9#B\n"
 		   "x \"7 #A/B");
@@ -92,8 +92,8 @@ TEST_CASE("render/ueb/examples/superscripts", "[render][UEB][examples][Exponents
   SECTION("UEB Technical Guidelines, Section 7.4 (Multiple levels)") {
     executeTest("e^(x^2)", "e9<x9#B>");
     // NOT IMPLEMENTED; executeTest("e^(x^2)", "e9\"<x9#B\">");
-    // An expression in paranthesees, square brackets, or braces can be taken 
-    // as an item, but for that to work in this context, parsing of 
+    // An expression in paranthesees, square brackets, or braces can be taken
+    // as an item, but for that to work in this context, parsing of
     // bracketed groups (i.e. in (x-1)^2, (x-1) would have to be an element
     // on its own rather than [lparen symbol][x][-][1][rparen symbol]
     executeTest("P^(x^i)", ",P9<x9i>");
@@ -118,9 +118,9 @@ TEST_CASE("render/ueb/examples/subscripts", "[render][UEB][examples][Subscripts]
     executeTest("x_(@1~2#y)", "x5<#A/By>");
     executeTest("x_@1~2#y", "x5#A/By");
     executeTest("x_@a~b#y=x", "x5(a./b)y \"7 x");
-    executeTest("&If $@x_2+2x~1+x_2# = 1\n" 
+    executeTest("&If $@x_2+2x~1+x_2# = 1\n"
                 "x_2 + 2x = 1 + x_2\n"
-                "x = @1~2#", 
+                "x = @1~2#",
 		   ",if (x5#B\"6#Bx./#A\"6x5#B) \"7 #A\n"
                    "x5#B\"6#Bx \"7 #A\"6x5#B\n"
 		   "x \"7 #A/B");
@@ -128,8 +128,8 @@ TEST_CASE("render/ueb/examples/subscripts", "[render][UEB][examples][Subscripts]
   SECTION("UEB Technical Guidelines, Section 7.4 (Multiple levels)") {
     executeTest("e_(x_2)", "e5<x5#B>");
     // NOT IMPLEMENTED; executeTest("e_((x_2))", "e9\"<x9#B\">");
-    // An expression in paranthesees, square brackets, or braces can be taken 
-    // as an item, but for that to work in this context, parsing of 
+    // An expression in paranthesees, square brackets, or braces can be taken
+    // as an item, but for that to work in this context, parsing of
     // bracketed groups (i.e. in (x-1)_2, (x-1) would have to be an element
     // on its own rather than [lparen symbol][x][-][1][rparen symbol]
      executeTest("P_(x_i)", ",P5<x5i>");

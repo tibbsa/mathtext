@@ -1,6 +1,6 @@
 /**
  * @file UEB_Fractions.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -19,12 +19,12 @@ TEST_CASE("render/ueb/Fractions", "[render][UEB][Fractions]") {
   UEBRenderer r;
 
   // UEB Technical Guideline 6.1 --------------------------------------------
-  // "Simple fractions" (those where both the numerator and denominator 
+  // "Simple fractions" (those where both the numerator and denominator
   // consist SOLELY of numbers) are rendered simple as [num]/[den].
-  // 
-  // We need to test a variety of number combinations to make sure that 
-  // the fraction rendering code is detecting 'simple' fractions 
-  // appropriately.  
+  //
+  // We need to test a variety of number combinations to make sure that
+  // the fraction rendering code is detecting 'simple' fractions
+  // appropriately.
   //
   // These examples are drawn from Technical Guideline 6.5
   SECTION ("Simple numeric fractions") {
@@ -45,7 +45,7 @@ TEST_CASE("render/ueb/Fractions", "[render][UEB][Fractions]") {
   }
 
   // UEB Technical Guideline 6.4 --------------------------------------------
-  // Fractions where the numerator or denominator is not a pure number 
+  // Fractions where the numerator or denominator is not a pure number
   // must be enclosed in fraction indicator symbols.
   //
   // As above, these examples are drawn from the examples in 6.5.
@@ -57,7 +57,7 @@ TEST_CASE("render/ueb/Fractions", "[render][UEB][Fractions]") {
       TF(MKNUM(POSITIVE, "3", ""), MKTEXT("b"), "(#C./b)");
     }
 
-    // More complex examples, all of which should be treated as requiring 
+    // More complex examples, all of which should be treated as requiring
     // general fraction indicators.
 
     // Example: @3^2~6#
@@ -70,7 +70,7 @@ TEST_CASE("render/ueb/Fractions", "[render][UEB][Fractions]") {
       numerator.push_back (boost::make_shared<MDE_Exponent>(exponent_vector));
       denominator.push_back (MKNUM(POSITIVE, "6", ""));
 
-      MDE_Fraction frac(numerator, denominator); 
+      MDE_Fraction frac(numerator, denominator);
       CHECK(r.renderFraction(&frac) == "(#C9#B./#F)");
     }
   }

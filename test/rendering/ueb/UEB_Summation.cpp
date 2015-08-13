@@ -1,6 +1,6 @@
 /**
  * @file UEB_Summation.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -114,7 +114,7 @@ TEST_CASE("render/ueb/Summations/upper_limits", "[render][UEB][Summations]") {
 TEST_CASE("render/ueb/Summations/complex", "[render][UEB][Summations]") {
   UEBRenderer r;
 
-  // Test to make sure we don't get a letter indicator in the upper limit 
+  // Test to make sure we don't get a letter indicator in the upper limit
   // when it is followed by a lower limit containing a number.
   SECTION ("Summation with simple, numeric lower limit and alphabetic upper limit") {
     MDEVector lower_bound, upper_bound;

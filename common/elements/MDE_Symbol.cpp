@@ -1,8 +1,8 @@
 /**
  * @file MDE_Symbol.cpp
- * Various symbols that do nto require particularly special handling, do 
- * not have attached 'arguments', etc. 
- * 
+ * Various symbols that do nto require particularly special handling, do
+ * not have attached 'arguments', etc.
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -15,7 +15,7 @@ MDE_Symbol::MDE_Symbol(const MDE_Symbol::Symbol s) : symbol(s)
 {
 }
 
-MDE_Symbol::Symbol MDE_Symbol::getSymbol (void) const 
+MDE_Symbol::Symbol MDE_Symbol::getSymbol (void) const
 {
   return symbol;
 }

@@ -1,6 +1,6 @@
 /**
  * @file InterpretSummations.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -20,12 +20,12 @@
  *
  */
 bool MathInterpreter::interpretSummation (MDEVector &target,
-					  const std::string &src, 
+					  const std::string &src,
 					  size_t &i)
 {
   size_t pos = i;
 
-  if (src.substr(pos, 2) != "`S" || (src.length() - pos) < 4) 
+  if (src.substr(pos, 2) != "`S" || (src.length() - pos) < 4)
     return false;
 
   pos += 2;
@@ -43,7 +43,7 @@ bool MathInterpreter::interpretSummation (MDEVector &target,
   std::string upperBoundStr;
   LOG_TRACE << "before ETD: pos " << pos << ", buffer: " << src.substr(pos, 20);
   if (!extractToDelimiter(lowerBoundStr, src, pos, ",")) {
-    //## TODO: ADD ERROR MESSAGE - unable to extrtact lower bound 
+    //## TODO: ADD ERROR MESSAGE - unable to extrtact lower bound
     BOOST_THROW_EXCEPTION (MathInterpreterException());
   }
   LOG_TRACE << "after ETD: pos " << pos << ", buffer: " << src.substr(pos, 20);
@@ -56,7 +56,7 @@ bool MathInterpreter::interpretSummation (MDEVector &target,
   LOG_TRACE << "extractToDelimeter calling on pos " << pos << ": buffer '" << src.substr(pos, 20) << "...";
 
   if (!extractToDelimiter(upperBoundStr, src, pos, ")")) {
-    //## TODO: ADD ERROR MESSAGE - unable to extrtact upper bound 
+    //## TODO: ADD ERROR MESSAGE - unable to extrtact upper bound
     BOOST_THROW_EXCEPTION (MathInterpreterException());
   }
 
@@ -70,7 +70,7 @@ bool MathInterpreter::interpretSummation (MDEVector &target,
 
   lowerBoundVec = interpretBuffer (lowerBoundStr);
   upperBoundVec = interpretBuffer (upperBoundStr);
-  
+
   target.push_back (boost::make_shared<MDE_Summation>(lowerBoundVec, upperBoundVec));
   return true;
 }

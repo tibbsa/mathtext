@@ -1,7 +1,7 @@
 /**
  * @file MathDocument.cpp
  * Implementation of the container holding the interpreted source document
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */

@@ -1,6 +1,6 @@
 /**
  * @file InterpretRoots.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -18,25 +18,25 @@
  *                            or _/3(16) (cube root of 16)
  *                            or _/[n^2](x + 2y + 3c^2) (complex root index)
  *
- * For the basic form, the root is everything up to the next space, sign of 
+ * For the basic form, the root is everything up to the next space, sign of
  * operation, sign of comparison, etc.
  *
- * If _/ is followed by parenthesees then the entire paranthesees is 
+ * If _/ is followed by parenthesees then the entire paranthesees is
  * taken as the root argument.
  *
- * If _/ is followed by a number, and immediately followed by an expression 
- * in paranthesees, then the number is considered the root index and the 
+ * If _/ is followed by a number, and immediately followed by an expression
+ * in paranthesees, then the number is considered the root index and the
  * entire paranthesees is taken as the root argment.
  *
- * If _/ is followed by a square bracket, then the entire square bracket is 
- * taken as the root index, and the entire paranthesees following that is 
+ * If _/ is followed by a square bracket, then the entire square bracket is
+ * taken as the root index, and the entire paranthesees following that is
  * taken as the root argument.
  *
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
  */
 bool MathInterpreter::interpretRoot (MDEVector &target,
-				  const std::string &src, 
+				  const std::string &src,
 				  size_t &i)
 {
   if (src.substr(i, 2) != "_/")
@@ -48,7 +48,7 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
 
   i += 2;
 
-  // Look for root indexes, which may be a simple letter or number, or a 
+  // Look for root indexes, which may be a simple letter or number, or a
   // more complex expression bounded by square brackets.
   boost::regex root_index_regex("(\\w)+\\(");
   boost::smatch mr;
@@ -69,9 +69,9 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
   else
     LOG_TRACE << "- found a root with no index";
 
-  // If this is followed by an open paren '(', read until the closing 
+  // If this is followed by an open paren '(', read until the closing
   // paren; otherwise, read until the end of the item
-  
+
   if (src [i] == '@') {
     if (!extractGroup(root_argument, src, i, "@", "#", true)) {
       MSG_ERROR(ROOT_NOT_TERMINATED, boost::str(boost::format("text in fractional root: '%s'") % root_argument));

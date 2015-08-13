@@ -1,8 +1,8 @@
 /**
  * @file MathInterpreter.h
- * Header file for the class that interprets source documents into the 
+ * Header file for the class that interprets source documents into the
  * internally represented math document.
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -68,10 +68,10 @@ class MathInterpreter
 
   /* Support functions */
   void sniffTextForMath (const std::string &buffer);
-  bool extractItem (std::string &target, const std::string &src, size_t &i, 
+  bool extractItem (std::string &target, const std::string &src, size_t &i,
 		    const std::string &terminators = ",+/*=<>()[]{} ~@#");
   bool extractGroup (std::string &target, const std::string &src, size_t &i,
-		     const std::string &groupOpen = "(", 
+		     const std::string &groupOpen = "(",
 		     const std::string &groupClose = ")",
 		     const bool retainGroupDelims = false);
   bool extractToDelimiter (std::string &target,
@@ -80,7 +80,7 @@ class MathInterpreter
 			   const std::string &delim);
 
   /* Reporting functions */
-  void addMessage (const MathInterpreterMsg::Category category, 
+  void addMessage (const MathInterpreterMsg::Category category,
 		   const MathInterpreterMsg::Code msgCode,
 		   const std::string &msg = std::string());
 

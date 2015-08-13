@@ -1,6 +1,6 @@
 /**
  * @file Operators.cpp
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -16,10 +16,10 @@
 TEST_CASE("render/ueb/Operators/unspaced", "[render][UEB][Operator]") {
   UEBRenderer r;
 
-  // Disable 'extra operator spacing' 
+  // Disable 'extra operator spacing'
   MDE_Command setupCmd("SpaceUEBOperators", "false");
   r.renderCommand(&setupCmd);
-  
+
   // UEB Rulebook 11.2 ---------------------------------------------
   RENDERCHECK(MDE_Operator::ADDITION, "\"6");
   RENDERCHECK(MDE_Operator::SUBTRACTION, "\"-");
@@ -30,7 +30,7 @@ TEST_CASE("render/ueb/Operators/unspaced", "[render][UEB][Operator]") {
 TEST_CASE("render/ueb/Operators/spaced", "[render][UEB][Operator]") {
   UEBRenderer r;
 
-  // Enable 'extra operator spacing' 
+  // Enable 'extra operator spacing'
   MDE_Command setupCmd("SpaceUEBOperators", "true");
   r.renderCommand(&setupCmd);
 

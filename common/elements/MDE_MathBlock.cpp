@@ -1,7 +1,7 @@
 /**
  * @file MDE_MathBlock.cpp
  * "Generic" math content block (unprocessed)
- * 
+ *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
@@ -9,7 +9,7 @@
 #include "common-includes.h"
 #include "MathDocumentElements.h"
 
-MDE_MathBlock::MDE_MathBlock(const std::string &contents) : 
+MDE_MathBlock::MDE_MathBlock(const std::string &contents) :
   MDE_GenericText(contents)
 {
 }

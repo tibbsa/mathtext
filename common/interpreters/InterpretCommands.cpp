@@ -19,14 +19,14 @@
  * Returns true on success, false on error, and puts resulting elements
  * into the 'target' buffer.
  *
- * If the commands are instructions to the interpreter, these are processed 
+ * If the commands are instructions to the interpreter, these are processed
  * frmo this function as well.
  */
 bool MathInterpreter::interpretCommand (MDEVector &target,
-					const std::string &src, 
+					const std::string &src,
 					size_t &i)
 {
-  // We should only be attempting this if this is the very start of a line of 
+  // We should only be attempting this if this is the very start of a line of
   // text.
   assert (m_isStartOfLine == true);
 
@@ -36,7 +36,7 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
   i += 2;
   std::string commandName, commandParameters;
 
-  // Handle $$+EnableMoreFeatures and $$-EnableMoreFeatures.  Include a 
+  // Handle $$+EnableMoreFeatures and $$-EnableMoreFeatures.  Include a
   // trailing space in case more parameters show up below
   if (src [i] == '+') {
     commandParameters = "true ";
@@ -45,14 +45,14 @@ bool MathInterpreter::interpretCommand (MDEVector &target,
     commandParameters = "false ";
     i++;
   }
-  
+
   // Grab the command name
   while (i < src.length() && isalpha(src [i])) {
     commandName += src[i];
     i++;
   }
 
-  // Grab the parameters, if there are any, to EOL.  If there is already 
+  // Grab the parameters, if there are any, to EOL.  If there is already
   // a parameter there, add a space after it.
   while (i < src.length()) {
     commandParameters += src[i];
