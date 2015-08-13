@@ -1005,16 +1005,23 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
 
   if (!e->getLowerBound().empty()) {
     std::string renderedBound;
+    bool savedNumericMode;
 
     beginInternalRender();
     status.isNumericMode = false;
     renderedBound = renderVector(e->getLowerBound());
+    savedNumericMode = status.isNumericMode;
     endInternalRender();
 
-    LOG_TRACE << "- rendered lower bound: " << renderedBound;
+    LOG_TRACE << "- rendered lower bound: " << renderedBound << " (numeric mode: " << savedNumericMode << ")";
 
     if (isBrailleItem(e->getLowerBound())) {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_BELOW "%s") % renderedBound));
+
+      // Restore numeric mode status for "item" bounds, in case we need to 
+      // follow this with a letter indicator (e.g. a sigma with only a lower 
+      // bound that is a number, and is then followed by an 'a')
+      status.isNumericMode = savedNumericMode;
     } else {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_BELOW UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedBound));
     }
@@ -1022,16 +1029,23 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
 
   if (!e->getUpperBound().empty()) {
     std::string renderedBound;
+    bool savedNumericMode;
 
     beginInternalRender();
     status.isNumericMode = false;
     renderedBound = renderVector(e->getUpperBound());
+    savedNumericMode = status.isNumericMode;
     endInternalRender();
 
-    LOG_TRACE << "- rendered upper bound: " << renderedBound;
+    LOG_TRACE << "- rendered upper bound: " << renderedBound << " (numeric mode: " << savedNumericMode << ")";
 
     if (isBrailleItem(e->getUpperBound())) {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_ABOVE "%s") % renderedBound));
+
+      // Restore numeric mode status for "item" bounds, in case we need to 
+      // follow this with a letter indicator (e.g. a sigma with an upper 
+      // bound that is a number, and is then followed by an 'a')
+      status.isNumericMode = savedNumericMode;
     } else {
       output += renderMathContent(boost::str(boost::format(UEB_DIRECTLY_ABOVE UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedBound));
     }
