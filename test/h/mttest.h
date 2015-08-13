@@ -15,8 +15,11 @@
 #define S(str) std::string(str)
 #define CHARSTR(c) std::string(1, c)
 
-void interpretToDocument (const std::string &input,
-                          MathDocument &document,
-                          std::string &outputString);
+void interpretToDocument (const std::string &input, MathDocument &document);
+void documentToString (const MathDocument &document, std::string &outputString);
+
+void checkInterpretation (const std::string &inputStr,
+                          const std::string &expectedOutputStr);
+
 
 #endif 

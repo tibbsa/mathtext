@@ -14,9 +14,7 @@
 #include "MathInterpreter.h"
 #include "MathSourceFile.h"
 
-void interpretToDocument (const std::string &input,
-                          MathDocument &document,
-                          std::string &outputString)
+void interpretToDocument (const std::string &input, MathDocument &document)
 {
   CAPTURE(input);
 
@@ -26,7 +24,10 @@ void interpretToDocument (const std::string &input,
   MathInterpreter interpreter(src, document);
   REQUIRE_NOTHROW(interpreter.interpret());
   REQUIRE(interpreter.haveMessages() == false);
+}
 
+void documentToString (const MathDocument &document, std::string &outputString)
+{
   outputString.clear();
   BOOST_FOREACH (const MathDocumentElementPtr &ePtr, document.getDocument()) {
     const MathDocumentElement *ptr = ePtr.get();
@@ -35,4 +36,15 @@ void interpretToDocument (const std::string &input,
     if(!dynamic_cast<const MDE_SourceLine *>(ptr))
       outputString += ptr->getString();
   }
+}
+
+void checkInterpretation (const std::string &inputStr,
+			  const std::string &expectedOutputStr)
+{
+  MathDocument doc;
+  std::string outputString;
+  
+  interpretToDocument (inputStr, doc);
+  documentToString (doc, outputString);
+  CHECK (outputString == (expectedOutputStr + "<eol>"));
 }
