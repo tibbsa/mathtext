@@ -18,6 +18,10 @@
 // Default settings
 #define UEB_DEFAULT_LINE_LEN 0 /* no wrapping */
 
+// UEB math/text mode indicators
+#define UEB_MATH_BLOCK_BEGIN "<|@M@|>"
+#define UEB_TEXT_BLOCK_BEGIN "<|@T@|>"
+
 // UEB wrapping markers
 #define UEB_WORDWRAP_INDLEN  7
 #define UEB_WORDWRAP_PRI1    "<|@1@|>"
@@ -124,6 +128,7 @@ class UEBRenderer : public MathRenderer
 {
  protected:
   typedef struct { 
+    bool isInTextBlock;
     bool isNumericMode; 
     bool isStart;
     bool isUsingSpacedOperators;

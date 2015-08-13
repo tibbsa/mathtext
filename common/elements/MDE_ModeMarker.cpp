@@ -10,12 +10,37 @@
 #include "common-includes.h"
 #include "MathDocumentElements.h"
 
+MDE_MathModeMarker::MDE_MathModeMarker (const MDE_MathModeMarker::MarkerType mt) : type(mt) 
+{
+}
+
+MDE_MathModeMarker::MarkerType MDE_MathModeMarker::getType (void) const
+{
+  return type;
+}
+
 std::string MDE_MathModeMarker::getString (void) const
 {
-  return std::string("<$>");
+  if (type == MDE_MathModeMarker::BLOCK_MARKER)
+    return std::string("<$$>");
+  else
+    return std::string("<$>");
+}
+
+
+MDE_TextModeMarker::MDE_TextModeMarker (const MDE_TextModeMarker::MarkerType mt) : type(mt) 
+{
+}
+
+MDE_TextModeMarker::MarkerType MDE_TextModeMarker::getType (void) const
+{
+  return type;
 }
 
 std::string MDE_TextModeMarker::getString (void) const
 {
-  return std::string("<&>");
+  if (type == MDE_TextModeMarker::BLOCK_MARKER)
+    return std::string("<&&>");
+  else
+    return std::string("<&>");
 }

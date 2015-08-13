@@ -140,7 +140,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
       m_inTextMode = true;
       m_blockBeganLineNum  = mdl.getStartLineNumber();
 
-      m_doc.addElementPtr (boost::make_shared<MDE_TextModeMarker>());
+      m_doc.addElementPtr (boost::make_shared<MDE_TextModeMarker>(MDE_TextModeMarker::BLOCK_MARKER));
     } else {
       MSG_WARNING(NESTED_TEXT_MODE, boost::str(boost::format("text block began at line %u") % m_blockBeganLineNum));
     }
@@ -154,7 +154,7 @@ void MathInterpreter::interpretLine (const MathDocumentLine &mdl)
       m_inTextBlock = false;
       m_inTextMode = false;
       m_blockBeganLineNum = mdl.getStartLineNumber();
-      m_doc.addElementPtr (boost::make_shared<MDE_MathModeMarker>());
+      m_doc.addElementPtr (boost::make_shared<MDE_MathModeMarker>(MDE_MathModeMarker::BLOCK_MARKER));
     } else {
       MSG_WARNING(NESTED_MATH_MODE, boost::str(boost::format("math block began at line %u") % m_blockBeganLineNum));
     }
@@ -222,7 +222,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 	LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
 	m_inTextMode = false;
-	elements.push_back (boost::make_shared<MDE_MathModeMarker>());
+	elements.push_back (boost::make_shared<MDE_MathModeMarker>(MDE_MathModeMarker::SEGMENT_MARKER));
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in math mode";
 	MSG_WARNINGX(NESTED_MATH_MODE);
@@ -236,7 +236,7 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 	LOG_TRACE << "* entering text mode; pushing '" << catch_buffer << "'";
 	PUSH_CATCH_BUFFER;
 	m_inTextMode = true;
-	elements.push_back (boost::make_shared<MDE_TextModeMarker>());
+	elements.push_back (boost::make_shared<MDE_TextModeMarker>(MDE_TextModeMarker::SEGMENT_MARKER));
       } else {
 	LOG_TRACE << "! attempt to enter math mode while in text mode";
 	MSG_WARNINGX(NESTED_TEXT_MODE);

@@ -21,6 +21,7 @@ UEBRenderer::UEBRenderer() : MathRenderer()
 {
   internalRenderCount = 0;
   
+  status.isInTextBlock = false;
   status.isNumericMode = false;
   status.isStart = true;
   status.isUsingSpacedOperators = false;
@@ -44,6 +45,7 @@ void UEBRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
 std::string UEBRenderer::renderDocument (const MathDocument &document)
 {
   std::string output;
+  bool isInTextBlock = false;
 
   // We hard code the lengths here for efficiency, but make sure 
   // the word wrapping indicators haven't been changed.
@@ -79,14 +81,31 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
       logIncreaseIndent();
       LOG_TRACE << curLine;
 #endif
-
+	
       size_t last_break_position [3] = {0, 0, 0};
       size_t curOutputLinePos = 0;
       size_t curOutputLineLength = 0;
       size_t i = 0;
+
+      if (strBeginsWith (curLine, UEB_MATH_BLOCK_BEGIN)) {
+#ifdef UEB_WRAPPING_DEBUG
+	LOG_TRACE << "beginning math block and indentation...";
+#endif
+
+	isInTextBlock = false;
+	i = std::string(UEB_MATH_BLOCK_BEGIN).length();
+      } else if (strBeginsWith (curLine, UEB_TEXT_BLOCK_BEGIN)) {
+#ifdef UEB_WRAPPING_DEBUG
+	LOG_TRACE << "beginning text block and disabling indentation...";
+#endif
+
+	isInTextBlock = true;
+	i = std::string(UEB_TEXT_BLOCK_BEGIN).length();
+      }
+
       while (i < curLine.length()) {
 #ifdef UEB_WRAPPING_DEBUG
-	LOG_TRACE << "  wrap lookahead @: " << curLine.substr(i, 10);
+	LOG_TRACE << "  wrap lookahead @ " << i << ": " << curLine.substr(i, 10);
 #endif
 
 	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI1) {
@@ -166,19 +185,35 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 #endif
 
 	  // Delete any whitespace which appears before this point
-	  while (isspace(curOutputLine[breakpoint - 1])) {
+	  while (breakpoint > 0 && isspace(curOutputLine[breakpoint-1])) {
 #ifdef UEB_WRAPPING_DEBUG
-	    LOG_TRACE << "  * deleted trailing space before break";
+	    LOG_TRACE << "  * deleting trailing space before break";
 #endif
-	    curOutputLine.erase(breakpoint-1, 1);
 	    breakpoint--;
 	    curOutputLinePos--;
+	    curOutputLine.erase(breakpoint, 1);
 	  }
-	  
-	  std::string continuationString = "\n  ";
+
+	  // Delete spaces following the break
+	  while (breakpoint < curOutputLine.length() && 
+		 isspace(curOutputLine[breakpoint])) {
+#ifdef UEB_WRAPPING_DEBUG
+	    LOG_TRACE << "  * deleting space after break";
+#endif
+	    curOutputLinePos--;
+	    curOutputLine.erase(breakpoint, 1);
+	  }	  
+
+	  std::string continuationString;
+  
+	  if (isInTextBlock)
+	    continuationString = "\n"; // no indentation
+	  else
+	    continuationString = "\n  "; // 2 cell runover indentation
+
 	  curOutputLine.insert(breakpoint, continuationString);
 	  curOutputLinePos = curOutputLine.length();
-	  curOutputLineLength = post_break_length + 2 /* (indent) */;
+	  curOutputLineLength = post_break_length + (continuationString.length() - 1);
 #ifdef UEB_WRAPPING_DEBUG
 	  LOG_TRACE << "  after: " << curOutputLineLength << ":[" << curOutputLine << "]";
 #endif
@@ -536,6 +571,16 @@ std::string UEBRenderer::renderCommand (const MDE_Command *e)
 std::string UEBRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 {
   std::string output;
+  
+  if (e->getType() == MDE_MathModeMarker::BLOCK_MARKER) {
+    // We should only see the start of a math "block" if we are also at the 
+    // start of a line.  We can't commence a math block mid-line, as the 
+    // indenting and word wrapping requirements will be different.
+    assert (status.isStart == true);
+    status.isInTextBlock = false;
+    output += UEB_MATH_BLOCK_BEGIN;
+    LOG_TRACE << "* commencing math block mode";
+  }
 
   return output;
 }
@@ -543,6 +588,22 @@ std::string UEBRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
 std::string UEBRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
 {
   std::string output;
+
+  LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
+  logIncreaseIndent();
+  
+  if (e->getType() == MDE_TextModeMarker::BLOCK_MARKER) {
+    // We should only see the start of a text "block" if we are also at the 
+    // start of a line.  We can't commence a text block mid-line, as the 
+    // indenting and word wrapping requirements will be different.
+    assert (status.isStart == true);
+    status.isInTextBlock = true;
+    output += UEB_TEXT_BLOCK_BEGIN;
+    LOG_TRACE << "* commencing text block mode";
+  }
+
+  logDecreaseIndent();
+  LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
   return output;
 }

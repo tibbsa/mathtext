@@ -85,13 +85,37 @@ class MDE_Command : public MathDocumentElement
  * primarily mathematical or primary textual in nature.
  */
 class MDE_MathModeMarker : public MathDocumentElement
-{ public:   virtual std::string getString (void) const; };
+{ 
+ public:   
+  typedef enum { BLOCK_MARKER, SEGMENT_MARKER } MarkerType;
+
+  MDE_MathModeMarker (const MarkerType mt = SEGMENT_MARKER);
+  MarkerType getType (void) const;
+  virtual std::string getString (void) const; 
+
+ protected:
+  MarkerType type;
+};
 
 class MDE_TextModeMarker : public MathDocumentElement
-{ public:   virtual std::string getString (void) const; };
+{ 
+ public:   
+  typedef enum { BLOCK_MARKER, SEGMENT_MARKER } MarkerType;
+
+  MDE_TextModeMarker (const MarkerType mt = SEGMENT_MARKER);
+  MarkerType getType (void) const;
+  virtual std::string getString (void) const;
+
+ protected:
+  MarkerType type;
+  
+};
 
 class MDE_LineBreak : public MathDocumentElement
-{ public:   virtual std::string getString (void) const; };
+{ 
+ public:   
+  virtual std::string getString (void) const; 
+};
 
 
 /**
