@@ -729,15 +729,15 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
+  if (maxLineLength)
+    brailleNumber = UEB_WORDWRAP_PRI3;
+
   size_t pos = 0;
   printNumber = e->getStandardNotation();
   if (printNumber[pos] == '-') {
-    brailleNumber = "-";
+    brailleNumber += "-";
     pos++;
   }
-
-  if (maxLineLength)
-    brailleNumber = UEB_WORDWRAP_PRI3;
 
   brailleNumber += UEB_NUMBER_SIGN;
 
