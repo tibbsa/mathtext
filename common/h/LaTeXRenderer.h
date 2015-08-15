@@ -45,7 +45,10 @@ class LaTeXRenderer : public MathRenderer
  public:
   LaTeXRenderer();
 
+  std::string renderDocument (const MathDocument &document);
+
   static void getInterpreterCommandList (std::vector<std::string> &cmdlist);
+  static std::string makeLaTeXSafe (const std::string &input);
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

@@ -34,9 +34,74 @@ LaTeXRenderer::LaTeXRenderer() : MathRenderer()
   internalRenderCount = 0;
 }
 
+std::string LaTeXRenderer::renderDocument (const MathDocument &document)
+{
+  std::string output;
+
+  output += "\\documentclass[12pt]{article}\n";
+  output += "\\usepackage{amssymb}\n";
+  output += "\\usepackage[fleqn]{amsmath}\n";
+  output += "\\usepackage{amstext}\n";
+  output += "\\usepackage{eurosym}\n";
+  output += "\\usepackage{textcomp}\n";
+  output += "\\usepackage{wasysym}\n";
+  output += "\\usepackage[margin=1in]{geometry}\n";
+  output += "\\usepackage{fancyhdr}\n";
+  output += "\\usepackage{lastpage}\n";
+  output += "\\pagestyle{fancy} % Set default page style to fancy\n";
+  output += "\\renewcommand{\\headrulewidth}{0pt} % Remove header rule\n";
+  output += "\\fancyhead{} % Remove all header contents\n";
+  output += "\\cfoot{Page \\thepage\\ of \\pageref{LastPage}} % Page X of Y in the footer (centered)\n";
+  output += "\\parskip 0in \\parindent 0in\n";
+  output += "\\begin{document}\n\n";
+
+  output += MathRenderer::renderDocument (document);
+
+  output += "\n\\end{document}\n";
+  return output;
+}
+
 void LaTeXRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
 {
   cmdlist.push_back("NoBracketSizing");
+}
+
+std::string LaTeXRenderer::makeLaTeXSafe (const std::string &input)
+{
+  std::string output;
+  bool bSawLatexEscape = false;
+
+  for (size_t pos = 0; pos < input.length(); pos++) {
+    char ch = input [pos];
+
+    if (!bSawLatexEscape) {
+      if (ch == '#') {
+	output += "\\#";
+      } else if (ch == '\\') {
+	output += "\\backslash ";
+      } else if (ch == '_') {
+	output += "\\underline ";
+      } else if (ch == '^') {
+	output += "\\^{}";
+      } else if (ch == '{') {
+	output += "\\lbrace ";
+      } else if (ch == '}') {
+	output += "\\rbrace ";
+      }
+      else if (ch == '\\') {
+	bSawLatexEscape = true;
+	output += "\\";
+      } else {
+	output += ch;
+      }
+    }
+    else {
+      output += ch;
+      bSawLatexEscape = false;
+    }
+  }
+
+  return output;
 }
 
 std::string LaTeXRenderer::status (void) const
@@ -199,8 +264,7 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
     }
   }
 
-  //## TODO: sanity check 's' for latex problems and escapes
-  output += s;
+  output += makeLaTeXSafe(s);
   isStartOfLine = false;
 
   logDecreaseIndent();
@@ -303,10 +367,10 @@ std::string LaTeXRenderer::renderLineBreak (const MDE_LineBreak *e)
       LOG_TRACE << "* LaTeX closing text block in math line";
       output += "}";
       writerCurrentMode = MATH;
-    } else {
-      LOG_TRACE << "* LaTeX closing math environment on math line";
-      output += " \\]";
     }
+
+    LOG_TRACE << "* LaTeX closing math environment on math line";
+    output += " \\]";
   } else if (writerLineMode == TEXT) {
     assert (writerCurrentMode != UNKNOWN);
 
@@ -317,6 +381,10 @@ std::string LaTeXRenderer::renderLineBreak (const MDE_LineBreak *e)
       output += "$";
       writerCurrentMode = TEXT;
     }
+  } else {
+    // We should only get here if this is a blank line
+    assert (isStartOfLine == true);
+    output += "\\vspace{10pt}";
   }
 
   writerLineMode = UNKNOWN;
@@ -386,8 +454,8 @@ std::string LaTeXRenderer::renderItemNumber (const MDE_ItemNumber *e)
 {
   std::string qnumber, output;
   qnumber = e->getText();
-  qnumber = boost::str(boost::format("%s \\thickspace ") % qnumber);
-  return renderMathContent(qnumber);
+  output = boost::str(boost::format("\\text{%s}\\thickspace ") % qnumber);
+  return renderMathContent(output);
 }
 
 std::string LaTeXRenderer::renderNumber (const MDE_Number *e)
@@ -488,12 +556,12 @@ std::string LaTeXRenderer::renderSymbol (const MDE_Symbol *e)
 {
   static std::map<MDE_Symbol::Symbol,std::string> map = ba::map_list_of
     ( MDE_Symbol::COMMA, "," )
-    ( MDE_Symbol::CURRENCY_CENTS, "\\textcent " )
+    ( MDE_Symbol::CURRENCY_CENTS, "\\cent " )
     ( MDE_Symbol::CURRENCY_EURO, "\\euro " )
     ( MDE_Symbol::CURRENCY_FRANC, "F" )
     ( MDE_Symbol::CURRENCY_POUND, "\\pounds " )
     ( MDE_Symbol::CURRENCY_DOLLAR, "\\$" )
-    ( MDE_Symbol::CURRENCY_YEN, "\\textyen " )
+    ( MDE_Symbol::CURRENCY_YEN, "Y " )
     ( MDE_Symbol::FACTORIAL, "!" )
     ( MDE_Symbol::LEFT_BRACE, "\\{" )
     ( MDE_Symbol::LEFT_BRACKET, "[" )
