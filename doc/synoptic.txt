@@ -1,11 +1,7 @@
 &&
-This file contains a general synoptic and basic test suite for all of the 
-language features that have been implemented to date.  This is not an 
-extensive test of every scenario, but should provide a quick check to 
-make sure that the basic output is correct.
+This file contains a general synoptic and basic test suite for all of the language features that have been implemented to date.  This is not an extensive test of every scenario, but should provide a quick check to make sure that the basic output is correct.
 
-As new language features are implemented, this example should be extended 
-to include a few basic samples of the new features.
+As new language features are implemented, this example should be extended to include a few basic samples of the new features.
 
 -----
 
@@ -86,13 +82,13 @@ $$
 
 $$
 &(In math mode)
-1. Question number 1 in a math blbock
-(1) Question number 1, form b, in a math block
-1) Question number 1, form c, in a math block
+1. &Question number 1 in a math block
+(1) &Question number 1, form b, in a math block
+1) &Question number 1, form c, in a math block
 
-a. Question 'a' in a math blbock
-(b) Question 'b', form b, in a math block
-c) Question 'c', form c, in a math block
+a. &Question 'a' in a math block
+(b) &Question 'b', form b, in a math block
+c) &Question 'c', form c, in a math block
 
 1.1 &not a question number
 0.(abc) &not a question number
