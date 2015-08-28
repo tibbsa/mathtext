@@ -52,7 +52,9 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
   // more complex expression bounded by square brackets.
   boost::regex root_index_regex("(\\w)+\\(");
   boost::smatch mr;
-  if (boost::regex_search(src.substr(i), mr, root_index_regex)) {
+
+  std::string searchStr = src.substr(i);
+  if (boost::regex_search(searchStr, mr, root_index_regex)) {
     root_index = mr[1];
     i += root_index.length();
   } else if (src [i] == '[') {

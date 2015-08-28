@@ -84,7 +84,8 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	  // assume this is a thousands separator within a number
 	  boost::regex re("^[, ]\\d{3}");
 	  boost::smatch matches;
-	  if (boost::regex_search(src.substr(pos, 4), matches, re)) {
+	  std::string searchStr = src.substr(pos, 4);
+	  if (boost::regex_search(searchStr, matches, re)) {
 	    // If the next character is NOT a number, we assume this
 	    // was a set of thousands and add it in.  If we see yet
 	    // another number, then this was not a thousands separator
@@ -92,7 +93,7 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	    // Example when we continue: 1,024,576
 	    // Example when we do not: 1,24837,23872 (treat as separate)
 	    if ((src.length() - pos == 3) || !isdigit(src [pos+4])) {
-	      lhs += src.substr(pos, 4);
+	      lhs += searchStr;
 	      pos += 4;
 	      curDigitGroupCount = 0;
 	    }
@@ -129,7 +130,8 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	    // assume this is a thousands separator within a number
 	    boost::regex re("^ \\d{3}");
 	    boost::smatch matches;
-	    if (boost::regex_search(src.substr(pos, 4), matches, re)) {
+	    std::string searchStr = src.substr(pos, 4);
+	    if (boost::regex_search(searchStr, matches, re)) {
 	      // If the next character is NOT a number, we assume this
 	      // was a set of thousands and add it in.  If we see yet
 	      // another number, then this was not a thousands separator
@@ -137,7 +139,7 @@ bool MathInterpreter::interpretNumber (MDEVector &target,
 	      // Example when we continue: 1,024,576
 	      // Example when we do not: 1,24837,23872 (treat as separate)
 	      if ((src.length() - pos == 3) || !isdigit(src [pos+4])) {
-		rhs += src.substr(pos, 4);
+		rhs += searchStr;
 		pos += 4;
 		curDigitGroupCount = 0;
 	      }

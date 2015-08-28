@@ -41,8 +41,12 @@ bool MathInterpreter::interpretItemNumber (MDEVector &target,
 
     boost::regex exp(pattern);
     boost::smatch mr;
-    if (boost::regex_search(src.substr(i), mr, exp)) {
-      std::string item_number = mr[1];
+
+    // search for item numbers - assume they will not be longer than 10 chars
+    // (123456) 
+    std::string searchStr = src.substr(i, 10);
+    if (boost::regex_search(searchStr, mr, exp)) {
+      std::string item_number (mr[1].first, mr[1].second);
       boost::trim(item_number);
 
       LOG_TRACE << "* added item number '" << item_number << "' with pattern '" << pattern << "'";
