@@ -55,6 +55,9 @@
 #define ll_widechar unsigned short int
 #define ll_formtype unsigned char
 
+void strToWideCharString(const std::string &str, ll_widechar *outString, unsigned &outLength);
+void wideCharStringToStr(const ll_widechar *str, const unsigned inLength, std::string &outString);
+
 // Tables to use
 #define LIBLOUIS_UEB_G1_TABLE "en-ueb-g1.ctb"
 
@@ -96,8 +99,6 @@ extern "C" {
   IMPORTDLL char * STDCALL lou_setDataPath(char *path);
   IMPORTDLL char * STDCALL lou_getDataPath(void);
 
-  IMPORTDLL int STDCALL extParseChars (const char *inString, ll_widechar * outString);
-  IMPORTDLL char * STDCALL showString (ll_widechar const *chars, int length);
   IMPORTDLL int STDCALL lou_translateString (const char *tableList,
 			 const ll_widechar * inbuf,
 			 int *inlen,

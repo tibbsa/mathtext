@@ -488,15 +488,16 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   boost::scoped_array<ll_widechar> input_buffer (new ll_widechar [LIBLOUIS_MAXSTRING]);
   boost::scoped_array<ll_widechar> braille_buffer (new ll_widechar [LIBLOUIS_MAXSTRING]);
 
-  int inlen = extParseChars(s.c_str(), input_buffer.get());
-  int outlen = LIBLOUIS_MAXSTRING;
+  unsigned inlen;
+  strToWideCharString(s, input_buffer.get(), inlen);
+  unsigned outlen = LIBLOUIS_MAXSTRING;
 
-  LOG_TRACE << "Sending " << inlen << " chars to louis using table '" << LIBLOUIS_UEB_G1_TABLE << "': {" << showString(input_buffer.get(), inlen) << "}, max output size=" << outlen;
+  LOG_TRACE << "Sending " << inlen << " chars to louis using table '" << LIBLOUIS_UEB_G1_TABLE << "': {" << s << "}, max output size=" << outlen;
   if (!lou_translateString(LIBLOUIS_UEB_G1_TABLE,
 			   input_buffer.get(),
-			   &inlen,
+			   (int *)&inlen,
 			   braille_buffer.get(),
-			   &outlen,
+			   (int *)&outlen,
 			   NULL /* no typeform checking */,
 			   NULL /* don't care about spacing info */,
 			   0 /* no modes set */)) {
@@ -508,11 +509,9 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 			   mdx_error_info(os.str()));
   }
 
-  // showString returns the braille encapsulated in single quotation marks
-  // ('), so we have to trim those out before returning
-  LOG_TRACE << "Louis returned " << outlen << " chars: {" << showString(braille_buffer.get(), outlen) << "}";
-  braille_string = std::string(showString(braille_buffer.get(), outlen));
-
+  wideCharStringToStr(braille_buffer.get(), outlen, braille_string);
+  LOG_TRACE << "Louis returned " << outlen << " chars: {" << braille_string << "}";
+  
   // Insert wrapping indicators.
   if (maxLineLength) {
     boost::replace_all(braille_string, "4 ", "4 " UEB_WORDWRAP_PRI1);
