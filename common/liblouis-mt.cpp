@@ -11,13 +11,13 @@
 
 void strToWideCharString(const std::string &str, ll_widechar *outString, unsigned &outLength)
 {
-  size_t inPos;
   unsigned outPos = 0;
 
   for (size_t inPos = 0; inPos < str.length(); inPos++)
     outString[outPos++] = (ll_widechar)str[inPos];
 
   outString[outPos] = 0;
+  outLength = outPos;
 }
 
 void wideCharStringToStr(const ll_widechar *str, const unsigned inLength, std::string &outString)

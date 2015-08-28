@@ -526,7 +526,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   //## There is a bug in liblouis that results in single letters
   //   getting letter indicators before them unnecessarily.  Fix this.
   std::string fixed_braille_string;
-  fixed_braille_string = braille_string.substr(1, braille_string.length()-2);
+  fixed_braille_string = braille_string;
   for (char ch = 'a'; ch <= 'z'; ch++) {
     const std::string searchStr = boost::str(boost::format(";%c ") % ch);
     const std::string replaceStr = boost::str(boost::format("%c ") % ch);
