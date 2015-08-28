@@ -11,6 +11,7 @@ LD_LIBS := -pthread -Wl,-Bstatic -llouis -lboost_thread -lboost_program_options 
 CC_FLAGS := -Wall -g -I../common/h -I$(BOOST_PATH) -I$(LIBLOUIS_PATH)/include
 CC_FLAGS += -DMATHTEXT_VERSION_BUILD=$(shell cat makefile.bld)
 CC_FLAGS += -MMD
+#CC_FLAGS += -DMT_LOG_TO_CONSOLE
 VPATH=.:../common:../common/elements:../common/renderers:../common/interpreters
 
 all: pch mathtext
