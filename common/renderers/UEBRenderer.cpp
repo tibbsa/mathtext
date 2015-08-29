@@ -667,6 +667,10 @@ std::string UEBRenderer::renderItemNumber (const MDE_ItemNumber *e)
 
   output = renderTextContent(e->getText() + " ");
 
+  // Drop letter indicator if one has appeared
+  if (output.substr(0, 1) == UEB_G1)
+    output.erase(output.begin(), output.begin()+1);
+
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
   return output;

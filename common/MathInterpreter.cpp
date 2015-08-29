@@ -216,16 +216,16 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
     if (c == '$') {
       // Do not consider `$ to be a math mode change: this is a dollar sign
       if (!m_inTextMode && i > 0 && buffer [i - 1] == '`')
-	goto DefaultAction;
+        goto DefaultAction;
 
       if (m_inTextMode) {
-	LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
-	PUSH_CATCH_BUFFER;
-	m_inTextMode = false;
-	elements.push_back (boost::make_shared<MDE_MathModeMarker>(MDE_MathModeMarker::SEGMENT_MARKER));
+	      LOG_TRACE << "* entering math mode; pushing '" << catch_buffer << "'";
+	      PUSH_CATCH_BUFFER;
+	      m_inTextMode = false;
+	      elements.push_back (boost::make_shared<MDE_MathModeMarker>(MDE_MathModeMarker::SEGMENT_MARKER));
       } else {
-	LOG_TRACE << "! attempt to enter math mode while in math mode";
-	MSG_WARNINGX(NESTED_MATH_MODE);
+	      LOG_TRACE << "! attempt to enter math mode while in math mode";
+	      MSG_WARNINGX(NESTED_MATH_MODE);
       }
 
       goto AdvanceNextChar;
@@ -233,25 +233,28 @@ MDEVector MathInterpreter::interpretBuffer (const std::string &buffer)
 
     if (c == '&') {
       if (!m_inTextMode) {
-	LOG_TRACE << "* entering text mode; pushing '" << catch_buffer << "'";
-	PUSH_CATCH_BUFFER;
-	m_inTextMode = true;
-	elements.push_back (boost::make_shared<MDE_TextModeMarker>(MDE_TextModeMarker::SEGMENT_MARKER));
-      } else {
-	LOG_TRACE << "! attempt to enter math mode while in text mode";
-	MSG_WARNINGX(NESTED_TEXT_MODE);
+        LOG_TRACE << "* entering text mode; pushing '" << catch_buffer << "'";
+        PUSH_CATCH_BUFFER;
+        m_inTextMode = true;
+        elements.push_back(boost::make_shared<MDE_TextModeMarker>(MDE_TextModeMarker::SEGMENT_MARKER));
+      }
+      else {
+        LOG_TRACE << "! attempt to enter math mode while in text mode";
+        MSG_WARNINGX(NESTED_TEXT_MODE);
       }
 
       goto AdvanceNextChar;
     }
-
 
     // If this is the first thing we're seeing on the line, check to see
     // if the first blob appears to be an 'item number' (as might appear
     // in homework).
     if (m_isStartOfLine && !m_inTextMode) {
       ATTEMPT(ItemNumber);
-      m_isStartOfLine = false;
+      
+      // Don't consider the line to have started until we see a non-space character.
+      if (!isspace(c))
+        m_isStartOfLine = false;
     }
 
     if (m_inTextMode)
