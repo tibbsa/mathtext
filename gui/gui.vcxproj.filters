@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{9d19f173-311e-477f-ba9c-71c97edef571}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{35023709-c4a8-4a59-ade7-ac59f297d247}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="MathText Header Files">
+      <UniqueIdentifier>{e56473e0-adc7-4f54-864e-cd4339bdd453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MathText Source Files">
+      <UniqueIdentifier>{58a80d81-7d62-454e-8f4f-6bf2f381ae85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MathText Source Files\Interpreters">
+      <UniqueIdentifier>{98c5a0e4-8dc0-43f1-a16f-9fb17d3af5bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MathText Source Files\Renderers">
+      <UniqueIdentifier>{de59e205-c95a-43ea-aed5-b26b2ffa41cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MathText Source Files\Elements">
+      <UniqueIdentifier>{94cd1ef4-2d26-4f5f-9cdf-16babf8ab45a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CMathTextWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_CMathTextWindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretCommands.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretComparators.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretExponents.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretFractions.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretGreek.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretGroups.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretItemNumbers.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretModifiers.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretNumbers.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretOperators.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretRoots.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretSubscripts.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretSummations.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\interpreters\InterpretSymbols.cpp">
+      <Filter>MathText Source Files\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Command.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Comparator.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Exponent.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Fraction.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_GenericText.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_GreekLetter.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Group.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_ItemNumber.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_LineBreak.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_MathBlock.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_ModeMarker.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Modifier.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Number.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Operator.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Root.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_SourceLine.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Subscript.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Summation.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_Symbol.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\elements\MDE_TextBlock.cpp">
+      <Filter>MathText Source Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\renderers\LaTeXRenderer.cpp">
+      <Filter>MathText Source Files\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\renderers\MathRenderer.cpp">
+      <Filter>MathText Source Files\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\renderers\UEBRenderer.cpp">
+      <Filter>MathText Source Files\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\logging.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathDocument.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathDocumentLine.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathInterpreter.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathInterpreterMsg.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathSourceFile.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\utility.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\common-includes.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CMathTextWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CMathTextWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\liblouis-mt.cpp">
+      <Filter>MathText Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="CMathTextWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CMathTextWindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CMathTextWindow.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_CMathTextWindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\common-includes.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\LaTeXRenderer.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\liblouis-mt.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\logging.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocument.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocumentElements.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathDocumentLine.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathExceptions.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathInterpreter.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathInterpreterMsg.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathRenderer.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\MathSourceFile.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\mathtext.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\UEBRenderer.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\h\utility.h">
+      <Filter>MathText Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

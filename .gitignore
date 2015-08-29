@@ -62,10 +62,10 @@ doc/doxygen/latex
 *.userprefs
 
 # Build results
-windows/[Dd]ebug/
-windows/[Dd]ebugPublic/
-windows/[Rr]elease/
-windows/[Rr]eleases/
+gui/GeneratedFiles
+gui/Debug
+gui/Win32
+gui/x64
 
 # Visual Studio 2015 cache/options directory
 .vs/
