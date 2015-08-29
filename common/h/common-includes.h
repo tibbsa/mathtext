@@ -19,6 +19,7 @@
 #include <errno.h>
 
 #include <cctype>
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <ostream>

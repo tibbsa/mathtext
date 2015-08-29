@@ -76,6 +76,7 @@ unsigned long MathInterpreterMsg::getEndLineNumber (void) const
   return m_line2;
 }
 
+
 /**
  * Retrieve the contents of the line.
  *
@@ -109,16 +110,19 @@ std::string MathInterpreterMsg::getMessage (void) const
   return (boost::str(boost::format("%s - %s") % error_map[m_code] % m_message));
 }
 
+
 /**
- * Stream the entire source line (primarily for debugging).
- */
-std::ostream &operator<<(std::ostream &os, const MathInterpreterMsg &mdm)
+* Retrieves a fully formatted message for display purposes.
+*/
+std::string MathInterpreterMsg::getFormattedMessage(void) const
 {
+  std::ostringstream os;
+
   unsigned long l1, l2;
   std::ostringstream lineNum;
   std::string categoryStr;
 
-  switch (mdm.getCategory()) {
+  switch (getCategory()) {
   case MathInterpreterMsg::MI_INFO:
     categoryStr = "FYI";
     break;
@@ -136,15 +140,25 @@ std::ostream &operator<<(std::ostream &os, const MathInterpreterMsg &mdm)
     break;
   }
 
-  l1 = mdm.getStartLineNumber();
-  l2 = mdm.getEndLineNumber();
+  l1 = getStartLineNumber();
+  l2 = getEndLineNumber();
   if (l1 == l2)
     lineNum << l1;
   else
     lineNum << l1 << "-" << l2;
 
-  return (os << categoryStr << ": " << mdm.getMessage()
-	     << " (at line " << lineNum.str()
-	  << " in " << mdm.getFilename() << ")");
+  os << categoryStr << ": " << getMessage()
+    << " (at line " << lineNum.str()
+    << " in " << getFilename() << ")";
+
+  return os.str();
+}
+
+/**
+ * Stream the entire source line (primarily for debugging).
+ */
+std::ostream &operator<<(std::ostream &os, const MathInterpreterMsg &mdm)
+{
+  return (os << mdm.getFormattedMessage());
 }
 

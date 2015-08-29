@@ -58,6 +58,7 @@ class MathInterpreterMsg
   unsigned long getStartLineNumber (void) const;
   unsigned long getEndLineNumber (void) const;
   std::string getMessage (void) const;
+  std::string getFormattedMessage(void) const;
 
   friend std::ostream &operator<<(std::ostream &os, const MathInterpreterMsg &mdm);
 };
