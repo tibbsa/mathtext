@@ -69,7 +69,7 @@ class MathInterpreter
   /* Support functions */
   void sniffTextForMath (const std::string &buffer);
   bool extractItem (std::string &target, const std::string &src, size_t &i,
-		    const std::string &terminators = ",+/*=<>()[]{} ~@#");
+		    const std::string &terminators = ",+/*=<>()[]{} ~@#!");
   bool extractGroup (std::string &target, const std::string &src, size_t &i,
 		     const std::string &groupOpen = "(",
 		     const std::string &groupClose = ")",
