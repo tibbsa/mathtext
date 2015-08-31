@@ -3,13 +3,6 @@ This file contains a general synoptic and basic test suite for all of the langua
 
 As new language features are implemented, this example should be extended to include a few basic samples of the new features.
 
------
-
-1. Text block (all text treated as text)
-2. Text block (all text treated as text)
-3. Text block (all text treated as text)
-
-&&
 ---- Mixed mode lines (text block) ----
 $c*b = a / d
 An equation to test math mode: $4x + 2y = 7
@@ -54,7 +47,7 @@ a ~= b
 &---- Symbols ----
 &Comma: $a, b, c
 &Currencies: Cents $`C, &Euro: $`E, &Franc: $`F, &Pound: $`P, &Dollar: $`$, &Yen: $`Y
-&Factorials: $2!, x!, (4+2)!
+&Factorial: $2!, x!, (4+2)!
 &Bracketing symbols: $( [ { test } ] )
 &Therefore: $/\ &There is a $0.71 &probability that ...
 &Percentage: Test at the $95%% &confidence level where $%a = 0.05.
@@ -64,7 +57,6 @@ a ~= b
 &Hat: $`HAT x, `H y, `H @1~2#, `HAT (_/4), `HAT (x + @2y^2~3#), `H 28.2
 &Vectors: $`V v, `V x^2, `V @x~2#, `V (_/4), `V (x + @2y^2~3#), `V 7
 
-$$
 &---- Fractions ----
 &Simple fraction: $@1~2#
 &Simple fraction (followed by letters): $@1~2#c
@@ -76,7 +68,7 @@ $$
 ---- Question Numbers -----
 (In text mode)
 
-1. Question number 1 in a text blbock
+1. Question number 1 in a text block
 (1) Question number 1, form b, in a text block
 1) Question number 1, form c, in a text block
 
@@ -113,7 +105,7 @@ b() &not a question number
 &beta (b): $%b, %B
 &chi (c): $%c, %C
 &delta (d): $%d, %D
-&epislon (e): $%e, %E
+&epsilon (e): $%e, %E
 &psi (f): $%f, %F
 &gamma (g): $%g, %G
 &iota (i): $%i, %I
@@ -152,11 +144,6 @@ b() &not a question number
 `S(,y) x^2 &(no lower limit)
 `S(,) x^2 &(no limits at all)
 
-&&
----- Detection of possible math material in text ----
-Fractions (@1~2#), roots (/_x), and other symbols (e.g. y^2) should trigger cautionary tales: but math in math segments (e.g. $2x^2 + 4x = 16&) should not raise concern.
-
-$$
 &---- Brackets and grouping ----
 &(With auto-sizing brackets for LaTeX)
 y = {1 + [2 - y(_/(@1~x^3 + 3ab + (z - 4)#))]}
@@ -167,3 +154,5 @@ $$-NoBracketSizing
 
 
 
+
+LocalWords:  CJ
