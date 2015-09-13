@@ -47,6 +47,11 @@ src/Makefile.in
 Makefile
 config.h
 src/Makefile
+config.status
+.deps
+.libs
+.dirstamp
+stamp-h?
 
 # Executables
 *.exe
