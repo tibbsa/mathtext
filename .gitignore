@@ -35,6 +35,19 @@ linux/mathtext
 *.a
 *.lib
 
+# Automake stuff
+Makefile.in
+aclocal.m4
+autom4te.cache
+autom4te.cache/*
+build-aux
+config.h.in
+configure
+src/Makefile.in
+Makefile
+config.h
+src/Makefile
+
 # Executables
 *.exe
 *.out
