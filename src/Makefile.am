@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include \
+AM_CPPFLAGS = -DBOOST_LOG_DYN_LINK -I$(top_srcdir)/include \
 	$(BOOST_CPPFLAGS) $(PTHREAD_CPPFLAGS)
 CXX = $(PTHREAD_CXX)
 
@@ -34,7 +34,7 @@ libmathtext_a_SOURCES = common-includes.cpp \
 	elements/MDE_Subscript.cpp \
 	elements/MDE_Summation.cpp \
 	elements/MDE_Symbol.cpp \
-	elements/MDE_TextBlock.cpp
+	elements/MDE_TextBlock.cpp \
 	interpreters/InterpretCommands.cpp \
 	interpreters/InterpretComparators.cpp \
 	interpreters/InterpretExponents.cpp \
@@ -53,9 +53,9 @@ libmathtext_a_SOURCES = common-includes.cpp \
 	renderers/UEBRenderer.cpp \
 	renderers/LaTeXRenderer.cpp
 
-libmathtext_a_LIBADD = $(BOOST_THREAD_LIB) \
-	$(BOOST_PROGRAM_OPTIONS_LIB) \
-	$(BOOST_FILESYSTEM_LIB) \
-	$(BOOST_SYSTEM_LIB) \
-	$(BOOST_LOG_LIB) \
-	$(BOOST_REGEX_LIB)
+#libmathtext_a_LIBADD = $(BOOST_THREAD_LIB) \
+#	$(BOOST_PROGRAM_OPTIONS_LIB) \
+#	$(BOOST_FILESYSTEM_LIB) \
+#	$(BOOST_SYSTEM_LIB) \
+#	$(BOOST_LOG_LIB) \
+#	$(BOOST_REGEX_LIB)
