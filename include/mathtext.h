@@ -9,11 +9,7 @@
 #ifndef __MATHTEXT_H__
 #define __MATHTEXT_H__
 
-/**
- * Version number and tagline strings
- */
 #define MATHTEXT_VERSION_NUMBER "0.10"
-#define MATHTEXT_VERSION_TAGLINE "Startin' Fresh"
 
 // Prevent inadvertent use of old Boost features
 #define BOOST_FILESYSTEM_NO_DEPRECATED

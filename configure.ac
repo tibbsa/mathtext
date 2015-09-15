@@ -1,4 +1,4 @@
-AC_INIT([mathtext], [dev], [anthony@tibbs.ca])
+AC_INIT([mathtext], [0.10], [anthony@tibbs.ca])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_SRCDIR([config.h.in])
