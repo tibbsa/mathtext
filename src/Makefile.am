@@ -5,7 +5,8 @@ CXX = $(PTHREAD_CXX)
 
 noinst_LIBRARIES = libmathtext.a
 
-libmathtext_a_SOURCES = common-includes.cpp \
+libmathtext_a_SOURCES = \
+	common-includes.cpp \
 	liblouis-mt.cpp \
 	logging.cpp \
 	MathDocument.cpp \
@@ -51,5 +52,19 @@ libmathtext_a_SOURCES = common-includes.cpp \
 	interpreters/InterpretSymbols.cpp \
 	renderers/MathRenderer.cpp \
 	renderers/UEBRenderer.cpp \
-	renderers/LaTeXRenderer.cpp
-
+	renderers/LaTeXRenderer.cpp \
+	../include/common-includes.h \
+	../include/LaTeXRenderer.h \
+	../include/liblouis-mt.h \
+	../include/logging.h \
+	../include/MathDocumentElements.h \
+	../include/MathDocument.h \
+	../include/MathDocumentLine.h \
+	../include/MathExceptions.h \
+	../include/MathInterpreter.h \
+	../include/MathInterpreterMsg.h \
+	../include/MathRenderer.h \
+	../include/MathSourceFile.h \
+	../include/mathtext.h \
+	../include/UEBRenderer.h \
+	../include/utility.h

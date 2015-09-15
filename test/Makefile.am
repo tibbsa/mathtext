@@ -20,7 +20,9 @@ mttest_SOURCES = mttest.cpp \
 	rendering/ueb/UEB_Numbers.cpp \
 	rendering/ueb/UEB_Operators.cpp \
 	rendering/ueb/UEB_Summation.cpp \
-	rendering/ueb/UEB_examples.cpp
+	rendering/ueb/UEB_examples.cpp \
+	include/mttest.h \
+	include/catch.hpp
 
 
 mttest_CPPFLAGS = -DBOOST_LOG_DYN_LINK -I$(top_srcdir)/include \
