@@ -29,5 +29,5 @@ CHECK_LIB_LOUIS(, [AC_MSG_ERROR([MathText needs the liblouis library, but it was
 
 # Output files.
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile src/Makefile cli/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile cli/Makefile test/Makefile])
 AC_OUTPUT

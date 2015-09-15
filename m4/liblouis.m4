@@ -85,6 +85,7 @@ AC_ARG_WITH([liblouis-lib],
     if test "x$ac_liblouis_path" != "x"; then
         for libsubdir in $libsubdirs ; do
             if ls "$ac_liblouis_path/$libsubdir/liblouis"* >/dev/null 2>&1 ; then
+	        LOUIS_LIBPATH="$ac_liblouis_path/$libsubdir"
                 LOUIS_LDFLAGS="-L$ac_liblouis_path/$libsubdir"
                 LOUIS_CFLAGS="-I$ac_liblouis_path/include"
 		LOUIS_CPPFLAGS="-I$ac_liblouis_path/include"
@@ -95,6 +96,7 @@ AC_ARG_WITH([liblouis-lib],
         for ac_liblouis_path_tmp in /usr /usr/local /opt /opt/local ; do
             for libsubdir in $libsubdirs ; do
                 if ls "$ac_liblouis_path_tmp/$libsubdir/liblouis"* >/dev/null 2>&1 ; then
+		    LOUIS_LIBPATH="$ac_liblouis_path_tmp/$libsubdir"
                     LOUIS_LDFLAGS="-L$ac_liblouis_path_tmp/$libsubdir"
                     LOUIS_CFLAGS="-I$ac_liblouis_path_tmp/include"
 		    LOUIS_CPPFLAGS="-I$ac_liblouis_path_tmp/include"
@@ -126,7 +128,8 @@ AC_ARG_WITH([liblouis-lib],
     export LDFLAGS
 
     AC_CHECK_LIB([louis], [lou_translateString], [
-    	LOUIS_LDFLAGS="$LOUIS_LDFLAGS -llouis"
+    	LOUIS_LDFLAGS="$LOUIS_LDFLAGS"
+	LOUIS_STATIC_LIB="$LOUIS_LIBPATH/liblouis.a"
         succeeded=yes
     ], [
         AC_MSG_ERROR([Could not find working liblouis library.])
@@ -137,6 +140,8 @@ AC_ARG_WITH([liblouis-lib],
         AC_SUBST(LOUIS_CFLAGS)
 	AC_SUBST(LOUIS_CPPFLAGS)
         AC_SUBST(LOUIS_LDFLAGS)
+	AC_SUBST(LOUIS_STATIC_LIB)
+
         AC_DEFINE(HAVE_LIBLOUIS, , [define if liblouis is available])
         ifelse([$1], , :, [$1])
     else
