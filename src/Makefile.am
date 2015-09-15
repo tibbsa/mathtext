@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -DBOOST_LOG_DYN_LINK -I$(top_srcdir)/include \
-	$(BOOST_CPPFLAGS) $(PTHREAD_CPPFLAGS)
+	$(BOOST_CPPFLAGS) $(PTHREAD_CPPFLAGS) $(LOUIS_CPPFLAGS) 
 CXX = $(PTHREAD_CXX)
 
 
@@ -53,9 +53,3 @@ libmathtext_a_SOURCES = common-includes.cpp \
 	renderers/UEBRenderer.cpp \
 	renderers/LaTeXRenderer.cpp
 
-#libmathtext_a_LIBADD = $(BOOST_THREAD_LIB) \
-#	$(BOOST_PROGRAM_OPTIONS_LIB) \
-#	$(BOOST_FILESYSTEM_LIB) \
-#	$(BOOST_SYSTEM_LIB) \
-#	$(BOOST_LOG_LIB) \
-#	$(BOOST_REGEX_LIB)

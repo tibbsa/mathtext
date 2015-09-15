@@ -2,6 +2,7 @@ AC_INIT([mathtext], [dev], [anthony@tibbs.ca])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror -Wno-portability subdir-objects])
+AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -18,7 +19,7 @@ AX_BOOST_SYSTEM
 AX_BOOST_FILESYSTEM
 AX_BOOST_REGEX
 
-#TODO: Add AX_BOOST_*
+CHECK_LIB_LOUIS(, [AC_MSG_ERROR([MathText needs the liblouis library, but it was not found in your system.])])
 
 # Checks for header files.
 
