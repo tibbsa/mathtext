@@ -1,1 +1,1 @@
-EXTRA_DIST = synoptic.txt
+EXTRA_DIST = Doxyfile synoptic.txt
