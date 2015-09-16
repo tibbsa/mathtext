@@ -6,7 +6,8 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <boost/assign.hpp>
+#include <map>
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */
@@ -56,7 +57,7 @@ std::string MDE_GreekLetter::getName (void) const
  */
 std::string MDE_GreekLetter::getString (void) const
 {
-  return boost::str(boost::format("<GREEK:%s>") % getName());
+  return std::string("<GREEK:" + getName() + ">");
 }
 
 

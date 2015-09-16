@@ -8,7 +8,8 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <map>
+#include <boost/assign.hpp>
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */

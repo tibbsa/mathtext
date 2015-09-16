@@ -7,7 +7,6 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
 #include "MathDocumentElements.h"
 
 MDE_MathModeMarker::MDE_MathModeMarker (const MDE_MathModeMarker::MarkerType mt) : type(mt)

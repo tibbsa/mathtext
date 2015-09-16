@@ -11,12 +11,15 @@
 #ifndef __LOGGING_H__
 #define __LOGGING_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
-#ifndef __UTILITY_H__
+#include <boost/log/core/core.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+
 #include "utility.h"
-#endif
 
 // the logs are also written to LOGFILE
 #ifndef TEST

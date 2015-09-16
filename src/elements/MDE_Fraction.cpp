@@ -1,12 +1,11 @@
 /**
- * @file MDE_MathBlock.cpp
- * "Generic" math content block (unprocessed)
+ * @file MDE_Fraction.cpp
+ * A fraction, with a numerator and a denominator component
  *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */

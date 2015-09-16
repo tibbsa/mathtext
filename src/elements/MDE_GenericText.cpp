@@ -1,11 +1,11 @@
 /**
  * @file MDE_GenericText.cpp
+ * A generic text block containing non-mathematical material
  *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
 #include "MathDocumentElements.h"
 
 /* ========================= PUBLIC FUNCTION =============================== */

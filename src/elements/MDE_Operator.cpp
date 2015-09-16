@@ -7,10 +7,8 @@
 */
 
 
-#include "common-includes.h"
 #include "MathDocumentElements.h"
 
-/* ========================= PUBLIC FUNCTION =============================== */
 MDE_Operator::MDE_Operator(const MDE_Operator::Operator o) : op(o)
 {
 }

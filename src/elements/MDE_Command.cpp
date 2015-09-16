@@ -1,16 +1,14 @@
 /**
- * @file MDE_MDE_Command.cpp
+ * @file MDE_Command.cpp
  * Processing, rendering, and other configuration commands
  *
  * @copyright Copyright 2015 Anthony Tibbs
  * This project is released under the GNU General Public License.
 */
 
-
-#include "common-includes.h"
+#include <boost/format.hpp>
 #include "MathDocumentElements.h"
 
-/* ========================= PUBLIC FUNCTION =============================== */
 MDE_Command::MDE_Command(const std::string &cmdName, const std::string &cmdParam) : name(cmdName), parameters(cmdParam)
 {
 }
