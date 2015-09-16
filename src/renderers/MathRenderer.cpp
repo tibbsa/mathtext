@@ -5,10 +5,11 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <boost/foreach.hpp>
 
 #include "logging.h"
 
+#include "MathDocument.h"
 #include "MathRenderer.h"
 #include "MathExceptions.h"
 

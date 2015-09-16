@@ -8,12 +8,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
-
 #include "mttest.h"
-#include "MathDocumentElements.h"
-#include "MathInterpreter.h"
-#include "MathSourceFile.h"
 
 // =========================================================================
 TEST_CASE("interpret/Subscripts", "[interpret][Subscripts]") {

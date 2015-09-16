@@ -10,11 +10,9 @@
 #ifndef __MATH_RENDERER_H__
 #define __MATH_RENDERER_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
+#include "MathDocumentElements.h"
 
-#include "MathDocument.h"
+class MathDocument;
 
 #define DECL_RENDER_FUNC(class) virtual std::string render##class (const MDE_##class *e)
 

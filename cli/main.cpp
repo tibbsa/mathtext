@@ -6,8 +6,10 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <iostream>
+#include <fstream>
 
+#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
 #include "logging.h"

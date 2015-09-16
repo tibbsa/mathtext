@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <boost/foreach.hpp>
 
 #define CATCH_CONFIG_MAIN
 #include "mttest.h"

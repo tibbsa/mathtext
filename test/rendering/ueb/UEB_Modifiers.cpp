@@ -5,7 +5,9 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <boost/assign.hpp>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 #include "mttest.h"
 #include "MathDocumentElements.h"
@@ -49,7 +51,7 @@ TEST_CASE("render/ueb/Modifiers", "[render][UEB][Modifiers]") {
   // UEB Technical Guidelines, Section 12 ----------------------------------
 
   BOOST_FOREACH ( const ModifierTest &curTest, tests ) {
-    std::string sectionName = boost::str(boost::format("modifier: %s") % MDE_Modifier::getModifierName(curTest.modifier));
+    std::string sectionName = std::string("modifier: " + MDE_Modifier::getModifierName(curTest.modifier));
     SECTION ( sectionName ) {
       MDE_Modifier ungrouped_modifier (curTest.modifier, positive_number_vector);
       CHECK (r.renderModifier(&ungrouped_modifier) == curTest.ungrouped);

@@ -6,7 +6,8 @@
 */
 
 
-#include "common-includes.h"
+#include <boost/format.hpp>
+
 #include "logging.h"
 
 #include "MathInterpreter.h"

@@ -6,7 +6,11 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <iostream>
+#include <fstream>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
 
 #include "logging.h"
 #include "MathExceptions.h"

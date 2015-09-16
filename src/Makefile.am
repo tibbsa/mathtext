@@ -6,7 +6,6 @@ CXX = $(PTHREAD_CXX)
 noinst_LIBRARIES = libmathtext.a
 
 libmathtext_a_SOURCES = \
-	common-includes.cpp \
 	liblouis-mt.cpp \
 	logging.cpp \
 	MathDocument.cpp \
@@ -53,7 +52,6 @@ libmathtext_a_SOURCES = \
 	renderers/MathRenderer.cpp \
 	renderers/UEBRenderer.cpp \
 	renderers/LaTeXRenderer.cpp \
-	../include/common-includes.h \
 	../include/LaTeXRenderer.h \
 	../include/liblouis-mt.h \
 	../include/logging.h \

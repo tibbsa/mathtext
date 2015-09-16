@@ -8,6 +8,8 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <iostream>
+#include <fstream>
 #include "logging.h"
 
 int logIndentLevel = 0;

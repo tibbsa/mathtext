@@ -6,7 +6,6 @@
 */
 
 
-#include "common-includes.h"
 #include "logging.h"
 
 #include "MathInterpreter.h"

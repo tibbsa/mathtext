@@ -9,10 +9,8 @@
 #ifndef __UEB_RENDERER_H__
 #define __UEB_RENDERER_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
-
+#include <stack>
+#include <string>
 #include "MathRenderer.h"
 
 // Default settings

@@ -6,7 +6,12 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <iostream>
+#include <sstream>
+#include <map>
+
+#include <boost/assign.hpp>
+
 #include "MathInterpreterMsg.h"
 
 /**
@@ -107,7 +112,7 @@ std::string MathInterpreterMsg::getMessage (void) const
 
   assert (error_map.count(m_code) == 1);
 
-  return (boost::str(boost::format("%s - %s") % error_map[m_code] % m_message));
+  return std::string(error_map[m_code] + " - " + m_message);
 }
 
 

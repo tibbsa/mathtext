@@ -6,7 +6,9 @@
 */
 
 
-#include "common-includes.h"
+#include <vector>
+#include <boost/assign.hpp>
+
 #include "logging.h"
 
 #include "MathInterpreter.h"

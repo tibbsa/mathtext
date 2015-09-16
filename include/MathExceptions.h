@@ -9,9 +9,7 @@
 #ifndef __MATH_EXCEPTIONS_H__
 #define __MATH_EXCEPTIONS_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
+#include <boost/exception/all.hpp>
 
 class MathDocumentElement;
 

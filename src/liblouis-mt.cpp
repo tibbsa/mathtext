@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <string>
 #include "liblouis-mt.h"
 
 void strToWideCharString(const std::string &str, ll_widechar *outString, unsigned &outLength)

@@ -9,10 +9,6 @@
 #ifndef __UTILITY_H__
 #define __UTILITY_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
-
 /**
  * Removes the extension (.XXX) from a filename, if there is one
  */

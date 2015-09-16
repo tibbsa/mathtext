@@ -6,7 +6,8 @@
 */
 
 
-#include "common-includes.h"
+#include <boost/regex.hpp>
+
 #include "logging.h"
 
 #include "MathInterpreter.h"
@@ -59,7 +60,7 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
     i += root_index.length();
   } else if (src [i] == '[') {
     if (!extractGroup(root_index, src, i, "[", "]")) {
-      MSG_ERROR(ROOT_INDEX_NOT_TERMINATED, boost::str(boost::format("text in root index: '%s'") % root_index));
+      MSG_ERROR(ROOT_INDEX_NOT_TERMINATED, std::string("text in root index: '" + root_index + "'"));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   }
@@ -76,12 +77,12 @@ bool MathInterpreter::interpretRoot (MDEVector &target,
 
   if (src [i] == '@') {
     if (!extractGroup(root_argument, src, i, "@", "#", true)) {
-      MSG_ERROR(ROOT_NOT_TERMINATED, boost::str(boost::format("text in fractional root: '%s'") % root_argument));
+      MSG_ERROR(ROOT_NOT_TERMINATED, std::string("text in fractional root: '" + root_argument + "'"));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else if (src [i] == '(') {
     if (!extractGroup(root_argument, src, i)) {
-      MSG_ERROR(ROOT_NOT_TERMINATED, boost::str(boost::format("text in root: '%s'") % root_argument));
+      MSG_ERROR(ROOT_NOT_TERMINATED, std::string("text in root: '" + root_argument + "'"));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else {

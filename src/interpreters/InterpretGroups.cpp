@@ -6,7 +6,6 @@
 */
 
 
-#include "common-includes.h"
 #include "logging.h"
 
 #include "MathInterpreter.h"
@@ -27,7 +26,7 @@ bool MathInterpreter::interpretGroup (MDEVector &target,
 
   if (src[i] == '(') {
     if (!extractGroup(contents, src, i, "(", ")")) {
-      MSG_ERROR(GROUP_NOT_TERMINATED, boost::str(boost::format("end of line was reached while looking for closing paranthesis - saw %s") % contents));
+      MSG_ERROR(GROUP_NOT_TERMINATED, std::string("end of line was reached while looking for closing paranthesis - saw " + contents));
 
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
@@ -37,7 +36,7 @@ bool MathInterpreter::interpretGroup (MDEVector &target,
   }
   else if (src [i] == '[') {
     if (!extractGroup(contents, src, i, "[", "]")) {
-      MSG_ERROR(GROUP_NOT_TERMINATED, boost::str(boost::format("end of line was reached while looking for closing bracket - saw %s") % contents));
+      MSG_ERROR(GROUP_NOT_TERMINATED, std::string("end of line was reached while looking for closing bracket - saw " + contents));
 
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
@@ -47,7 +46,7 @@ bool MathInterpreter::interpretGroup (MDEVector &target,
   }
   else if (src [i] == '{') {
     if (!extractGroup(contents, src, i, "{", "}")) {
-      MSG_ERROR(GROUP_NOT_TERMINATED, boost::str(boost::format("end of line was reached while looking for closing paranthesis - saw %s") % contents));
+      MSG_ERROR(GROUP_NOT_TERMINATED, std::string("end of line was reached while looking for closing paranthesis - saw " + contents));
 
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }

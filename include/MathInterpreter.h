@@ -10,10 +10,6 @@
 #ifndef __MATH_INTERPRETER_H__
 #define __MATH_INTERPRETER_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
-
 #include "MathDocument.h"
 #include "MathDocumentElements.h"
 #include "MathInterpreterMsg.h"

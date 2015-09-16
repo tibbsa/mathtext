@@ -9,9 +9,8 @@
 #ifndef __MATH_DOCUMENT_LINE_H__
 #define __MATH_DOCUMENT_LINE_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
+#include <string>
+#include <iostream>
 
 /**
  * A single line in the source document.

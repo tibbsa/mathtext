@@ -6,7 +6,14 @@
  * This project is released under the GNU General Public License.
 */
 
-#include "common-includes.h"
+#include <string>
+#include <map>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
+#include <boost/format.hpp>
+#include <boost/scoped_array.hpp>
+
 #include "liblouis-mt.h"
 #include "logging.h"
 #include "UEBRenderer.h"

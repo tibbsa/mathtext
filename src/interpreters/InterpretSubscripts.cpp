@@ -6,7 +6,6 @@
 */
 
 
-#include "common-includes.h"
 #include "logging.h"
 
 #include "MathInterpreter.h"
@@ -41,12 +40,12 @@ bool MathInterpreter::interpretSubscript (MDEVector &target,
   i++;
   if (src [i] == '(') {
     if (!extractGroup(subscript_contents, src, i)) {
-      MSG_ERROR(SUBSCRIPT_NOT_TERMINATED, boost::str(boost::format("text in subscript: '%s'") % subscript_contents));
+      MSG_ERROR(SUBSCRIPT_NOT_TERMINATED, std::string("text in subscript: '" + subscript_contents + "'"));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else if (src [i] == '@') {
     if (!extractGroup(subscript_contents, src, i, "@", "#", true)) {
-      MSG_ERROR(EXPONENT_NOT_TERMINATED, boost::str(boost::format("text in fractional subscript: '%s'") % subscript_contents));
+      MSG_ERROR(EXPONENT_NOT_TERMINATED, std::string("text in fractional subscript: '" + subscript_contents + "'"));
       BOOST_THROW_EXCEPTION (MathInterpreterException());
     }
   } else {

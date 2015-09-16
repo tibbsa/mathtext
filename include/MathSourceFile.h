@@ -9,12 +9,8 @@
 #ifndef __MATH_SOURCE_FILE_H__
 #define __MATH_SOURCE_FILE_H__
 
-#ifndef __COMMON_INCLUDES_H__
-#include "common-includes.h"
-#endif
-
+#include <vector>
 #include "MathDocumentLine.h"
-
 
 /**
  * A MathSourceFile holds the contents of the source document(s).

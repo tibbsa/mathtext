@@ -5,8 +5,8 @@
  * This project is released under the GNU General Public License.
 */
 
+#include <boost/regex.hpp>
 
-#include "common-includes.h"
 #include "logging.h"
 
 #include "MathInterpreter.h"
