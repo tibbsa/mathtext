@@ -36,7 +36,7 @@ UEBRenderer::UEBRenderer() : MathRenderer()
 
   maxLineLength = UEB_DEFAULT_LINE_LEN;
 
-  lou_setDataPath("braille_tables");
+  lou_setDataPath(".");
 }
 
 UEBRenderer::~UEBRenderer()

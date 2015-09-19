@@ -22,6 +22,8 @@ Compilation of MathText requires:
 - [liblouis](http://www.liblouis.org) (tested with 2.6.3)
 - [Qt](http://www.qt.io) (tested with 5.5) _(for the GUI only, tested on Windows)_
 
+On Linux, Automake/Autoconf scripts are used to facilitate building. 
+
 # Why use MathText?
 
 A variety of methods have been used by the blind and visually impaired 

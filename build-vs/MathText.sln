@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathText Core Library", "libmathtext.vcxproj", "{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLI", "mathtext-cli.vcxproj", "{4F9600CB-7CDE-4182-8028-273D80E6F5E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1} = {0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test Suite", "mttest.vcxproj", "{909E0969-52AE-4717-853C-091E6310CDAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1} = {0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}.Debug|Win32.Build.0 = Debug|Win32
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}.Release|Win32.ActiveCfg = Release|Win32
+		{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}.Release|Win32.Build.0 = Release|Win32
+		{4F9600CB-7CDE-4182-8028-273D80E6F5E8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4F9600CB-7CDE-4182-8028-273D80E6F5E8}.Debug|Win32.Build.0 = Debug|Win32
+		{4F9600CB-7CDE-4182-8028-273D80E6F5E8}.Release|Win32.ActiveCfg = Release|Win32
+		{4F9600CB-7CDE-4182-8028-273D80E6F5E8}.Release|Win32.Build.0 = Release|Win32
+		{909E0969-52AE-4717-853C-091E6310CDAA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{909E0969-52AE-4717-853C-091E6310CDAA}.Debug|Win32.Build.0 = Debug|Win32
+		{909E0969-52AE-4717-853C-091E6310CDAA}.Release|Win32.ActiveCfg = Release|Win32
+		{909E0969-52AE-4717-853C-091E6310CDAA}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

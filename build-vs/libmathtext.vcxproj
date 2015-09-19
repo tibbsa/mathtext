@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0CCB98BD-A444-4C15-A0DB-918E4B4A0AD1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>MathText Core Library</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="VSConfigurationPropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="VSConfigurationPropertySheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)libmathtext-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)libmathtext-$(Configuration)\</IntDir>
+    <TargetName>libmathtext</TargetName>
+    <IncludePath>$(SolutionDir)..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)libmathtext-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)libmathtext-$(Configuration)\</IntDir>
+    <TargetName>libmathtext</TargetName>
+    <IncludePath>$(BOOST_PATH);$(SolutionDir)..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories />
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories />
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories />
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories />
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\elements\MDE.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Command.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Comparator.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Exponent.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Fraction.cpp" />
+    <ClCompile Include="..\src\elements\MDE_GenericText.cpp" />
+    <ClCompile Include="..\src\elements\MDE_GreekLetter.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Group.cpp" />
+    <ClCompile Include="..\src\elements\MDE_ItemNumber.cpp" />
+    <ClCompile Include="..\src\elements\MDE_LineBreak.cpp" />
+    <ClCompile Include="..\src\elements\MDE_MathBlock.cpp" />
+    <ClCompile Include="..\src\elements\MDE_ModeMarker.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Modifier.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Number.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Operator.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Root.cpp" />
+    <ClCompile Include="..\src\elements\MDE_SourceLine.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Subscript.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Summation.cpp" />
+    <ClCompile Include="..\src\elements\MDE_Symbol.cpp" />
+    <ClCompile Include="..\src\elements\MDE_TextBlock.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretCommands.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretComparators.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretExponents.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretFractions.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretGreek.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretGroups.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretItemNumbers.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretModifiers.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretNumbers.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretOperators.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretRoots.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretSubscripts.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretSummations.cpp" />
+    <ClCompile Include="..\src\interpreters\InterpretSymbols.cpp" />
+    <ClCompile Include="..\src\liblouis-mt.cpp" />
+    <ClCompile Include="..\src\logging.cpp" />
+    <ClCompile Include="..\src\MathDocument.cpp" />
+    <ClCompile Include="..\src\MathDocumentLine.cpp" />
+    <ClCompile Include="..\src\MathInterpreter.cpp" />
+    <ClCompile Include="..\src\MathInterpreterMsg.cpp" />
+    <ClCompile Include="..\src\MathSourceFile.cpp" />
+    <ClCompile Include="..\src\renderers\LaTeXRenderer.cpp" />
+    <ClCompile Include="..\src\renderers\MathRenderer.cpp" />
+    <ClCompile Include="..\src\renderers\UEBRenderer.cpp" />
+    <ClCompile Include="..\src\utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\LaTeXRenderer.h" />
+    <ClInclude Include="..\include\liblouis-mt.h" />
+    <ClInclude Include="..\include\logging.h" />
+    <ClInclude Include="..\include\MathDocument.h" />
+    <ClInclude Include="..\include\MathDocumentElements.h" />
+    <ClInclude Include="..\include\MathDocumentLine.h" />
+    <ClInclude Include="..\include\MathExceptions.h" />
+    <ClInclude Include="..\include\MathInterpreter.h" />
+    <ClInclude Include="..\include\MathInterpreterMsg.h" />
+    <ClInclude Include="..\include\MathRenderer.h" />
+    <ClInclude Include="..\include\MathSourceFile.h" />
+    <ClInclude Include="..\include\mathtext.h" />
+    <ClInclude Include="..\include\UEBRenderer.h" />
+    <ClInclude Include="..\include\utility.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

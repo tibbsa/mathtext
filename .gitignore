@@ -80,10 +80,9 @@ doc/doxygen/latex
 *.userprefs
 
 # Build results
-gui/GeneratedFiles
-gui/Debug
-gui/Win32
-gui/x64
+build-vs/cli-*
+build-vs/mttest-*
+build-vs/libmathtext-*
 
 # Visual Studio 2015 cache/options directory
 .vs/
