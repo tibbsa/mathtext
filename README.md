@@ -16,13 +16,11 @@ by a user listening to the information.
 
 # Project dependencies
 
-Compilation of MathText requires the [BOOST](http://www.boost.org) libraries
-(tested with 1.58.0), as well as the [liblouis](http://www.liblouis.org) 
-library for braille translation of textual material.  
+Compilation of MathText requires:
 
-_At present, a specialized fork of the liblouis library is required on 
-Windows due to the use of certain functions not exported by default by 
-the liblouis Windows build._
+- [BOOST](http://www.boost.org) (tested with 1.58.0)
+- [liblouis](http://www.liblouis.org) (tested with 2.6.3)
+- [Qt](http://www.qt.io) (tested with 5.5) _(for the GUI only, tested on Windows)_
 
 # Why use MathText?
 
