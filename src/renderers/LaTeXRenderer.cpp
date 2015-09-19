@@ -1,9 +1,9 @@
 /**
- * @file LaTeXRenderer.cpp
- * LaTeX rendering engine
- *
- * @copyright Copyright 2015 Anthony Tibbs
- * This project is released under the GNU General Public License.
+* @file
+* @copyright Copyright (C) 2001-2015 Anthony Tibbs <anthony@tibbs.ca>
+* \par License
+* This project is released under the GNU Public License, version 3.
+* See COPYING or http://www.gnu.org/licenses/ for more information.
 */
 
 #include <map>
@@ -20,12 +20,6 @@
 
 namespace ba = boost::assign;
 
-//
-// ##TODO: Latex preamble and such
-// -- need eurosym package - http://www.theiling.de/eurosym.html
-// -- need textcomp package (for \\textcent, \\textyen)
-// !! verify \textcent works in math mode?
-
 LaTeXRenderer::LaTeXRenderer() : MathRenderer()
 {
   currentBlockType = MATH;
@@ -40,6 +34,11 @@ LaTeXRenderer::LaTeXRenderer() : MathRenderer()
   internalRenderCount = 0;
 }
 
+/**
+ * @copydoc MathRenderer::renderDocument
+ *
+ * The rendered document includes the LaTeX preamble, \\begin, \\end, etc.
+ */
 std::string LaTeXRenderer::renderDocument (const MathDocument &document)
 {
   std::string output;
