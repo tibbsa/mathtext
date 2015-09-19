@@ -14,12 +14,29 @@
 #include <boost/shared_ptr.hpp>
 
 class MathDocumentElement;
+
+/**
+ * A pointer to a MathDocumentELement item.
+ */
 typedef boost::shared_ptr<MathDocumentElement> MathDocumentElementPtr;
+
+/**
+ * A vector (array) containing a series of MathDocumentElement items.
+*/
 typedef std::vector<MathDocumentElementPtr> MDEVector;
+
+/**
+ * A pointer to a vector (array) containing a series of MathDocumentElement items.
+ */
 typedef boost::shared_ptr<MDEVector> MDEVectorPtr;
 
 /**
- * A MathDocumentElement holds the contents of an interpreted math file.
+ * A MathDocumentElement holds a single item or element from the interpreted 
+ * document: a number, a fraction, an operator sign, etc. A different type 
+ * will be derived for each possible document element.
+ *
+ * @note Whenever a new type of document element is added, changes must also 
+ *       be made to MathRenderer and in particular MathRenderer::renderElement.
  */
 class MathDocumentElement
 {

@@ -1,9 +1,9 @@
 /**
- * @file LaTeXRenderer.h
- * Header file for the LaTeX renderer.
- *
- * @copyright Copyright 2015 Anthony Tibbs
- * This project is released under the GNU General Public License.
+* @file
+* @copyright Copyright (C) 2001-2015 Anthony Tibbs <anthony@tibbs.ca>
+* \par License
+* This project is released under the GNU Public License, version 3.
+* See COPYING or http://www.gnu.org/licenses/ for more information.
 */
 
 #ifndef __LATEX_RENDERER_H__
@@ -11,6 +11,36 @@
 
 #include "MathRenderer.h"
 
+/** LaTeX rendering engine used to produce LaTeX (and then PDF) files.
+*
+* For the most part, this is a straightforward transformation from the
+* math document to LaTeX.
+
+* Two issues complicate this process.First, it is necessary to track
+* the type of block we are currently in.On lines that appear to be text - based,
+* math material is inserted as inline math($...$).On lines that appear to be
+* primarily math - based, a full - blown math environment(\[... \]) is opened to
+* allow for prettier displayed math material.
+*
+* Second, it is possible that pdflatex will ultimately report problems that
+* cannot be automatically fixed : notably, lines may become too long and may
+* not automatically wrap.This requires manual intervention on the part of the
+* author to determine how the math on that line can be split up or otherwise
+* simplified to span multiple lines.
+*
+* @todo Analysis of pdflatex output to recommend solutions not yet implemented!
+*
+* LaTeX packages depended on :
+* - amsmath
+* - amssymb
+* - amstext
+* - eurosym (for Euro currency symbols)
+* - textcomp (for cents and Yen currency symbols)
+* - wasysym
+* - margin (to easily adjust page margins)
+* - fancyhdr (for adding headers / footers)
+* - lastpage (for calculating last page number in footer)
+*/
 class LaTeXRenderer : public MathRenderer
 {
  private:
@@ -19,7 +49,14 @@ class LaTeXRenderer : public MathRenderer
   void setWriteMode (void);
 
  protected:
-  typedef enum { UNKNOWN, MATH, TEXT } Mode;
+  /** 
+   * Enum to identify which LaTeX output mode (math or text) we are in
+   */
+  typedef enum { 
+    UNKNOWN, ///< Have not yet determined (start of line)
+    MATH, ///< We are in a math block ($...$)
+    TEXT ///< We are outputting text
+   } Mode;
 
   Mode writerLineMode;
   Mode writerCurrentMode;
