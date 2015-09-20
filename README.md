@@ -22,7 +22,16 @@ Compilation of MathText requires:
 - [liblouis](http://www.liblouis.org) (tested with 2.6.3)
 - [Qt](http://www.qt.io) (tested with 5.5) _(for the GUI only, tested on Windows)_
 
+# Compilation Notes
+
 On Linux, Automake/Autoconf scripts are used to facilitate building. 
+
+In Visual Studio, a custom property sheet has been setup with user macros
+for BOOST_PATH (point to root directory) and LOUIS_PATH (point to root 
+directory). The VS projects assume Boost 1.58 for the libraries. Note 
+that as of September 2015, building with Boost 1.59 was not possible 
+due to some bug in the log-related templates.
+
 
 # Why use MathText?
 
@@ -56,9 +65,13 @@ together circa 2001. The core translation engine is intended to be
 fully independent of the user interface, and both command-line, Linux 
 clients as well as a Windows-based client are envisioned. 
 
-At present, the Linux command-line client is functional. A starting point 
-for the Windows client has been developed but significantly more effort is 
-required there.
+At present, the command-line client and command-line test suites are 
+functional and operational. They can produce Braille or LaTeX output 
+accordingly. 
+
+Development of a Windows client has been started (based on Qt for potential 
+portability to other platforms) but is not yet part of the core project 
+yet.
 
 From a functionality standpoint, most of the core language constructs 
 have been implemented, including:
@@ -80,17 +93,5 @@ yet been integrated here:
 - binomials
 - column vectors
 - integrals
-
-
-
-
-
-
-
-
-
-
-
-
 
 
