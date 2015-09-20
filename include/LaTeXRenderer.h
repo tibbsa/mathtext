@@ -46,8 +46,6 @@ class LaTeXRenderer : public MathRenderer
  private:
   std::string status (void) const;
 
-  void setWriteMode (void);
-
  protected:
   /** 
    * Enum to identify which LaTeX output mode (math or text) we are in
@@ -58,16 +56,41 @@ class LaTeXRenderer : public MathRenderer
     TEXT ///< We are outputting text
    } Mode;
 
+  /**
+   * The type of line that we are currently writing (mostly math, mostly text).
+   */
   Mode writerLineMode;
+
+  /**
+   * The mode that we last wrote in (math or text)
+  */
   Mode writerCurrentMode;
 
-  Mode currentBlockType;
-  Mode currentSegmentType;
-
+  /**
+   * Set to TRUE if we are at the beginning of a new line.
+  */
   bool isStartOfLine;
+  
+  /**
+   * If this feature is enabled, then \\left and \\right will be added to brackets 
+   * in the LaTeX. This allows LaTeX to dynamically size the brackets to grow 
+   * or shrink to fit what is between them -- but may cause problems for long 
+   * expressions because it prevents any automatic wrapping.
+   *
+   * Default: Enabled
+   * @see LaTeXRenderer::renderGroup
+   */
   bool isBracketSizingEnabled;
 
+  /**
+   * Counts the rendering nesting level: for example, if rendering a numerator 
+   * inside of a fraction, this would be one level of nesting. If rendering 
+   * an exponent within a numerator within a fraction, this would be two 
+   * levels of nesting. This is necessary to avoid changing render modes 
+   * while inside a mathematical construct, for example.
+   */
   unsigned internalRenderCount;
+
   void beginInternalRender (void);
   bool doingInternalRender (void) const;
   void endInternalRender (void);

@@ -30,11 +30,11 @@ UEBRenderer::UEBRenderer() : MathRenderer()
 
   status.isInTextBlock = false;
   status.isNumericMode = false;
-  status.isStart = true;
-  status.isUsingSpacedOperators = false;
+  status.isStartOfLine = true;
   status.skipFollowingWhitespace = false;
 
   maxLineLength = UEB_DEFAULT_LINE_LEN;
+  isUsingSpacedOperators = false;
 
   lou_setDataPath(".");
 }
@@ -44,6 +44,17 @@ UEBRenderer::~UEBRenderer()
   lou_free();
 }
 
+/**
+* Provides the interpreter with a list of UEB-specific commands.
+*
+* Returns a list of additional "commands" that the math interpreter should
+* consider to be valid and which will be processed by this renderer.
+*
+* \par Commands
+* - SpacedUEBOperators: UEBRenderer::isUsingSpacedOperators
+*
+* @param [out] cmdlist A vector of std::string to add our commands to
+*/
 void UEBRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
 {
   cmdlist.push_back("SpaceUEBOperators");
@@ -73,14 +84,14 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 
       size_t eolPos = renderedBraille.find("\n", pos);
       if (eolPos == std::string::npos) { // no final end of line found?
-	curLine = renderedBraille.substr(pos);
-	// Advance to the end of the buffer
-	pos = renderedBraille.length();
+	      curLine = renderedBraille.substr(pos);
+	      // Advance to the end of the buffer
+	      pos = renderedBraille.length();
       }
       else {
-	curLine = renderedBraille.substr(pos, eolPos - pos);
-	// Advance to the end of the current line
-	pos = eolPos+1;
+	      curLine = renderedBraille.substr(pos, eolPos - pos);
+	      // Advance to the end of the current line
+	      pos = eolPos+1;
       }
 
 #ifdef UEB_WRAPPING_DEBUG
@@ -96,139 +107,139 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 
       if (strBeginsWith (curLine, UEB_MATH_BLOCK_BEGIN)) {
 #ifdef UEB_WRAPPING_DEBUG
-	LOG_TRACE << "beginning math block and indentation...";
+	      LOG_TRACE << "beginning math block and indentation...";
 #endif
 
-	isInTextBlock = false;
-	i = std::string(UEB_MATH_BLOCK_BEGIN).length();
+	      isInTextBlock = false;
+	      i = std::string(UEB_MATH_BLOCK_BEGIN).length();
       } else if (strBeginsWith (curLine, UEB_TEXT_BLOCK_BEGIN)) {
 #ifdef UEB_WRAPPING_DEBUG
-	LOG_TRACE << "beginning text block and disabling indentation...";
+	      LOG_TRACE << "beginning text block and disabling indentation...";
 #endif
 
-	isInTextBlock = true;
-	i = std::string(UEB_TEXT_BLOCK_BEGIN).length();
+	      isInTextBlock = true;
+	      i = std::string(UEB_TEXT_BLOCK_BEGIN).length();
       }
 
       while (i < curLine.length()) {
 #ifdef UEB_WRAPPING_DEBUG
-	LOG_TRACE << "  wrap lookahead @ " << i << ": " << curLine.substr(i, 10);
+	      LOG_TRACE << "  wrap lookahead @ " << i << ": " << curLine.substr(i, 10);
 #endif
 
-	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI1) {
-	  last_break_position [0] = curOutputLinePos;
-	  i += UEB_WORDWRAP_INDLEN;
-	  continue;
-	}
-	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI2) {
-	  last_break_position [1] = curOutputLinePos;
-	  i += UEB_WORDWRAP_INDLEN;
-	  continue;
-	}
-	if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI3) {
-	  last_break_position [2] = curOutputLinePos;
-	  i += UEB_WORDWRAP_INDLEN;
-	  continue;
-	}
-
-	curOutputLine += curLine[i];
-	curOutputLinePos++;
-	curOutputLineLength++;
-	i++;
-
-	/**
-	 * We first try to find a "priority 1" break point within the last 20%
-	 * of the line. If there is none, then look for priority 2, then
-	 * priority 3. If none of those are available, we increase the lookback
-	 * up until 50% of the line, at which point we just say to heck with it
-	 * and break right where we are.
-	 */
-	if (curOutputLineLength == maxLineLength) {
-#ifdef UEB_WRAPPING_DEBUG
-	  LOG_TRACE << "reached maxLength " << curOutputLineLength << "@" << curOutputLinePos;
-	  LOG_TRACE << "recorded breakpoints: ";
-	  for (int xxxx = 0; xxxx <= 2; xxxx++)
-	    LOG_TRACE << " - priority " << (xxxx+1) << ": " << last_break_position[xxxx];
-#endif
-
-	  unsigned breakpoint = 0;
-	  for (size_t lookback_window_size = (size_t)(maxLineLength/5);
-	       !breakpoint && lookback_window_size < (size_t)(maxLineLength/2);
-	       lookback_window_size++) {
-	    size_t lookback_start_offset = curOutputLine.length() - lookback_window_size;
-
-#ifdef UEB_WRAPPING_DEBUG
-	    LOG_TRACE << "lookback window size: " << lookback_window_size << ", starting offset: " << lookback_start_offset;
-#endif
-
-	    for (int curPriority = 1; curPriority <= 3 && !breakpoint; curPriority++) {
-	      if (last_break_position [curPriority-1] != 0 &&
-		  last_break_position [curPriority-1] >= lookback_start_offset) {
-#ifdef UEB_WRAPPING_DEBUG
-		LOG_TRACE << " - breaking at priority " << curPriority << " position " << last_break_position [curPriority-1];
-#endif
-
-		breakpoint = last_break_position [curPriority-1];
-	      } else {
-#ifdef UEB_WRAPPING_DEBUG
-		LOG_TRACE << " - no priotity " << curPriority << " break available";
-#endif
+	      if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI1) {
+	        last_break_position [0] = curOutputLinePos;
+	        i += UEB_WORDWRAP_INDLEN;
+	        continue;
 	      }
-	    }
-	  }
+	      if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI2) {
+	        last_break_position [1] = curOutputLinePos;
+	        i += UEB_WORDWRAP_INDLEN;
+	        continue;
+	      }
+	      if (curLine.substr(i, UEB_WORDWRAP_INDLEN) == UEB_WORDWRAP_PRI3) {
+	        last_break_position [2] = curOutputLinePos;
+	        i += UEB_WORDWRAP_INDLEN;
+	        continue;
+	      }
 
-	  if (!breakpoint) {
+	      curOutputLine += curLine[i];
+	      curOutputLinePos++;
+	      curOutputLineLength++;
+	      i++;
+
+	      /**
+	       * We first try to find a "priority 1" break point within the last 20%
+	       * of the line. If there is none, then look for priority 2, then
+	       * priority 3. If none of those are available, we increase the lookback
+	       * up until 50% of the line, at which point we just say to heck with it
+	       * and break right where we are.
+	       */
+        if (curOutputLineLength == maxLineLength) {
 #ifdef UEB_WRAPPING_DEBUG
-	    LOG_TRACE << "no suitable breakpoint found: breaking at EOL";
-#endif
-	    breakpoint = curOutputLinePos;
-	  }
-
-	  size_t post_break_length;
-	  post_break_length = curOutputLine.length() - breakpoint;
-#ifdef UEB_WRAPPING_DEBUG
-	  LOG_TRACE << "inserting break at " << breakpoint << ", post-break length: " << post_break_length;
-	  LOG_TRACE << "  before: " << curOutputLineLength << ":[" << curOutputLine << "]";
-#endif
-
-	  // Delete any whitespace which appears before this point
-	  while (breakpoint > 0 && isspace(curOutputLine[breakpoint-1])) {
-#ifdef UEB_WRAPPING_DEBUG
-	    LOG_TRACE << "  * deleting trailing space before break";
-#endif
-	    breakpoint--;
-	    curOutputLinePos--;
-	    curOutputLine.erase(breakpoint, 1);
-	  }
-
-	  // Delete spaces following the break
-	  while (breakpoint < curOutputLine.length() &&
-		 isspace(curOutputLine[breakpoint])) {
-#ifdef UEB_WRAPPING_DEBUG
-	    LOG_TRACE << "  * deleting space after break";
-#endif
-	    curOutputLinePos--;
-	    curOutputLine.erase(breakpoint, 1);
-	  }
-
-	  std::string continuationString;
-
-	  if (isInTextBlock)
-	    continuationString = "\n"; // no indentation
-	  else
-	    continuationString = "\n  "; // 2 cell runover indentation
-
-	  curOutputLine.insert(breakpoint, continuationString);
-	  curOutputLinePos = curOutputLine.length();
-	  curOutputLineLength = post_break_length + (continuationString.length() - 1);
-#ifdef UEB_WRAPPING_DEBUG
-	  LOG_TRACE << "  after: " << curOutputLineLength << ":[" << curOutputLine << "]";
+          LOG_TRACE << "reached maxLength " << curOutputLineLength << "@" << curOutputLinePos;
+          LOG_TRACE << "recorded breakpoints: ";
+          for (int xxxx = 0; xxxx <= 2; xxxx++)
+            LOG_TRACE << " - priority " << (xxxx+1) << ": " << last_break_position[xxxx];
 #endif
 
-	  // reset breakpoints for new line
-	  for (int curPriority = 1; curPriority <= 3; curPriority++)
-	    last_break_position[curPriority-1] = 0;
-	}
+          unsigned breakpoint = 0;
+          for (size_t lookback_window_size = (size_t)(maxLineLength / 5);
+            !breakpoint && lookback_window_size < (size_t)(maxLineLength / 2);
+            lookback_window_size++) {
+            size_t lookback_start_offset = curOutputLine.length() - lookback_window_size;
+
+#ifdef UEB_WRAPPING_DEBUG
+            LOG_TRACE << "lookback window size: " << lookback_window_size << ", starting offset: " << lookback_start_offset;
+#endif
+
+            for (int curPriority = 1; curPriority <= 3 && !breakpoint; curPriority++) {
+              if (last_break_position[curPriority - 1] != 0 &&
+                last_break_position[curPriority - 1] >= lookback_start_offset) {
+#ifdef UEB_WRAPPING_DEBUG
+                LOG_TRACE << " - breaking at priority " << curPriority << " position " << last_break_position [curPriority-1];
+#endif
+
+                breakpoint = last_break_position[curPriority - 1];
+              } else {
+#ifdef UEB_WRAPPING_DEBUG
+                LOG_TRACE << " - no priotity " << curPriority << " break available";
+#endif
+              }
+            }
+          }
+	      
+	        if (!breakpoint) {
+      #ifdef UEB_WRAPPING_DEBUG
+	          LOG_TRACE << "no suitable breakpoint found: breaking at EOL";
+      #endif
+	          breakpoint = curOutputLinePos;
+	        }
+
+	        size_t post_break_length;
+	        post_break_length = curOutputLine.length() - breakpoint;
+#ifdef UEB_WRAPPING_DEBUG
+	        LOG_TRACE << "inserting break at " << breakpoint << ", post-break length: " << post_break_length;
+	        LOG_TRACE << "  before: " << curOutputLineLength << ":[" << curOutputLine << "]";
+#endif
+
+	        // Delete any whitespace which appears before this point
+	        while (breakpoint > 0 && isspace(curOutputLine[breakpoint-1])) {
+      #ifdef UEB_WRAPPING_DEBUG
+	          LOG_TRACE << "  * deleting trailing space before break";
+      #endif
+	          breakpoint--;
+	          curOutputLinePos--;
+	          curOutputLine.erase(breakpoint, 1);
+	        }
+
+	        // Delete spaces following the break
+	        while (breakpoint < curOutputLine.length() &&
+		             isspace(curOutputLine[breakpoint])) {
+#ifdef UEB_WRAPPING_DEBUG
+	          LOG_TRACE << "  * deleting space after break";
+#endif
+	          curOutputLinePos--;
+	          curOutputLine.erase(breakpoint, 1);
+	        }
+
+	        std::string continuationString;
+
+	        if (isInTextBlock)
+	          continuationString = "\n"; // no indentation
+	        else
+	          continuationString = "\n  "; // 2 cell runover indentation
+
+	        curOutputLine.insert(breakpoint, continuationString);
+	        curOutputLinePos = curOutputLine.length();
+	        curOutputLineLength = post_break_length + (continuationString.length() - 1);
+      #ifdef UEB_WRAPPING_DEBUG
+	        LOG_TRACE << "  after: " << curOutputLineLength << ":[" << curOutputLine << "]";
+      #endif
+
+	        // reset breakpoints for new line
+	        for (int curPriority = 1; curPriority <= 3; curPriority++)
+	          last_break_position[curPriority-1] = 0;
+        }
       }
 
 #ifdef UEB_WRAPPING_DEBUG
@@ -248,18 +259,38 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
   return output;
 }
 
+/**
+ * Turn off all word wrapping (no maximum line length)
+ *
+ * @see UEBRenderer::enableLineWrapping, UEBRenderer::maxLineLength
+ */
 void UEBRenderer::disableLineWrapping (void)
 {
   maxLineLength = 0;
 }
 
+/**
+ * Sets the maximum braille line length.
+ *
+ * @param [in] length Maximum number of braille characters to put on each line
+ * @see UEBRenderer::disableLineWrapping, UEBRenderer::maxLineLength
+ */
 void UEBRenderer::enableLineWrapping (const unsigned length)
 {
   assert (length != 0);
   maxLineLength = length;
 }
 
-
+/**
+ * Remove line wrap indicators from a rendered braille string
+ *
+ * Special indicators are inserted into the rendered math output to indicate 
+ * plausible and realistic places for the line to be broken when the time 
+ * comes to word wrap. This strips those indicators from the provided string.
+ *
+ * @param [in] input Rendered braille string to be cleansed
+ * @return std::string containing rendered braille (without wrapping symbols)
+ */
 std::string UEBRenderer::stripWrappingIndicators (const std::string &input) const
 {
   std::string temp = input;
@@ -269,22 +300,34 @@ std::string UEBRenderer::stripWrappingIndicators (const std::string &input) cons
   return temp;
 }
 
-void UEBRenderer::beginInternalRender (void)
+/**
+* Call at the start of each nested rendering operation.
+*/
+void UEBRenderer::beginInternalRender(void)
 {
   internalRenderCount++;
   statusStack.push (status);
 
-  LOG_TRACE << "** push render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart << ", spaceOp=" << status.isUsingSpacedOperators;
+  LOG_TRACE << "** push render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStartOfLine << ", spaceOp=" << isUsingSpacedOperators;
 
   logIncreaseIndent();
 }
 
-bool UEBRenderer::doingInternalRender (void) const
+/**
+* Determine whether we are currently rendering at a nested level.
+*
+* @retval TRUE if we are rendering within another element.
+* @retval FALSE if we are at the baseline.
+*/
+bool UEBRenderer::doingInternalRender(void) const
 {
   return (internalRenderCount > 0);
 }
 
-void UEBRenderer::endInternalRender (void)
+/**
+* Call at the conclusion of each nested rendering operation.
+*/
+void UEBRenderer::endInternalRender(void)
 {
   assert (internalRenderCount != 0);
   internalRenderCount--;
@@ -292,9 +335,21 @@ void UEBRenderer::endInternalRender (void)
   statusStack.pop();
 
   logDecreaseIndent();
-  LOG_TRACE << "** pop render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStart << ", spaceOp=" << status.isUsingSpacedOperators;
+  LOG_TRACE << "** pop render stack #" << internalRenderCount << ", status: #=" << status.isNumericMode << ", S=" << status.isStartOfLine << ", spaceOp=" << isUsingSpacedOperators;
 }
 
+/**
+ * Perform basic translation into the braille code.
+ *
+ * Translates the provided input string into braille, taking into account
+ * punctuation symbols and the need for capitalization indicators on uppercase
+ * letters.  
+ *
+ * This is used only for mathematical material, and not text material!
+ *
+ * @param [in] s Input string containing rendered content
+ * @return std::string containing sanitized/indicated content
+ */
 std::string UEBRenderer::translateToBraille (const std::string &s)
 {
   std::string output;
@@ -311,6 +366,12 @@ std::string UEBRenderer::translateToBraille (const std::string &s)
   return output;
 }
 
+/**
+ * Add capitalization indicators in braille (math) material where required.
+ *
+ * @param [in] s Input string containing rendered content
+ * @return std::string containing sanitized/indicated content
+ */
 std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
 {
   std::string output;
@@ -333,7 +394,7 @@ std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
     // "2" (comma)
     if (inNumericMode) {
       if (!isOneOf(c, UEB_NUMERIC_MODE_SYMBOLS)) {
-	inNumericMode = false;
+	      inNumericMode = false;
       }
     } else if (c >= 'A' && c <= 'Z') {
       output += UEB_CAPITAL_SIGN;
@@ -348,7 +409,15 @@ std::string UEBRenderer::translateBrailleLetterIndicators (const std::string &s)
   return output;
 }
 
-std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
+/**
+* Add punctuation indicators in braille (math) material where required.
+*
+* @todo Confirm that this is in fact necessary. It may be entire usurped by 
+*       UEBRenderer::renderSymbols now (UEB_COMMA, UEB_PERIOD)?  
+* @param [in] s Input string containing rendered content
+* @return std::string containing sanitized/indicated content
+*/
+std::string UEBRenderer::translateBraillePunctuation(const std::string &s)
 {
   std::string output;
 
@@ -383,9 +452,30 @@ std::string UEBRenderer::translateBraillePunctuation (const std::string &s)
 // (An 'item' is: a number; a fraction; a radical; a narrow; a shape;
 //  anything in paranthesees, square brackets, or braces; anything in
 //  braille grouping indicators; or the previous character)
+/**
+ * Determine whether the provided array consists of a single "item"
+ *
+ * The UEB Technical Guidelines, ss. 7.1 and 12.1, define certain elements 
+ * that may be considered to be a single "item". In exponents (and elsewhere),
+ * "items" do not need to appear between grouping symbols, but more complex 
+ * elements do. 
+ *
+ * Per the standard, and "item" is:
+ * - a positive number
+ * - a fraction
+ * - an operation sign (typically + or -)
+ * - a radical (root)
+ * - an arrow or shape
+ * - anything in grouping symbols -- ([{ }])
+ * - or, in the case of modifiers, the single previous character
+ *
+ * @param [in] v Vector containing one or more elements to assess
+ * @retval TRUE if the contents of 'v' can be considered a single 'item'
+ * @retval FALSE if the contents of 'v' cannot be considered a single 'item'
+ */
 bool UEBRenderer::isBrailleItem (const MDEVector &v)
 {
-  // any vector containing multiple items will be, by definition, not an
+  // any vector containing multiple elements will be, by definition, not an
   // item
   if (v.empty() || v.size() > 1)
     return false;
@@ -422,24 +512,49 @@ bool UEBRenderer::isBrailleItem (const MDEVector &v)
   return false;
 }
 
-// Returns true if the provided fraction is a "simple" fraction -- that is,
-// both the numerator and the denominator contain only a simple number.
+/**
+ * Determines whether the provided fraction is a 'simple' fraction
+ * 
+ * Simple fractions are defined as those where the numerator and the 
+ * denominator consist only of a number. 
+ *
+ * @param [in] frac Fraction to assess
+ * @retval TRUE if the provided fraction is a 'simple' fraction
+ * @retval FALSE if the provided fraction is not a 'simple' fraction
+ */
 bool UEBRenderer::isSimpleFraction (const MDE_Fraction &frac)
 {
+  // if either the numerator od the denominator contain more than one 
+  // element, this will by definition not be a simple fraction
   if (frac.getNumerator().size() > 1 || frac.getDenominator().size() > 1)
     return false;
 
+  // if the numerator is not a number, it is not a simple fraction
   if (!dynamic_cast<const MDE_Number *>(frac.getNumerator().front().get()))
     return false;
 
+  // if the denominator is not a number, it is not a simple fraction
   if (!dynamic_cast<const MDE_Number *>(frac.getDenominator().front().get()))
     return false;
 
   return true;
 }
 
-// called to output what is known to be 'math' material. takes care of
-// any necessary mode switches, etc.,
+/**
+* Renders mathematical material into the braille output.
+*
+* Inserts the provided text (assumed to be already-rendere braille) into
+* the output, changing to math mode if required, and inserting a letter 
+* indicator if needed (i.e. if we are following a number).
+*
+* This will also skip over any leading whitespace if we have been asked
+* to do so by some other function (e.g. UEBRenderer::renderOperator may
+* do this to prevent multiple spaces appearing after an operator).
+*
+* @param [in] s Rendered braille to be inserted into the output
+* @return Input string, with any indicators prepended as required
+* @see UEBRenderer::UEBRenderStatus::isNumericMode
+*/
 std::string UEBRenderer::renderMathContent (const std::string &s)
 {
   std::string output;
@@ -463,7 +578,7 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
   else
     output += s;
 
-  status.isStart = false;
+  status.isStartOfLine = false;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
@@ -471,6 +586,15 @@ std::string UEBRenderer::renderMathContent (const std::string &s)
   return output;
 }
 
+/**
+* Renders textual material into the braille output.
+*
+* Inserts the provided text into the output, converting it to braille
+* using the liblouis library.
+*
+* @param [in] s Text content (ASCII) to be added to output file.
+* @return Rendered braille, including wordwrap indicators.
+*/
 std::string UEBRenderer::renderTextContent (const std::string &s)
 {
   std::string output;
@@ -481,9 +605,10 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 
   // Assume that the braille could grow to be a bit larger than our max
   // LibLouis buffer size.  If this will likely be a problem, abort.
-  //## TODO: Split long strings into ~500-byte chunks (using a "period space"
-  // or just a space as a likely split point) and feed to LibLouis in smaller
-  // sections to get around this limitation.
+
+  /*! @todo Split long strings into ~500-byte chunks (using a "period space"
+      or just a space as a likely split point) and feed to LibLouis in smaller
+      sections to get around this limitation. */
   if (s.length() >= (0.90 * LIBLOUIS_MAXSTRING)) {
     LOG_ERROR << "! Braille translation max buffer size error on '" << s << "'!";
     std::ostringstream os;
@@ -530,8 +655,8 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
     boost::replace_all(braille_string, UEB_LEFT_BRACE, UEB_WORDWRAP_PRI1 UEB_LEFT_BRACE);
   }
 
-  //## There is a bug in liblouis that results in single letters
-  //   getting letter indicators before them unnecessarily.  Fix this.
+  /*! @bug There is a bug in liblouis that results in single letters
+      getting letter indicators before them unnecessarily.  Fix this. */
   std::string fixed_braille_string;
   fixed_braille_string = braille_string;
   for (char ch = 'a'; ch <= 'z'; ch++) {
@@ -544,7 +669,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   output += fixed_braille_string;
 
   status.isNumericMode = false;
-  status.isStart = false;
+  status.isStartOfLine = false;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
@@ -555,6 +680,8 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
 std::string UEBRenderer::renderSourceLine (const MDE_SourceLine *e)
 {
   std::string output;
+
+  //! @todo Function does nothing on braille render: remove?
 
   LOG_TRACE << "%% " << e->getString();
 
@@ -567,8 +694,8 @@ std::string UEBRenderer::renderCommand (const MDE_Command *e)
 
   LOG_TRACE << "%% COMMAND: " << e->getString();
   if (boost::iequals(e->getName(), "SpaceUEBOperators")) {
-    status.isUsingSpacedOperators = (e->getParameters() == "true");
-    LOG_TRACE << "- extra operator spacing: " << status.isUsingSpacedOperators;
+    isUsingSpacedOperators = (e->getParameters() == "true");
+    LOG_TRACE << "- extra operator spacing: " << isUsingSpacedOperators;
   }
 
   return output;
@@ -582,7 +709,7 @@ std::string UEBRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
     // We should only see the start of a math "block" if we are also at the
     // start of a line.  We can't commence a math block mid-line, as the
     // indenting and word wrapping requirements will be different.
-    assert (status.isStart == true);
+    assert (status.isStartOfLine == true);
     status.isInTextBlock = false;
     output += UEB_MATH_BLOCK_BEGIN;
     LOG_TRACE << "* commencing math block mode";
@@ -602,7 +729,7 @@ std::string UEBRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
     // We should only see the start of a text "block" if we are also at the
     // start of a line.  We can't commence a text block mid-line, as the
     // indenting and word wrapping requirements will be different.
-    assert (status.isStart == true);
+    assert (status.isStartOfLine == true);
     status.isInTextBlock = true;
     output += UEB_TEXT_BLOCK_BEGIN;
     LOG_TRACE << "* commencing text block mode";
@@ -623,7 +750,7 @@ std::string UEBRenderer::renderLineBreak (const MDE_LineBreak *e)
 
   output += "\n";
   status.isNumericMode = false;
-  status.isStart = true;
+  status.isStartOfLine = true;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
@@ -638,11 +765,11 @@ std::string UEBRenderer::renderTextBlock (const MDE_TextBlock *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (!status.isStart)
+  if (!status.isStartOfLine)
     output = " ";
 
   output += renderTextContent(e->getText());
-  status.isStart = false;
+  status.isStartOfLine = false;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
@@ -765,8 +892,8 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
       // The beginning of the alphabet (uppercase) is at #65, so 1=A=65, etc.
       // In other words, adding 16 to the digit will get the uppercase letter.
       brailleNumber += (c == '0')
-	? "J"
-	: boost::str(boost::format("%c") % (char)(16 + (int)c));
+                       ? "J"
+	                     : boost::str(boost::format("%c") % (char)(16 + (int)c));
     } else if (c == '.') {
       brailleNumber += UEB_PERIOD;
     } else if (c == ',') {
@@ -776,7 +903,7 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
     } else {
       assert(0);
     }
-
+  
     pos++;
   }
 
@@ -802,15 +929,9 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (!opmap.count(e->getOperator())) {
-    LOG_ERROR << "! Operator translation error - unknown operator on " << (*e);
-    std::ostringstream os;
-    os << "The braille generator encountered a mathematical operator it does not understand. Please contact technical support for assistance. (Operator: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathRenderException() <<
-			   mdx_error_info(os.str()));
-  }
+  assert(opmap.count(e->getOperator()) == 1);
 
-  if (status.isUsingSpacedOperators)
+  if (isUsingSpacedOperators)
     output = " ";
 
   if (maxLineLength)
@@ -818,9 +939,10 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
 
   output += opmap[e->getOperator()];
 
-  if (status.isUsingSpacedOperators)
+  if (isUsingSpacedOperators)
     output += " ";
 
+  // make sure no additional spaces wind up following this operator
   status.skipFollowingWhitespace = true;
 
   logDecreaseIndent();
@@ -845,18 +967,15 @@ std::string UEBRenderer::renderComparator (const MDE_Comparator *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (!compmap.count(e->getComparator())) {
-    LOG_ERROR << "! Comparator translation error - unknown comparator on " << (*e);
-    std::ostringstream os;
-    os << "The braille generator encountered a mathematical comparator it does not understand. Please contact technical support for assistance. (Comparator: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathRenderException() <<
-			   mdx_error_info(os.str()));
-  }
+  assert(compmap.count(e->getComparator()) == 1);
 
   if (maxLineLength)
     output = " " UEB_WORDWRAP_PRI1 + compmap [e->getComparator()] + " ";
   else
     output = " " + compmap [e->getComparator()] + " ";
+
+  // make sure no additional spaces wind up following this comparator
+  status.skipFollowingWhitespace = true;
 
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
@@ -905,18 +1024,12 @@ std::string UEBRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 #undef MAPUC
 #undef MAPLC
 
-  if (!charmap.count(e->getValue())) {
-    LOG_ERROR << "! Greek translation error - unknown character on " << (*e);
-    std::ostringstream os;
-    os << "The braille generator encountered a Greek letter it does not understand. Please contact technical support for assistance. (Letter: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathRenderException() <<
-			   mdx_error_info(os.str()));
-  }
+  assert(charmap.count(e->getValue()) == 1);
 
   if (maxLineLength)
     output = UEB_WORDWRAP_PRI3;
 
-  output += renderMathContent(charmap [e->getValue()]);
+  output += renderMathContent(charmap[e->getValue()]);
   logDecreaseIndent();
   LOG_TRACE << "<< " << __func__ << ": (" << stripWrappingIndicators(output) << ")";
 
@@ -950,13 +1063,7 @@ std::string UEBRenderer::renderSymbol (const MDE_Symbol *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (!symmap.count(e->getSymbol())) {
-    LOG_ERROR << "! Symbol translation error - unknown symbol on " << (*e);
-    std::ostringstream os;
-    os << "The braille generator encountered a mathematical symbol it does not understand. Please contact technical support for assistance. (Symbol: " << (*e) << ")";
-    BOOST_THROW_EXCEPTION (MathRenderException() <<
-			   mdx_error_info(os.str()));
-  }
+  assert(symmap.count(e->getSymbol()) == 1);
 
   output = renderMathContent(symmap [e->getSymbol()]);
 
@@ -1131,7 +1238,6 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
 {
   std::string renderedNumerator, renderedDenominator;
   std::string output;
-  bool simpleFraction = isSimpleFraction(*e);
 
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
@@ -1143,6 +1249,8 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   status.isNumericMode = false;
   renderedDenominator = renderVector (e->getDenominator());
   endInternalRender();
+
+  bool simpleFraction = isSimpleFraction(*e);
 
   LOG_TRACE << "- rendered numerator:   " << renderedNumerator;
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;

@@ -22,9 +22,6 @@ namespace ba = boost::assign;
 
 LaTeXRenderer::LaTeXRenderer() : MathRenderer()
 {
-  currentBlockType = MATH;
-  currentSegmentType = MATH;
-
   writerLineMode = UNKNOWN;
   writerCurrentMode = UNKNOWN;
 
@@ -66,11 +63,31 @@ std::string LaTeXRenderer::renderDocument (const MathDocument &document)
   return output;
 }
 
+/**
+ * Provides the interpreter with a list of LaTeX-specific commands.
+ *
+ * Returns a list of additional "commands" that the math interpreter should 
+ * consider to be valid and which will be processed by this renderer. 
+ *
+ * \par Commands
+ * - NoBracketSizing: see LaTeXRenderer::isBracketSizingEnabled
+ *
+ * @param [out] cmdlist A vector of std::string to add our commands to
+ */
 void LaTeXRenderer::getInterpreterCommandList (std::vector<std::string> &cmdlist)
 {
   cmdlist.push_back("NoBracketSizing");
 }
 
+/**
+ * Sanitizes a text string for inclusion in the LaTeX output.
+ *
+ * Escapes special characters that may present a problem when they appear
+ * in the LaTeX file: poudn signs, backslashes, braces, etc.
+ *
+ * @param [in] input Text string to be sanitized
+ * @returns std::string containing the sanitized string
+ */
 std::string LaTeXRenderer::makeLaTeXSafe (const std::string &input)
 {
   std::string output;
@@ -81,26 +98,25 @@ std::string LaTeXRenderer::makeLaTeXSafe (const std::string &input)
 
     if (!bSawLatexEscape) {
       if (ch == '#') {
-	output += "\\#";
+      	output += "\\#";
       } else if (ch == '\\') {
-	output += "\\backslash ";
+      	output += "\\backslash ";
       } else if (ch == '_') {
-	output += "\\underline ";
+	      output += "\\underline ";
       } else if (ch == '^') {
-	output += "\\^{}";
+	      output += "\\^{}";
       } else if (ch == '{') {
-	output += "\\lbrace ";
+	      output += "\\lbrace ";
       } else if (ch == '}') {
-	output += "\\rbrace ";
+	      output += "\\rbrace ";
       }
       else if (ch == '\\') {
-	bSawLatexEscape = true;
-	output += "\\";
+	      bSawLatexEscape = true;
+	      output += "\\";
       } else {
-	output += ch;
+	      output += ch;
       }
-    }
-    else {
+    } else {
       output += ch;
       bSawLatexEscape = false;
     }
@@ -109,25 +125,18 @@ std::string LaTeXRenderer::makeLaTeXSafe (const std::string &input)
   return output;
 }
 
+/**
+ * Get the current status of the writer (internal debugging function)
+ *
+ * Used in log entries to show the current status of the LaTeX writing engine.
+ * 
+ * @return std::string showing current line/writing mode, nesting level, etc.
+ */
 std::string LaTeXRenderer::status (void) const
 {
   std::string output;
 
-  output += "blk:";
-  switch (currentBlockType) {
-  case MATH: output += "M"; break;
-  case TEXT: output += "T"; break;
-  case UNKNOWN: output += "?"; break;
-  }
-
-  output += ", seg:";
-  switch (currentSegmentType) {
-  case MATH: output += "M"; break;
-  case TEXT: output += "T"; break;
-  case UNKNOWN: output += "?"; break;
-  }
-
-  output += ", wl:";
+  output = "wl:";
   switch (writerLineMode) {
   case MATH: output += "M"; break;
   case TEXT: output += "T"; break;
@@ -150,24 +159,45 @@ std::string LaTeXRenderer::status (void) const
   return output;
 }
 
+/**
+ * Call at the start of each nested rendering operation.
+ */
 void LaTeXRenderer::beginInternalRender (void)
 {
   internalRenderCount++;
 }
 
-bool LaTeXRenderer::doingInternalRender (void) const
+/**
+ * Determine whether we are currently rendering at a nested level.
+ *
+ * @retval TRUE if we are rendering within another element.
+ * @retval FALSE if we are at the baseline.
+ */
+bool LaTeXRenderer::doingInternalRender(void) const
 {
   return (internalRenderCount > 0);
 }
 
+/**
+ * Call at the conclusion of each nested rendering operation.
+ */
 void LaTeXRenderer::endInternalRender (void)
 {
   assert (internalRenderCount != 0);
   internalRenderCount--;
 }
 
-// called to output what is known to be 'math' material. takes care of
-// any necessary LaTeX mode switches, etc.,
+/**
+ * Renders mathematical material into the LaTeX file.
+ *
+ * Inserts the provided text (assumed to be already-rendere LaTeX) into 
+ * the output, changing to math mode (and beginning a math environment) 
+ * if required.
+ *
+ * @param [in] s Rendered LaTeX to be inserted into the output
+ * @return Input string, with any mode change indicators prepended as required
+ * @see writerCurrentMode, writerLineMode, isStartOfLine
+ */
 std::string LaTeXRenderer::renderMathContent (const std::string &s)
 {
   std::string output;
@@ -184,30 +214,30 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
     if (writerCurrentMode != MATH) {
       LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == TEXT ? "text" : "unknown") << " mode";
       if (writerCurrentMode == UNKNOWN) {
-	// We should only get here if we're at the start of a line and
-	// we haven't yet made up our mind as to the line mode.
-	assert (writerLineMode == UNKNOWN);
-	assert (isStartOfLine == true);
+	      // We should only get here if we're at the start of a line and
+	      // we haven't yet made up our mind as to the line mode.
+	      assert (writerLineMode == UNKNOWN);
+	      assert (isStartOfLine == true);
 
-	LOG_TRACE << "* LaTeX line will be in math mode";
-	writerLineMode = MATH;
-	writerCurrentMode = MATH;
+	      LOG_TRACE << "* LaTeX line will be in math mode";
+	      writerLineMode = MATH;
+	      writerCurrentMode = MATH;
 
-	output += "\\[ ";
+	      output += "\\[ ";
       } else { /* writerCurrentMode == TEXT */
-	assert (writerLineMode != UNKNOWN);
+	      assert (writerLineMode != UNKNOWN);
 
-	// If this is a math line, end the \text{...} segment. If it is a text
-	// line, begin an inline math segment ($...$).
-	if (writerLineMode == MATH) {
-	  LOG_TRACE << "* LaTeX math line, ending text segment";
-	  output += "} ";
-	} else { /* writerLineMode == TEXT */
-	  LOG_TRACE << "* LaTeX text line, beginning math segment";
-	  output += " $";
-	}
+	      // If this is a math line, end the \text{...} segment. If it is a text
+	      // line, begin an inline math segment ($...$).
+	      if (writerLineMode == MATH) {
+	        LOG_TRACE << "* LaTeX math line, ending text segment";
+	        output += "} ";
+	      } else { /* writerLineMode == TEXT */
+	        LOG_TRACE << "* LaTeX text line, beginning math segment";
+	        output += " $";
+	      }
 
-	writerCurrentMode = MATH;
+	      writerCurrentMode = MATH;
       }
 
       LOG_TRACE << "   >> " << status();
@@ -225,7 +255,18 @@ std::string LaTeXRenderer::renderMathContent (const std::string &s)
   return output;
 }
 
-std::string LaTeXRenderer::renderTextContent (const std::string &s)
+/**
+* Renders textual material into the LaTeX file.
+*
+* Inserts the provided text (assumed to be already-rendere LaTeX) into
+* the output, changing to text mode (and ending a math environment)
+* if required.
+*
+* @param [in] s Rendered LaTeX to be inserted into the output
+* @return Input string, with any mode change indicators prepended as required
+* @see writerCurrentMode, writerLineMode, isStartOfLine
+*/
+std::string LaTeXRenderer::renderTextContent(const std::string &s)
 {
   std::string output;
 
@@ -241,30 +282,30 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
     if (writerCurrentMode != TEXT) {
       LOG_TRACE << "* LaTeX mode switch needed: currently in " << (writerCurrentMode == MATH ? "math" : "unknown") << " mode";
       if (writerCurrentMode == UNKNOWN) {
-	// We should only get here if we're at the start of a line and
-	// we haven't yet made up our mind as to the line mode.
-	assert (writerLineMode == UNKNOWN);
-	assert (isStartOfLine == true);
+	      // We should only get here if we're at the start of a line and
+	      // we haven't yet made up our mind as to the line mode.
+	      assert (writerLineMode == UNKNOWN);
+	      assert (isStartOfLine == true);
 
-	LOG_TRACE << "* LaTeX line will be in text mode";
-	writerLineMode = TEXT;
-	writerCurrentMode = TEXT;
+	      LOG_TRACE << "* LaTeX line will be in text mode";
+	      writerLineMode = TEXT;
+	      writerCurrentMode = TEXT;
 
-	output += "\\par ";
+	      output += "\\par ";
       } else { /* writerCurrentMode == MATH */
-	assert (writerLineMode != UNKNOWN);
+	      assert (writerLineMode != UNKNOWN);
 
-	// If this is a math line, begin the \text{...} segment. If it is a text
-	// line, end  an inline math segment ($...$).
-	if (writerLineMode == MATH) {
-	  LOG_TRACE << "* LaTeX math line, beginning text segment";
-	  output += "\\text{ ";
-	} else { /* writerLineMode == TEXT */
-	  LOG_TRACE << "* LaTeX text line, ending math segment";
-	  output += "$ ";
-	}
+	      // If this is a math line, begin the \text{...} segment. If it is a text
+	      // line, end  an inline math segment ($...$).
+	      if (writerLineMode == MATH) {
+	        LOG_TRACE << "* LaTeX math line, beginning text segment";
+	        output += "\\text{ ";
+	      } else { /* writerLineMode == TEXT */
+	        LOG_TRACE << "* LaTeX text line, ending math segment";
+	        output += "$ ";
+	      }
 
-	writerCurrentMode = TEXT;
+	      writerCurrentMode = TEXT;
       }
     }
   }
@@ -279,6 +320,12 @@ std::string LaTeXRenderer::renderTextContent (const std::string &s)
   return output;
 }
 
+/**
+ * @copydoc MathRenderer::renderSourceLine
+ * 
+ * In the LaTeX file, the original source code lines are inserted with 
+ * the source filename and line number, to aid in troubleshooting.
+ */
 std::string LaTeXRenderer::renderSourceLine (const MDE_SourceLine *e)
 {
   std::string output;
@@ -325,10 +372,7 @@ std::string LaTeXRenderer::renderMathModeMarker (const MDE_MathModeMarker *e)
   LOG_TRACE << "  >> " << status();
   logIncreaseIndent();
 
-  if (isStartOfLine)
-    currentBlockType = MATH;
-
-  currentSegmentType = MATH;
+  //! @todo Function does nothing on LaTeX render: remove?
 
   logDecreaseIndent();
   LOG_TRACE << "exit LaTeXRenderer::renderMathModeMarker: no output";
@@ -345,10 +389,7 @@ std::string LaTeXRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
   LOG_TRACE << "  >> " << status();
   logIncreaseIndent();
 
-  if (isStartOfLine)
-    currentBlockType = TEXT;
-
-  currentSegmentType = TEXT;
+  //! @todo Function does nothing on LaTeX render: remove?
 
   logDecreaseIndent();
   LOG_TRACE << "exit LaTeXRenderer::renderTextModeMarker: no output";
@@ -357,6 +398,15 @@ std::string LaTeXRenderer::renderTextModeMarker (const MDE_TextModeMarker *e)
   return output;
 }
 
+/**
+ * @copydoc MathRenderer::renderLineBreak
+ *
+ * In LaTeX, before putting a line break in we may need to close off a
+ * math environment (\\]) if this was a math-based line, or close off a 
+ * \\text{...} segment.
+ *
+ * In the case of blank lines, a 10pt vertical space is inserted.
+ */
 std::string LaTeXRenderer::renderLineBreak (const MDE_LineBreak *e)
 {
   std::string output;
@@ -407,11 +457,7 @@ std::string LaTeXRenderer::renderLineBreak (const MDE_LineBreak *e)
 
 std::string LaTeXRenderer::renderTextBlock (const MDE_TextBlock *e)
 {
-  std::string text;
-
-  text = e->getText();
-
-  return renderTextContent(text);
+  return renderTextContent(e->getText());
 }
 
 std::string LaTeXRenderer::renderMathBlock (const MDE_MathBlock *e)
@@ -419,6 +465,10 @@ std::string LaTeXRenderer::renderMathBlock (const MDE_MathBlock *e)
   return renderMathContent(e->getText());
 }
 
+/**
+ * @copydoc MathRenderer::renderGroup
+ * @see LaTeXRenderer::isBracketSizingEnabled
+ */
 std::string LaTeXRenderer::renderGroup (const MDE_Group *e)
 {
   std::string renderedContents;

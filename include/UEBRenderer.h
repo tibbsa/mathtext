@@ -13,8 +13,11 @@
 #include <string>
 #include "MathRenderer.h"
 
-// Default settings
-#define UEB_DEFAULT_LINE_LEN 0 /* no wrapping */
+/**
+ * Default line length for braille output; 0 disables wrapping altogether.
+ * @see UEBRenderer::maxLineLength
+ */
+#define UEB_DEFAULT_LINE_LEN 0
 
 // UEB math/text mode indicators
 #define UEB_MATH_BLOCK_BEGIN "<|@M@|>"
@@ -25,10 +28,10 @@
 #define UEB_WORDWRAP_PRI1    "<|@1@|>"
 #define UEB_WORDWRAP_PRI2    "<|@2@|>"
 #define UEB_WORDWRAP_PRI3    "<|@3@|>"
-#define UEB_CONTINUATION     BD_5
 
 // Technical braille symbols
 #define UEB_CAPITAL_SIGN     BD_6
+#define UEB_CONTINUATION     BD_5
 #define UEB_DIRECTLY_ABOVE   BD_46 BD_35
 #define UEB_DIRECTLY_BELOW   BD_46 BD_26
 #define UEB_G1               BD_56
@@ -122,28 +125,98 @@
 #define UEB_CURRENCY_YEN     BD_4 "Y"
 #define UEB_CURRENCY_NAIRA   BD_4 "N"
 
+/**
+ * Unified English Braille rendering engine
+ *
+ * Renders a mathematical document into Unified English Braille Code, using 
+ * the liblouis library where necessary for text-based content. 
+ *
+ * One of the more complicated aspects of this rendering is taking care of 
+ * line breaks, to ensure that the mathematical statements are wrapped to 
+ * new lines at appropriate places. To facilitate this, suitable wrapping 
+ * points are marked in the interim output (UEB_WORDWRAP_PRIx macros), 
+ * and then the entire document is word-wrapped in one pass at the end of
+ * the render. 
+ */
 class UEBRenderer : public MathRenderer
 {
  protected:
-  typedef struct {
-    bool isInTextBlock;
-    bool isNumericMode;
-    bool isStart;
-    bool isUsingSpacedOperators;
-    bool skipFollowingWhitespace;
-  } UEBRenderStatus;
+   /** 
+    * Sets the maximum line length for each line of braille.
+    * 
+    * If this is set to 0, no wrapping will be done at all and each line of 
+    * the input file will result in a line of braille.
+    *
+    * \par Default value:
+    * UEB_DEFAULT_LINE_LEN (0), disabling word wrapping
+    * @see UEBRenderer::disableLineWrapping
+    * @see UEBRenderer::enableLineWrapping
+    */
+   unsigned maxLineLength;
 
+   /**
+    * Determine whether to put extra spaces around operators.
+    *
+    * Normally, no spaces are included on either side of mathematical 
+    * operators (+ - / x). For lower grade levels and less experienced
+    * braille readers, additional spacing may optionally be included.
+    * Turn this on to add those extra spaces.
+    *
+    * \par Default value:
+    * FALSE
+    */
+   bool isUsingSpacedOperators;
+
+   /**
+    * Render engine status flags.
+    *
+    * We need to keep track of various conditions (such as whether we are in
+    * "numeric mode" (following a number sign), and these need to be saved 
+    * and restored when rendering subexpressions (such as a numerator in a 
+    * fraction). This structure is used to store these status flags.
+    */
+   struct UEBRenderStatus {
+    bool isInTextBlock; ///< TRUE if we are inserting text material
+    bool isNumericMode; ///< TRUE if we are in numeric mode (after a # sign)
+    bool isStartOfLine; ///< TRUE if we are at the beginning of a new line
+    
+    /**
+     * Set to TRUE if it is necessary to skip the next spaces seen.
+     *
+     * Sometimes when returning to an outer level from an internal rendering, 
+     * it may be desirable to have any additional spaces that appear in the 
+     * output bypassed. The setting of this variable will be propogated up 
+     * the render status stack accordingly.
+     *
+     * @see UEBRenderer::endInternalRender
+     */
+    bool skipFollowingWhitespace; 
+  };
+
+  /**
+   * The current status of the rendering engine.
+   */
   UEBRenderStatus status;
+
+  /**
+   * A stack of saved status flags for the rendering engine.
+   */
   std::stack<UEBRenderStatus> statusStack;
 
-  unsigned maxLineLength;
-
-  std::string stripWrappingIndicators (const std::string &input) const;
-
+  /**
+  * Counts the rendering nesting level: for example, if rendering a numerator
+  * inside of a fraction, this would be one level of nesting. If rendering
+  * an exponent within a numerator within a fraction, this would be two
+  * levels of nesting. This is necessary to avoid changing render modes
+  * while inside a mathematical construct, for example.
+  */
   unsigned internalRenderCount;
+
   void beginInternalRender (void);
   bool doingInternalRender (void) const;
   void endInternalRender (void);
+
+  std::string stripWrappingIndicators(const std::string &input) const;
 
   std::string translateToBraille (const std::string &s);
   std::string translateBrailleLetterIndicators (const std::string &s);
