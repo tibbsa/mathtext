@@ -1,5 +1,5 @@
 /**
- * @file MathDocument.h
+ * @file
  * Header file for the class that holds interpreted math documents
  *
  * @copyright Copyright 2015 Anthony Tibbs
@@ -13,12 +13,14 @@
 
 
 /**
- * A MathDocument holds the contents of an interpreted math file./
+ * A MathDocument holds the contents of an interpreted math file.
  */
-
 class MathDocument
 {
  protected:
+   /**
+    * An array/vector of MathDocumentLine entries.
+    */
   MDEVector m_document;
 
  public:

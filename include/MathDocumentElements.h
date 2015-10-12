@@ -1,5 +1,5 @@
 /**
- * @file MathDocumentElements.h
+ * @file
  * Header file for the class that holds a single element in a document.
  *
  * @copyright Copyright 2015 Anthony Tibbs
@@ -59,9 +59,24 @@ class MathDocumentElement
 class MDE_SourceLine : public MathDocumentElement
 {
  protected:
+   /** 
+   * The name of the file from which this line was loaded
+   */
   std::string filename;
+
+  /** 
+   * The starting line number that this expression began on.
+   */
   unsigned long line1;
+  
+  /**
+   * The ending line number that this expression finished on.
+   */
   unsigned long line2;
+  
+  /**
+   * The text contents of this line of the file.
+   */
   std::string payload;
 
  public:
