@@ -237,6 +237,7 @@ class UEBRenderer : public MathRenderer
 
   void disableLineWrapping (void);
   void enableLineWrapping (const unsigned length);
+  bool isWrappingEnabled (void) const;
 
   DECL_RENDER_FUNC(SourceLine);
   DECL_RENDER_FUNC(Command);

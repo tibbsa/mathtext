@@ -76,7 +76,7 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 
   std::string renderedBraille = MathRenderer::renderDocument (document);
 
-  if (maxLineLength) {
+  if (isWrappingEnabled()) {
     size_t pos = 0;
     while (pos < renderedBraille.length()) {
       std::string curLine;
@@ -189,9 +189,9 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
           }
 	      
 	        if (!breakpoint) {
-      #ifdef UEB_WRAPPING_DEBUG
+#ifdef UEB_WRAPPING_DEBUG
 	          LOG_TRACE << "no suitable breakpoint found: breaking at EOL";
-      #endif
+#endif
 	          breakpoint = curOutputLinePos;
 	        }
 
@@ -204,9 +204,9 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 
 	        // Delete any whitespace which appears before this point
 	        while (breakpoint > 0 && isspace(curOutputLine[breakpoint-1])) {
-      #ifdef UEB_WRAPPING_DEBUG
+#ifdef UEB_WRAPPING_DEBUG
 	          LOG_TRACE << "  * deleting trailing space before break";
-      #endif
+#endif
 	          breakpoint--;
 	          curOutputLinePos--;
 	          curOutputLine.erase(breakpoint, 1);
@@ -232,9 +232,9 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
 	        curOutputLine.insert(breakpoint, continuationString);
 	        curOutputLinePos = curOutputLine.length();
 	        curOutputLineLength = post_break_length + (continuationString.length() - 1);
-      #ifdef UEB_WRAPPING_DEBUG
+#ifdef UEB_WRAPPING_DEBUG
 	        LOG_TRACE << "  after: " << curOutputLineLength << ":[" << curOutputLine << "]";
-      #endif
+#endif
 
 	        // reset breakpoints for new line
 	        for (int curPriority = 1; curPriority <= 3; curPriority++)
@@ -263,6 +263,9 @@ std::string UEBRenderer::renderDocument (const MathDocument &document)
  * Turn off all word wrapping (no maximum line length)
  *
  * @see UEBRenderer::enableLineWrapping, UEBRenderer::maxLineLength
+ * @todo This should probably be a construction-time parameter, because it 
+ *       cannot actually be changed mid-render (unless we rework wrapping 
+ *       to have wrapping happen on-the-fly rather than at the end).
  */
 void UEBRenderer::disableLineWrapping (void)
 {
@@ -279,6 +282,17 @@ void UEBRenderer::enableLineWrapping (const unsigned length)
 {
   assert (length != 0);
   maxLineLength = length;
+}
+
+/**
+ * Query whether line wrapping has been enabled.
+ *
+ * @retval TRUE if a maximum line length has been set
+ * @retval FALSE if no maximum line length has been set
+ */
+bool UEBRenderer::isWrappingEnabled(void) const
+{
+  return (maxLineLength != 0);
 }
 
 /**
@@ -447,11 +461,6 @@ std::string UEBRenderer::translateBraillePunctuation(const std::string &s)
   return output;
 }
 
-// Returns true if the provided vector consists of a single 'item', as that
-// is defined by the Technical Guidelines, s. 7.1 or 12.1
-// (An 'item' is: a number; a fraction; a radical; a narrow; a shape;
-//  anything in paranthesees, square brackets, or braces; anything in
-//  braille grouping indicators; or the previous character)
 /**
  * Determine whether the provided array consists of a single "item"
  *
@@ -645,7 +654,7 @@ std::string UEBRenderer::renderTextContent (const std::string &s)
   LOG_TRACE << "Louis returned " << outlen << " chars: {" << braille_string << "}";
   
   // Insert wrapping indicators.
-  if (maxLineLength) {
+  if (isWrappingEnabled()) {
     boost::replace_all(braille_string, "4 ", "4 " UEB_WORDWRAP_PRI1);
     boost::replace_all(braille_string, "6 ", "6 " UEB_WORDWRAP_PRI1);
     boost::replace_all(braille_string, "8 ", "8 " UEB_WORDWRAP_PRI1);
@@ -845,7 +854,7 @@ std::string UEBRenderer::renderGroup (const MDE_Group *e)
   renderedContents = renderVector (e->getContents());
   endInternalRender();
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI2;
 
   output += openChar;
@@ -866,7 +875,7 @@ std::string UEBRenderer::renderNumber (const MDE_Number *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     brailleNumber = UEB_WORDWRAP_PRI3;
 
   size_t pos = 0;
@@ -934,7 +943,7 @@ std::string UEBRenderer::renderOperator (const MDE_Operator *e)
   if (isUsingSpacedOperators)
     output = " ";
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output += UEB_WORDWRAP_PRI2;
 
   output += opmap[e->getOperator()];
@@ -969,7 +978,7 @@ std::string UEBRenderer::renderComparator (const MDE_Comparator *e)
 
   assert(compmap.count(e->getComparator()) == 1);
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = " " UEB_WORDWRAP_PRI1 + compmap [e->getComparator()] + " ";
   else
     output = " " + compmap [e->getComparator()] + " ";
@@ -1026,7 +1035,7 @@ std::string UEBRenderer::renderGreekLetter (const MDE_GreekLetter *e)
 
   assert(charmap.count(e->getValue()) == 1);
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI3;
 
   output += renderMathContent(charmap[e->getValue()]);
@@ -1088,7 +1097,7 @@ std::string UEBRenderer::renderModifier (const MDE_Modifier *e)
 
   // Include grouping indicators only if the symbol to be modified is
   // something more than an 'item'.  See isBrailleItem() for details.
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI3;
 
   if (!isBrailleItem(e->getArgument()))
@@ -1127,7 +1136,7 @@ std::string UEBRenderer::renderRoot (const MDE_Root *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI3;
 
   if (e->getIndex().empty()) { /* simple square root */
@@ -1176,7 +1185,7 @@ std::string UEBRenderer::renderSummation (const MDE_Summation *e)
   LOG_TRACE << ">> " << __func__ << ": (" << *e << ")";
   logIncreaseIndent();
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI3;
 
   output += UEB_CAPITAL_SIGN UEB_GREEK_SIGN UEB_GREEK_SIGMA;
@@ -1256,12 +1265,12 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
   LOG_TRACE << "- rendered denominator: " << renderedDenominator;
   LOG_TRACE << "- is simple fraction? " << simpleFraction;
 
-  if (maxLineLength)
+  if (isWrappingEnabled())
     output = UEB_WORDWRAP_PRI2;
 
   if (simpleFraction) {
     // Do not permit word wrapping within simple fractions
-    if (maxLineLength) {
+    if (isWrappingEnabled()) {
       renderedNumerator = stripWrappingIndicators(renderedNumerator);
       renderedDenominator = stripWrappingIndicators(renderedDenominator);
     }
@@ -1272,7 +1281,7 @@ std::string UEBRenderer::renderFraction (const MDE_Fraction *e)
 
     output += renderMathContent(boost::str(boost::format("%s" UEB_SIMPLE_FRAC_DIVIDER "%s") % renderedNumerator % renderedDenominator));
   } else {
-    if (maxLineLength)
+    if (isWrappingEnabled())
       output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER UEB_WORDWRAP_PRI3 "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
     else
       output += renderMathContent(boost::str(boost::format(UEB_FRAC_BEGIN "%s" UEB_FRAC_DIVIDER "%s" UEB_FRAC_END) % renderedNumerator % renderedDenominator));
@@ -1306,7 +1315,7 @@ std::string UEBRenderer::renderExponent (const MDE_Exponent *e)
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP "%s") % renderedExponent));
     status.isNumericMode = endedInNumericMode;
   } else {
-    if (maxLineLength)
+    if (isWrappingEnabled())
       output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_WORDWRAP_PRI3 UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
     else
       output = renderMathContent(boost::str(boost::format(UEB_LEVEL_UP UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedExponent));
@@ -1341,7 +1350,7 @@ std::string UEBRenderer::renderSubscript (const MDE_Subscript *e)
     output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN "%s") % renderedSubscript));
     status.isNumericMode = endedInNumericMode;
   } else {
-    if (maxLineLength)
+    if (isWrappingEnabled())
       output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_WORDWRAP_PRI3 UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
     else
       output = renderMathContent(boost::str(boost::format(UEB_LEVEL_DOWN UEB_GROUP_BEGIN "%s" UEB_GROUP_END) % renderedSubscript));
