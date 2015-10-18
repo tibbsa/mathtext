@@ -16,6 +16,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalIncludeDirectories>$(SolutionDir)..\include</AdditionalIncludeDirectories>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(BOOST_PATH)\lib32-msvc-12.0;$(LIBLOUIS_PATH)\windows</AdditionalLibraryDirectories>

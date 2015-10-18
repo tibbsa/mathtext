@@ -44,12 +44,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)cli-$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)cli-$(Configuration)\</IntDir>
-    <TargetName>mathtext</TargetName>
+    <TargetName>mtcli</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)cli-$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)cli-$(Configuration)\</IntDir>
-    <TargetName>mathtext</TargetName>
+    <TargetName>mtcli</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -83,6 +83,10 @@ doc/latex
 build-vs/cli-*
 build-vs/mttest-*
 build-vs/libmathtext-*
+build-vs/mtgui-*
+
+# QT generated files
+MTGUI/GeneratedFiles/*
 
 # Visual Studio 2015 cache/options directory
 .vs/
