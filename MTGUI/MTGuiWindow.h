@@ -6,14 +6,17 @@
 
 class MTGUIWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MTGUIWindow(QWidget *parent = 0);
-    ~MTGUIWindow();
+  MTGUIWindow(QWidget *parent = 0);
+  ~MTGUIWindow();
 
+private slots:
+  void on_exit(void);
+  
 private:
-    Ui::MTGUIWindowClass ui;
+  Ui::MTGUIWindowClass ui;
 };
 
 #endif // MTGUIWINDOW_H
