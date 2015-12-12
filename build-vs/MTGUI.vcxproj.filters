@@ -35,35 +35,47 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\MTGUI\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MTGuiWindow.cpp">
+    <ClCompile Include="..\MTGUI\MTGuiWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_MTGuiWindow.cpp">
+    <ClCompile Include="..\MTGUI\GeneratedFiles\Debug\moc_MTGuiWindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_MTGuiWindow.cpp">
+    <ClCompile Include="..\MTGUI\GeneratedFiles\Release\moc_MTGuiWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_MTGuiWindow.cpp">
+    <ClCompile Include="..\MTGUI\GeneratedFiles\qrc_MTGuiWindow.cpp">
       <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MTGUI\GeneratedFiles\Debug\moc_MTDocWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MTGUI\GeneratedFiles\Release\moc_MTDocWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MTGUI\MTDocWindow.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="MTGuiWindow.h">
+    <CustomBuild Include="..\MTGUI\MTGuiWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="MTGuiWindow.ui">
+    <CustomBuild Include="..\MTGUI\MTGuiWindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="MTGuiWindow.qrc">
+    <CustomBuild Include="..\MTGUI\MTGuiWindow.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MTGUI\MTDocWindow.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_MTGuiWindow.h">
+    <ClInclude Include="..\MTGUI\GeneratedFiles\ui_MTGuiWindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

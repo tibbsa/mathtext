@@ -40,6 +40,8 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="action_File_New"/>
+    <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
    <addaction name="menu_File"/>
@@ -59,6 +61,17 @@
    </property>
    <property name="toolTip">
     <string>Exit the MathText program altogether.</string>
+   </property>
+  </action>
+  <action name="action_File_New">
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="toolTip">
+    <string>Creates a new, blank math document file.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>
@@ -83,8 +96,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_File_New</sender>
+   <signal>triggered()</signal>
+   <receiver>MTGUIWindowClass</receiver>
+   <slot>on_file_new()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_exit()</slot>
+  <slot>on_file_new()</slot>
  </slots>
 </ui>
