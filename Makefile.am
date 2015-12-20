@@ -3,4 +3,4 @@ EXTRA_DIST = bootstrap \
 	README.md \
 	COPYING 
 
-SUBDIRS = src gui doc cli test
+SUBDIRS = src MTGUI doc cli test
