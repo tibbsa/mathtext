@@ -26,13 +26,19 @@ public:
   bool saveAs(void);
   bool saveFile(const QString &filename);
 
+  QString getFileTitle(void);
+
 protected:
+  void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
    
 private slots:
+  void documentWasModified(void);
 
 private:
   bool isUntitled;
   QString documentFilename;
+
+  bool querySaveOnClose(void);
 
 };
 
