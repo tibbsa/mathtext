@@ -32,8 +32,8 @@
 
 AC_DEFUN([CHECK_LIB_LOUIS],
 [
-AC_ARG_WITH([louis],
-    [AS_HELP_STRING([--with-louis@<:@=ARG@:>@],
+AC_ARG_WITH([liblouis],
+    [AS_HELP_STRING([--with-liblouis@<:@=ARG@:>@],
         [use liblouis from a standard location (ARG=yes),
          from the specified location (ARG=<path>)
          @<:@ARG=yes@:>@ ])],

@@ -1,5 +1,5 @@
 /**
- * @file main.cpp
+ * @file
  * Command-line interface for MathText on Linux.
  *
  * @copyright Copyright 2015 Anthony Tibbs
@@ -41,6 +41,7 @@ int main (const int argc, const char **argv)
   bool generateLaTeX = false;
   string latexOutputFilename;
   bool generateBraille = false;
+  int brailleLineLength = 0;
   string brfOutputFilename;
 
   LOG_INFO << endl;
@@ -56,6 +57,10 @@ int main (const int argc, const char **argv)
       ("braille,b",
        po::value(&brfOutputFilename)->implicit_value (string()),
        "Generate a braille file (default: input name + .BRF)")
+
+      ("line-length", 
+       po::value<int>(&brailleLineLength)->default_value(0), 
+       "Maximum length of a braille line (default: no limit)")
 
       ("latex,l",
        po::value(&latexOutputFilename)->implicit_value (string()),
@@ -114,7 +119,7 @@ int main (const int argc, const char **argv)
     } catch (MathInterpreterException &e) {
       cout << "An error occurred and translation of your document was stopped." << endl;
       if (!interp.haveMessages()) {
-	cout << "Cause of execption unknown: no messages produced!" << endl;
+	cout << "The cause of the problem could not be determined." << endl;
       } else {
 	const std::vector<MathInterpreterMsg> &msgs = interp.getMessages();
 	cout << msgs.size() << " message(s):" << endl;
@@ -148,7 +153,6 @@ int main (const int argc, const char **argv)
       output = ltr.renderDocument(doc);
 
       LOG_INFO << endl << "^^^^^^^^^^^^^^^^^^^^^^^^^^ LATEX ^^^^^^^^^^^^^^^^^^^^^^" << endl;
-
       LOG_INFO << output;
       LOG_INFO << endl << "vvvvvvvvvvvvvvvvvvvvvvvvvv LATEX vvvvvvvvvvvvvvvvvvvvvv" << endl;
 
@@ -174,9 +178,9 @@ int main (const int argc, const char **argv)
 
       std::string output;
       UEBRenderer ueb;
-      ueb.enableLineWrapping (30);
+      if (brailleLineLength > 0)
+	ueb.enableLineWrapping (brailleLineLength);
       output = ueb.renderDocument(doc);
-
 
       LOG_INFO << endl << "^^^^^^^^^^^^^^^^^^^^^^^^^^  UEB  ^^^^^^^^^^^^^^^^^^^^^^" << endl;
 

@@ -44,5 +44,5 @@ AC_CONFIG_FILES([
   cli/Makefile 
   test/Makefile
   doc/Makefile
-  gui/Makefile])
+  MTGUI/Makefile])
 AC_OUTPUT
