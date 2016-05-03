@@ -55,6 +55,7 @@ std::string LaTeXRenderer::renderDocument (const MathDocument &document)
   output += "\\fancyhead{} % Remove all header contents\n";
   output += "\\cfoot{Page \\thepage\\ of \\pageref{LastPage}} % Page X of Y in the footer (centered)\n";
   output += "\\parskip 0in \\parindent 0in\n";
+	output += "\\setlength{\\mathindent}{0pt}\n";
   output += "\\begin{document}\n\n";
 
   output += MathRenderer::renderDocument (document);
