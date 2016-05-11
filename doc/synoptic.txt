@@ -1,0 +1,158 @@
+&&
+This file contains a general synoptic and basic test suite for all of the language features that have been implemented to date.  This is not an extensive test of every scenario, but should provide a quick check to make sure that the basic output is correct.
+
+As new language features are implemented, this example should be extended to include a few basic samples of the new features.
+
+---- Mixed mode lines (text block) ----
+$c*b = a / d
+An equation to test math mode: $4x + 2y = 7
+
+$$
+&---- Mixed mode lines (math block) ----
+&This is a math block, with a pure text line.
+&This is a math block, with a mixed math/text line: $2a + (4b * c) <= x
+
+&---- Numbers ----
+1
+128
+1024
+1,024
+1,204,576
+1 024
+1 024 576
+1.1
+1.25
+25.50
+500.75
+1 024.72
+1024.
+1024.x
+1024.x62
+
+&---- Signs of operation ----
+a + b = c
+a - b = c
+a / b = c
+a * b = c
+
+&---- Signs of comparison ----
+a < b
+a > b
+a <= b
+a >= b
+a != b
+a = b
+a ~= b
+
+&---- Symbols ----
+&Comma: $a, b, c
+&Currencies: Cents $`C, &Euro: $`E, &Franc: $`F, &Pound: $`P, &Dollar: $`$, &Yen: $`Y
+&Factorial: $2!, x!, (4+2)!
+&Bracketing symbols: $( [ { test } ] )
+&Therefore: $/\ &There is a $0.71 &probability that ...
+&Percentage: Test at the $95%% &confidence level where $%a = 0.05.
+
+&---- Modifiers ----
+&Bar: $`BAR x, `CJ c, `BAR @1~2#, `CJ (_/4), `CJ (x + @2y^2~3#), `BAR 48
+&Hat: $`HAT x, `H y, `H @1~2#, `HAT (_/4), `HAT (x + @2y^2~3#), `H 28.2
+&Vectors: $`V v, `V x^2, `V @x~2#, `V (_/4), `V (x + @2y^2~3#), `V 7
+
+&---- Fractions ----
+&Simple fraction: $@1~2#
+&Simple fraction (followed by letters): $@1~2#c
+&Fraction with signs of operation: $@x + 2y~z#
+&Nested fraction (one level): $z = @@1~x#~y#
+&Multiple nested fraction: $@@a~b#~@x + @1~y#~2y##
+
+&&
+---- Question Numbers -----
+(In text mode)
+
+1. Question number 1 in a text block
+(1) Question number 1, form b, in a text block
+1) Question number 1, form c, in a text block
+
+$$
+&(In math mode)
+1. &Question number 1 in a math block
+(1) &Question number 1, form b, in a math block
+1) &Question number 1, form c, in a math block
+
+a. &Question 'a' in a math block
+(b) &Question 'b', form b, in a math block
+c) &Question 'c', form c, in a math block
+
+1.1 &not a question number
+0.(abc) &not a question number
+b() &not a question number
+
+&---- Exponents and Subscripts -------
+1. x_2
+2. a_b
+3. a^2x+4
+4. x + y_2 = z
+5. x^2;y^2 = 4xy_4
+6. @1~x^2# + @2x_4~3x# + 5x_2< z
+7. x_@1~2#
+8. x_(2y + 4)=z
+9. x_(y_(z_@1~2#))
+10. [1 + (x + z_4)_8]=t
+11. x_1;^2 + y_(ab)^@1~2# > p
+12. c=(a^2, b^2, c^2)
+
+&---- Greek alphabet ----
+&alpha (a): $%a, %A
+&beta (b): $%b, %B
+&chi (c): $%c, %C
+&delta (d): $%d, %D
+&epsilon (e): $%e, %E
+&psi (f): $%f, %F
+&gamma (g): $%g, %G
+&iota (i): $%i, %I
+&kappa (k): $%k, %K
+&lambda (l): $%l, %L
+&mu (m): $%m, %M
+&nu (n): $%n, %N
+&omicron (o): $%o, %O
+&pi (p): $%p, %P
+&tau (q): $%q, %Q
+&rho (r): $%r, %R
+&sigma (s): $%s, %S
+&theta (t): $%t, %T
+&upsilon (u): $%u, %U
+&phi (v): $%v, %V
+&xi (x): $%x, %X
+&zeta (z): $%z, %Z
+&omega (w): $%w, %W
+
+&---- Root ----
+1. _/4
+2. _/x
+3. _/3(12)
+4. _/3(x+1)
+5. _/n(12)
+6. &This should stop at the 'x': $_/x+1
+7. _/@1~2#
+8. _/x(24y)
+9. _/[n^2](x+2y+(3c^2 / @a~b#))
+
+&--- Summations ---
+`S((a = 1, b = 1), (a = 100, b = 25)) a^2 + b^@1~2# = 1,024
+`S(n = 1, y^2) n = n_1 + n_2 + n_3 + ... + n_(y^2)
+
+`S(x,) y^2 &(no upper limit)
+`S(,y) x^2 &(no lower limit)
+`S(,) x^2 &(no limits at all)
+
+&---- Brackets and grouping ----
+&(With auto-sizing brackets for LaTeX)
+y = {1 + [2 - y(_/(@1~x^3 + 3ab + (z - 4)#))]}
+$$+NoBracketSizing
+&(Without auto-sizing brackets for LaTeX)
+y = {1 + [2 - y(_/(@1~x^3 + 3ab + (z - 4)#))]}
+$$-NoBracketSizing
+
+
+
+
+LocalWords:  CJ
